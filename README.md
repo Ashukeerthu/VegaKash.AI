@@ -94,12 +94,18 @@ VegaKash.AI/
    pip install -r requirements.txt
    ```
 
-4. **Set environment variable for OpenAI API key**
+4. **Configure environment variables**
    ```powershell
-   $env:OPENAI_API_KEY="your-openai-api-key-here"
+   # Copy the example file
+   copy .env.example .env
+   
+   # Edit .env and add your actual OpenAI API key
+   # OPENAI_API_KEY=sk-proj-your-actual-key-here
    ```
    
-   For permanent setup, add to your PowerShell profile or create a `.env` file (if using python-dotenv).
+   **⚠️ IMPORTANT**: Never commit your `.env` file to git! It's already in `.gitignore` for security.
+   
+   See [DEPLOYMENT.md](./DEPLOYMENT.md) for production deployment instructions.
 
 5. **Run the backend server**
    ```powershell
@@ -258,6 +264,16 @@ Content-Type: application/json
 - [ ] Investment tracking
 - [ ] Bill reminders and notifications
 - [ ] Mobile app (React Native)
+
+## 🔒 Security
+
+### Environment Variables
+- **Never commit `.env` files** - Already protected by `.gitignore`
+- **Use `.env.example`** - Contains only placeholder values for reference
+- **Production deployment** - Set environment variables through your hosting provider's control panel
+- **API key rotation** - Use different keys for development and production
+
+For detailed deployment and security guidelines, see [DEPLOYMENT.md](./DEPLOYMENT.md)
 
 ## 🤝 Contributing
 
