@@ -9,7 +9,7 @@ const env = import.meta.env.MODE || 'development';
 // API Base URLs for different environments
 const API_BASE_URLS = {
   development: 'http://localhost:8000',
-  production: 'https://api.vegakash.com', // TODO: Update with actual production URL
+  production: 'https://yourdomain.com', // ⚠️ IMPORTANT: Change to your actual domain before deployment
 };
 
 // Get current API base URL
