@@ -40,21 +40,22 @@
 }
 
 .hero-title {
-  font-size: 3rem;
+  font-size: clamp(2rem, 5vw, 3rem);
   margin-bottom: var(--spacing-md);
   font-weight: 700;
   animation: fadeInUp 0.8s ease-out;
+  word-wrap: break-word;
 }
 
 .hero-subtitle {
-  font-size: 1.75rem;
+  font-size: clamp(1.25rem, 3.5vw, 1.75rem);
   margin-bottom: var(--spacing-lg);
   font-weight: 500;
   animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
 .hero-description {
-  font-size: 1.125rem;
+  font-size: clamp(0.95rem, 2vw, 1.125rem);
   margin-bottom: var(--spacing-xl);
   line-height: 1.8;
   opacity: 0.95;
@@ -64,8 +65,8 @@
 .cta-button {
   background-color: white;
   color: #667eea;
-  padding: 1rem 2.5rem;
-  font-size: 1.125rem;
+  padding: 0.875rem 2rem;
+  font-size: clamp(1rem, 2vw, 1.125rem);
   font-weight: 600;
   border: none;
   border-radius: var(--radius-lg);
@@ -75,6 +76,8 @@
   animation: fadeInUp 0.8s ease-out 0.6s both;
   position: relative;
   overflow: hidden;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .cta-button::before {
@@ -837,60 +840,264 @@
   }
 }
 
+/* Mobile Responsive Styles */
 @media (max-width: 768px) {
+  .hero {
+    padding: var(--spacing-xl) var(--spacing-md);
+  }
+
+  .hero-content {
+    padding: 0 var(--spacing-md);
+  }
+  
   .hero-title {
     font-size: 2rem;
+    margin-bottom: var(--spacing-sm);
   }
   
   .hero-subtitle {
     font-size: 1.25rem;
+    margin-bottom: var(--spacing-md);
   }
   
   .hero-description {
-    font-size: 1rem;
+    font-size: 0.95rem;
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .cta-button {
+    width: 100%;
+    max-width: 320px;
+    padding: 0.875rem 1.5rem;
+  }
+  
+  .main-content {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+
+  .financial-form-container,
+  .summary-panel,
+  .ai-plan-panel {
+    margin-bottom: var(--spacing-lg);
+    border-radius: var(--radius-md);
+  }
+
+  .financial-form-container {
+    padding: var(--spacing-lg);
+  }
+
+  .form-header h2 {
+    font-size: 1.5rem;
   }
   
   .metrics-grid {
     grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+
+  .metric-card {
+    padding: var(--spacing-md);
+  }
+
+  .metric-value {
+    font-size: 1.5rem;
   }
   
   .form-grid {
     grid-template-columns: 1fr;
+    gap: var(--spacing-md);
   }
   
   .form-actions {
     flex-direction: column;
+    gap: var(--spacing-sm);
   }
   
   .form-actions .btn {
     width: 100%;
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
   }
   
   .panel-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg);
+  }
+
+  .panel-body {
+    padding: var(--spacing-lg);
+  }
+
+  .advice-box,
+  .ai-section {
+    padding: var(--spacing-md);
+  }
+
+  .rule-50-30-20 {
+    gap: var(--spacing-md);
+  }
+
+  .rule-bar {
+    padding: var(--spacing-md);
+  }
+
+  .ai-plan-content {
+    gap: var(--spacing-lg);
+  }
+
+  .action-item {
+    padding: var(--spacing-md);
   }
   
   .footer-content {
     grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+    text-align: center;
+  }
+
+  .footer-section {
+    align-items: center;
   }
 }
 
 @media (max-width: 480px) {
+  :root {
+    --spacing-2xl: 2rem;
+    --spacing-xl: 1.5rem;
+  }
+
   .hero {
-    padding: var(--spacing-xl) 0;
+    padding: var(--spacing-lg) var(--spacing-sm);
+  }
+
+  .hero-content {
+    padding: 0 var(--spacing-sm);
+  }
+
+  .hero-title {
+    font-size: 1.75rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .hero-description {
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  .cta-button {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.95rem;
   }
   
   .main-content {
-    padding: var(--spacing-lg) 0;
+    padding: var(--spacing-md) var(--spacing-sm);
   }
-  
+
   .financial-form-container,
-  .panel-body {
-    padding: var(--spacing-lg);
-  }
-  
+  .panel-body,
   .panel-header {
-    padding: var(--spacing-lg);
+    padding: var(--spacing-md);
+  }
+
+  .form-header h2,
+  .panel-header h3 {
+    font-size: 1.25rem;
+  }
+
+  .form-group label {
+    font-size: 0.875rem;
+  }
+
+  .form-input {
+    padding: 0.625rem 0.75rem;
+    font-size: 0.95rem;
+  }
+
+  .btn {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.95rem;
+  }
+
+  .metric-card {
+    padding: var(--spacing-sm);
+  }
+
+  .metric-label {
+    font-size: 0.8rem;
+  }
+
+  .metric-value {
+    font-size: 1.25rem;
+  }
+
+  .advice-box,
+  .ai-section {
+    padding: var(--spacing-sm);
+  }
+
+  .rule-bar {
+    padding: var(--spacing-sm);
+  }
+
+  .rule-label {
+    font-size: 0.875rem;
+  }
+
+  .rule-amount {
+    font-size: 1rem;
+  }
+
+  .action-item {
+    padding: var(--spacing-sm);
+  }
+
+  .action-number {
+    width: 28px;
+    height: 28px;
+    font-size: 0.875rem;
+  }
+
+  .action-text {
+    font-size: 0.875rem;
+  }
+
+  .disclaimer-box {
+    padding: var(--spacing-sm);
+    font-size: 0.8rem;
+  }
+}
+
+/* Tablet Landscape */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .btn,
+  .cta-button,
+  .form-input,
+  .form-select {
+    min-height: 44px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .metric-card:active {
+    transform: scale(0.98);
+  }
+
+  .btn:active {
+    transform: translateY(1px);
   }
 }

@@ -2,8 +2,12 @@
 VegaKash.AI - FastAPI Backend Application
 AI-powered Budget Planner & Savings Assistant
 """
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from slowapi import Limiter, _rate_limit_exceeded_handler  # type: ignore
+from slowapi.util import get_remote_address  # type: ignore
+from slowapi.errors import RateLimitExceeded  # type: ignore
 import logging
 from typing import Dict
 
@@ -18,14 +22,21 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Initialize rate limiter
+limiter = Limiter(key_func=get_remote_address)
+
 # Initialize FastAPI app
 app = FastAPI(
     title="VegaKash.AI API",
     description="AI Budget Planner & Savings Assistant - Backend API",
     version="1.0.0",
-    docs_url="/api/docs",
-    redoc_url="/api/redoc"
+    docs_url="/api/v1/docs",
+    redoc_url="/api/v1/redoc"
 )
+
+# Add rate limiter to app state
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # type: ignore
 
 # Configure CORS
 # Allow frontend to access backend from different origins
@@ -34,6 +45,8 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",      # React default dev server
         "http://127.0.0.1:3000",
+        "http://localhost:3001",      # Vite alternate port
+        "http://127.0.0.1:3001",
         "http://localhost:5500",      # VS Code Live Server
         "http://127.0.0.1:5500",
         "http://localhost:5173",      # Vite default port
@@ -46,7 +59,22 @@ app.add_middleware(
 )
 
 
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    """Global exception handler for unhandled errors"""
+    logger.error(f"Unhandled error: {exc}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": True,
+            "message": "An unexpected error occurred. Please try again later.",
+            "detail": str(exc) if app.debug else None
+        }
+    )
+
+
 @app.get("/health")
+@app.get("/api/v1/health")
 async def health_check() -> Dict[str, str]:
     """
     Health check endpoint
@@ -56,11 +84,13 @@ async def health_check() -> Dict[str, str]:
         Status message
     """
     logger.info("Health check requested")
-    return {"status": "ok", "message": "VegaKash.AI API is running"}
+    return {"status": "ok", "message": "VegaKash.AI API is running", "version": "1.0.0"}
 
 
 @app.post("/api/calculate-summary", response_model=SummaryOutput)
-async def calculate_financial_summary(financial_input: FinancialInput) -> SummaryOutput:
+@app.post("/api/v1/calculate-summary", response_model=SummaryOutput)
+@limiter.limit("30/minute")  # type: ignore
+async def calculate_financial_summary(request: Request, financial_input: FinancialInput) -> SummaryOutput:
     """
     Calculate financial summary based on user input
     Performs rule-based calculations without AI
@@ -94,12 +124,16 @@ async def calculate_financial_summary(financial_input: FinancialInput) -> Summar
 
 
 @app.post("/api/generate-ai-plan", response_model=AIPlanOutput)
-async def generate_ai_financial_plan(request: AIPlanRequest) -> AIPlanOutput:
+@app.post("/api/v1/generate-ai-plan", response_model=AIPlanOutput)
+@limiter.limit("5/minute")  # type: ignore
+async def generate_ai_financial_plan(http_request: Request, request: AIPlanRequest) -> AIPlanOutput:
     """
     Generate personalized AI financial plan
     Uses OpenAI to create customized budget and savings recommendations
+    Rate limited to 5 requests per minute per IP
     
     Args:
+        http_request: FastAPI request object (for rate limiting)
         request: Contains both financial input and calculated summary
         
     Returns:
@@ -109,7 +143,7 @@ async def generate_ai_financial_plan(request: AIPlanRequest) -> AIPlanOutput:
         HTTPException: If AI generation fails
     """
     try:
-        logger.info("Generating AI financial plan")
+        logger.info(f"Generating AI financial plan for IP: {get_remote_address(http_request)}")
         
         # Generate AI plan
         ai_plan = generate_ai_plan(request.input, request.summary)
@@ -123,14 +157,22 @@ async def generate_ai_financial_plan(request: AIPlanRequest) -> AIPlanOutput:
         logger.error(f"Configuration error: {e}")
         raise HTTPException(
             status_code=500,
-            detail=str(e)
+            detail={
+                "error": True,
+                "message": "AI service configuration error",
+                "detail": str(e)
+            }
         )
         
     except Exception as e:
         logger.error(f"Error generating AI plan: {e}", exc_info=True)
         raise HTTPException(
             status_code=500,
-            detail=f"Failed to generate AI plan. Please try again later. Error: {str(e)}"
+            detail={
+                "error": True,
+                "message": "Failed to generate AI plan. Please try again later.",
+                "detail": str(e)
+            }
         )
 
 

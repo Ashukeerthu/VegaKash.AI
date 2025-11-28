@@ -36,10 +36,10 @@ class LoanInput(BaseModel):
     """
     Details of a single loan
     """
-    name: str = Field(..., description="Name/type of loan (e.g., 'Car Loan', 'Personal Loan')")
-    outstanding_principal: float = Field(..., gt=0, description="Outstanding principal amount")
-    interest_rate_annual: float = Field(..., gt=0, description="Annual interest rate in percentage")
-    remaining_months: int = Field(..., gt=0, description="Number of months remaining")
+    name: str = Field(..., min_length=1, max_length=100, description="Name/type of loan (e.g., 'Car Loan', 'Personal Loan')")
+    outstanding_principal: float = Field(..., gt=0, le=100000000, description="Outstanding principal amount")
+    interest_rate_annual: float = Field(..., gt=0, le=30, description="Annual interest rate in percentage (0-30%)")
+    remaining_months: int = Field(..., gt=0, le=600, description="Number of months remaining (max 50 years)")
 
 
 class FinancialInput(BaseModel):
@@ -47,12 +47,12 @@ class FinancialInput(BaseModel):
     Complete financial input from user
     This is the main request body for calculations
     """
-    currency: str = Field(default="INR", description="Currency code (INR, USD, etc.)")
-    monthly_income_primary: float = Field(..., gt=0, description="Primary monthly income")
-    monthly_income_additional: float = Field(default=0, ge=0, description="Additional monthly income")
+    currency: str = Field(default="INR", max_length=10, description="Currency code (INR, USD, etc.)")
+    monthly_income_primary: float = Field(..., gt=0, le=10000000, description="Primary monthly income (must be positive)")
+    monthly_income_additional: float = Field(default=0, ge=0, le=10000000, description="Additional monthly income")
     expenses: ExpensesInput = Field(..., description="Breakdown of monthly expenses")
     goals: GoalsInput = Field(..., description="Financial goals")
-    loans: List[LoanInput] = Field(default_factory=list, description="List of active loans")
+    loans: List[LoanInput] = Field(default_factory=lambda: [], max_length=20, description="List of active loans (max 20)")
 
 
 class SummaryOutput(BaseModel):

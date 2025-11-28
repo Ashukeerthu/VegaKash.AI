@@ -3,18 +3,33 @@
  * Handles all backend API communication
  */
 import axios from 'axios';
-
-// Base URL for API - change for production
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+import { API_ENDPOINTS, APP_CONFIG } from '../config';
 
 // Create axios instance with default config
 const apiClient = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_ENDPOINTS.calculateSummary.split('/api')[0],
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 60000, // 60 seconds for AI operations
+  timeout: APP_CONFIG.defaultTimeout,
 });
+
+// Response interceptor for better error handling
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response) {
+      // Server responded with error
+      const errorMessage = error.response.data?.detail?.message || error.response.data?.detail || error.message;
+      throw new Error(errorMessage);
+    } else if (error.request) {
+      // Request made but no response
+      throw new Error('Cannot connect to server. Please check your internet connection.');
+    } else {
+      throw new Error(error.message);
+    }
+  }
+);
 
 /**
  * Calculate financial summary (non-AI)
@@ -23,7 +38,7 @@ const apiClient = axios.create({
  */
 export const calculateSummary = async (financialInput) => {
   try {
-    const response = await apiClient.post('/api/calculate-summary', financialInput);
+    const response = await apiClient.post('/api/v1/calculate-summary', financialInput);
     return response.data;
   } catch (error) {
     console.error('Error calculating summary:', error);
@@ -42,7 +57,7 @@ export const calculateSummary = async (financialInput) => {
  */
 export const generateAIPlan = async (financialInput, summary) => {
   try {
-    const response = await apiClient.post('/api/generate-ai-plan', {
+    const response = await apiClient.post('/api/v1/generate-ai-plan', {
       input: financialInput,
       summary: summary,
     });
@@ -50,6 +65,7 @@ export const generateAIPlan = async (financialInput, summary) => {
   } catch (error) {
     console.error('Error generating AI plan:', error);
     throw new Error(
+      error.response?.data?.detail?.message || 
       error.response?.data?.detail || 
       'Failed to generate AI plan. Please try again later.'
     );
@@ -62,7 +78,7 @@ export const generateAIPlan = async (financialInput, summary) => {
  */
 export const checkHealth = async () => {
   try {
-    const response = await apiClient.get('/health');
+    const response = await apiClient.get('/api/v1/health');
     return response.data;
   } catch (error) {
     console.error('Health check failed:', error);
