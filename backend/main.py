@@ -128,15 +128,15 @@ async def calculate_financial_summary(request: Request, financial_input: Financi
 @app.post("/api/generate-ai-plan", response_model=AIPlanOutput)
 @app.post("/api/v1/generate-ai-plan", response_model=AIPlanOutput)
 @limiter.limit("5/minute")  # type: ignore
-async def generate_ai_financial_plan(http_request: Request, request: AIPlanRequest) -> AIPlanOutput:
+async def generate_ai_financial_plan(request: Request, ai_request: AIPlanRequest) -> AIPlanOutput:
     """
     Generate personalized AI financial plan
     Uses OpenAI to create customized budget and savings recommendations
     Rate limited to 5 requests per minute per IP
     
     Args:
-        http_request: FastAPI request object (for rate limiting)
-        request: Contains both financial input and calculated summary
+        request: FastAPI request object (for rate limiting)
+        ai_request: Contains both financial input and calculated summary
         
     Returns:
         AIPlanOutput with AI-generated recommendations
@@ -145,10 +145,10 @@ async def generate_ai_financial_plan(http_request: Request, request: AIPlanReque
         HTTPException: If AI generation fails
     """
     try:
-        logger.info(f"Generating AI financial plan for IP: {get_remote_address(http_request)}")
+        logger.info(f"Generating AI financial plan for IP: {get_remote_address(request)}")
         
         # Generate AI plan
-        ai_plan = generate_ai_plan(request.input, request.summary)
+        ai_plan = generate_ai_plan(ai_request.input, ai_request.summary)
         
         logger.info("AI plan generated successfully")
         
