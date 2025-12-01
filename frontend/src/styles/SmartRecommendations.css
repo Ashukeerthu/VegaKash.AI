@@ -1,0 +1,339 @@
+/* Smart Recommendations Styles */
+
+.recommendations-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 30px auto;
+  padding: 0 20px;
+}
+
+.recommendations-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.recommendations-header h2 {
+  color: #2c3e50;
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.recommendations-subtitle {
+  color: #7f8c8d;
+  font-size: 1.1rem;
+}
+
+.loading-state,
+.error-state {
+  text-align: center;
+  padding: 60px 20px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-message {
+  color: #e74c3c;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+}
+
+.retry-btn {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.retry-btn:hover {
+  background-color: #2980b9;
+}
+
+/* Alerts Section */
+.alerts-section,
+.recommendations-section,
+.reminders-section {
+  margin-bottom: 40px;
+}
+
+.alerts-section h3,
+.recommendations-section h3,
+.reminders-section h3 {
+  color: #2c3e50;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+.alerts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.alert-card {
+  background-color: white;
+  padding: 20px;
+  border-radius: 12px;
+  border-left: 5px solid;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.alert-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.alert-card.severity-high {
+  border-left-color: #e74c3c;
+  background-color: #fef5f5;
+}
+
+.alert-card.severity-medium {
+  border-left-color: #f39c12;
+  background-color: #fef9f3;
+}
+
+.alert-card.severity-low {
+  border-left-color: #3498db;
+  background-color: #f4f9fc;
+}
+
+.alert-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.alert-category {
+  font-weight: bold;
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+
+.alert-severity {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.alert-severity.severity-high {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.alert-severity.severity-medium {
+  background-color: #f39c12;
+  color: white;
+}
+
+.alert-severity.severity-low {
+  background-color: #3498db;
+  color: white;
+}
+
+.alert-message {
+  color: #2c3e50;
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+.alert-suggestion {
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #2c3e50;
+}
+
+.alert-suggestion strong {
+  color: #27ae60;
+}
+
+/* Recommendations Section */
+.recommendations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 25px;
+}
+
+.recommendation-card {
+  background-color: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.recommendation-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.recommendation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  gap: 15px;
+}
+
+.recommendation-header h4 {
+  color: #2c3e50;
+  font-size: 1.2rem;
+  margin: 0;
+  flex: 1;
+}
+
+.savings-badge {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.recommendation-description {
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.action-items {
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.action-items strong {
+  color: #2c3e50;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.action-items ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.action-items li {
+  color: #2c3e50;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+/* Reminders Section */
+.reminders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px;
+}
+
+.reminder-card {
+  background-color: white;
+  padding: 15px 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: transform 0.2s;
+}
+
+.reminder-card:hover {
+  transform: translateX(5px);
+}
+
+.reminder-icon {
+  font-size: 1.5rem;
+}
+
+.reminder-card p {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* No Recommendations */
+.no-recommendations {
+  text-align: center;
+  padding: 60px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px;
+  font-size: 1.3rem;
+  margin-top: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .recommendations-container {
+    padding: 0 15px;
+  }
+
+  .recommendations-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .alerts-grid,
+  .recommendations-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .reminders-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .alert-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .recommendation-header {
+    flex-direction: column;
+  }
+
+  .savings-badge {
+    align-self: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .recommendations-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .alert-card,
+  .recommendation-card {
+    padding: 15px;
+  }
+
+  .action-items {
+    padding: 12px;
+  }
+}

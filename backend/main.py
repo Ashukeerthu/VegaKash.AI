@@ -10,10 +10,21 @@ from slowapi.util import get_remote_address  # type: ignore
 from slowapi.errors import RateLimitExceeded  # type: ignore
 import logging
 from typing import Dict
+from datetime import datetime
 
-from schemas import FinancialInput, SummaryOutput, AIPlanRequest, AIPlanOutput
+from schemas import (
+    FinancialInput, SummaryOutput, AIPlanRequest, AIPlanOutput,
+    MultiLoanInput, DebtStrategyComparison, PDFExportRequest,
+    SmartRecommendationsOutput
+)
 from services.calculations import calculate_summary
 from services.ai_planner import generate_ai_plan
+from services.multi_loan import compare_debt_strategies
+from services.smart_recommendations import generate_smart_recommendations
+from fastapi.responses import Response
+
+# Import PDF generator (ReportLab - pure Python, no GTK needed)
+from services.pdf_generator_reportlab import generate_pdf_bytes
 
 # Configure logging
 logging.basicConfig(
@@ -178,14 +189,110 @@ async def generate_ai_financial_plan(request: Request, ai_request: AIPlanRequest
         )
 
 
+@app.post("/api/v1/compare-debt-strategies", response_model=DebtStrategyComparison)
+@limiter.limit("10/minute")  # type: ignore
+async def compare_debt_strategies_endpoint(request: Request, multi_loan_input: MultiLoanInput) -> DebtStrategyComparison:
+    """
+    Compare debt snowball vs avalanche strategies
+    
+    Args:
+        multi_loan_input: List of loans and extra payment amount
+        
+    Returns:
+        DebtStrategyComparison with both strategies and recommendation
+    """
+    try:
+        logger.info(f"Comparing debt strategies for {len(multi_loan_input.loans)} loans")
+        comparison = compare_debt_strategies(multi_loan_input)
+        logger.info(f"Debt comparison complete - Interest saved: ₹{comparison.interest_saved}")
+        return comparison
+    except Exception as e:
+        logger.error(f"Error comparing debt strategies: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to compare debt strategies: {str(e)}"
+        )
+
+
+@app.post("/api/v1/export-pdf")
+@limiter.limit("10/minute")  # type: ignore
+async def export_financial_plan_pdf(request: Request, pdf_request: PDFExportRequest) -> Response:
+    """
+    Export financial plan as PDF
+    
+    Args:
+        pdf_request: Contains financial input, summary, and optional AI plan
+        
+    Returns:
+        PDF file as bytes
+    """
+    try:
+        logger.info("Generating PDF export")
+        pdf_bytes = generate_pdf_bytes(
+            pdf_request.input,
+            pdf_request.summary,
+            pdf_request.ai_plan
+        )
+        
+        filename = f"VegaKash_Financial_Plan_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+        
+        logger.info(f"PDF generated successfully: {filename}")
+        
+        return Response(
+            content=pdf_bytes,
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": f'attachment; filename="{filename}"'
+            }
+        )
+    except Exception as e:
+        logger.error(f"Error generating PDF: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to generate PDF: {str(e)}"
+        )
+
+
+@app.post("/api/v1/smart-recommendations", response_model=SmartRecommendationsOutput)
+@limiter.limit("20/minute")  # type: ignore
+async def get_smart_recommendations(request: Request, financial_input: FinancialInput) -> SmartRecommendationsOutput:
+    """
+    Get personalized smart recommendations and alerts
+    
+    Args:
+        financial_input: User's financial data
+        
+    Returns:
+        SmartRecommendationsOutput with alerts, recommendations, and reminders
+    """
+    try:
+        logger.info("Generating smart recommendations")
+        
+        # Calculate summary first
+        summary = calculate_summary(financial_input)
+        
+        # Generate recommendations
+        recommendations = generate_smart_recommendations(financial_input, summary)
+        
+        logger.info(f"Generated {len(recommendations.alerts)} alerts and {len(recommendations.recommendations)} recommendations")
+        
+        return recommendations
+    except Exception as e:
+        logger.error(f"Error generating smart recommendations: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to generate recommendations: {str(e)}"
+        )
+
+
 # TODO: Phase 2 - Add authentication endpoints (login, register, logout)
 # TODO: Phase 2 - Add endpoint to save/retrieve user financial plans
 # TODO: Phase 2 - Add endpoint to get user dashboard data
 # TODO: Phase 2 - Add endpoint to track financial goals over time
-# TODO: Phase 2 - Add rate limiting to prevent API abuse
 # TODO: Phase 2 - Add database integration for persistent storage
 
 
 if __name__ == "__main__":
     import uvicorn
+    from datetime import datetime
     uvicorn.run(app, host="0.0.0.0", port=8000)

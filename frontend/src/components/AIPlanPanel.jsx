@@ -1,4 +1,6 @@
 import React from 'react';
+import LoadingSpinner from './LoadingSpinner';
+import ProgressBar from './ProgressBar';
 
 /**
  * AI Plan Panel Component
@@ -7,16 +9,16 @@ import React from 'react';
 function AIPlanPanel({ aiPlan, error, isGenerating, onGenerate, currency }) {
   if (isGenerating) {
     return (
-      <div className="panel ai-plan-panel" id="ai-plan-section">
+      <div className="panel ai-plan-panel page-transition" id="ai-plan-section">
         <div className="panel-header">
           <h2>🤖 AI-Powered Financial Plan</h2>
         </div>
         <div className="panel-body">
-          <div className="loading">
-            <div className="spinner"></div>
-            <p>Analyzing your finances with AI...</p>
-            <p className="loading-subtext">This may take 10-30 seconds</p>
-          </div>
+          <LoadingSpinner 
+            size="medium" 
+            message="Analyzing your finances with AI..." 
+          />
+          <ProgressBar indeterminate={true} label="This may take 10-30 seconds" />
         </div>
       </div>
     );
@@ -45,14 +47,14 @@ function AIPlanPanel({ aiPlan, error, isGenerating, onGenerate, currency }) {
 
   if (!aiPlan) {
     return (
-      <div className="panel ai-plan-panel" id="ai-plan-section">
+      <div className="panel ai-plan-panel page-transition" id="ai-plan-section">
         <div className="panel-header">
           <h2>🤖 AI-Powered Financial Plan</h2>
           <p>Get personalized recommendations powered by AI</p>
         </div>
         <div className="panel-body">
           <button 
-            className="btn btn-primary btn-large"
+            className="btn btn-primary btn-large ripple-button hover-lift"
             onClick={onGenerate}
           >
             ✨ Generate AI Plan
@@ -63,7 +65,7 @@ function AIPlanPanel({ aiPlan, error, isGenerating, onGenerate, currency }) {
   }
 
   return (
-    <div className="panel ai-plan-panel" id="ai-plan-section">
+    <div className="panel ai-plan-panel page-transition" id="ai-plan-section">
       <div className="panel-header">
         <h2>🤖 AI-Powered Financial Plan</h2>
         <button 

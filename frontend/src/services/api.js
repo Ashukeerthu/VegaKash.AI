@@ -3,11 +3,11 @@
  * Handles all backend API communication
  */
 import axios from 'axios';
-import { API_ENDPOINTS, APP_CONFIG } from '../config';
+import { API_BASE_URL, API_ENDPOINTS, APP_CONFIG } from '../config';
 
 // Create axios instance with default config
 const apiClient = axios.create({
-  baseURL: API_ENDPOINTS.calculateSummary.split('/api')[0],
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -83,6 +83,64 @@ export const checkHealth = async () => {
   } catch (error) {
     console.error('Health check failed:', error);
     throw new Error('Unable to connect to backend API');
+  }
+};
+
+/**
+ * Export financial plan as PDF
+ * @param {Object} financialInput - User's financial data
+ * @param {Object} summary - Calculated summary
+ * @param {Object} aiPlan - AI-generated plan (optional)
+ * @returns {Promise<Blob>} PDF file as blob
+ */
+export const exportPDF = async (financialInput, summary, aiPlan = null) => {
+  try {
+    const response = await apiClient.post('/api/v1/export-pdf', {
+      input: financialInput,
+      summary: summary,
+      ai_plan: aiPlan,
+    }, {
+      responseType: 'blob',
+      timeout: 30000 // 30 seconds for PDF generation
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error exporting PDF:', error);
+    throw new Error('Failed to generate PDF. Please try again.');
+  }
+};
+
+/**
+ * Get smart recommendations and alerts
+ * @param {Object} financialInput - User's financial data
+ * @returns {Promise<Object>} Smart recommendations output
+ */
+export const getSmartRecommendations = async (financialInput) => {
+  try {
+    const response = await apiClient.post('/api/v1/smart-recommendations', financialInput);
+    return response.data;
+  } catch (error) {
+    console.error('Error getting smart recommendations:', error);
+    throw new Error('Failed to generate recommendations. Please try again.');
+  }
+};
+
+/**
+ * Compare debt payoff strategies (snowball vs avalanche)
+ * @param {Array} loans - List of detailed loan objects
+ * @param {Number} extraPayment - Extra monthly payment available
+ * @returns {Promise<Object>} Debt strategy comparison
+ */
+export const compareDebtStrategies = async (loans, extraPayment = 0) => {
+  try {
+    const response = await apiClient.post('/api/v1/compare-debt-strategies', {
+      loans: loans,
+      extra_payment: extraPayment
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error comparing debt strategies:', error);
+    throw new Error('Failed to compare debt strategies. Please try again.');
   }
 };
 

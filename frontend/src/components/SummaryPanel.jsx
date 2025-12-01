@@ -1,5 +1,6 @@
 import React from 'react';
 import { formatCurrency } from '../utils/helpers';
+import LoadingSpinner from './LoadingSpinner';
 
 /**
  * Summary Panel Component
@@ -8,15 +9,15 @@ import { formatCurrency } from '../utils/helpers';
 function SummaryPanel({ summary, error, isCalculating, currency }) {
   if (isCalculating) {
     return (
-      <div className="panel summary-panel" id="summary-section">
+      <div className="panel summary-panel page-transition" id="summary-section">
         <div className="panel-header">
           <h2>📊 Financial Summary</h2>
         </div>
         <div className="panel-body">
-          <div className="loading">
-            <div className="spinner"></div>
-            <p>Calculating your financial summary...</p>
-          </div>
+          <LoadingSpinner 
+            size="medium" 
+            message="Calculating your financial summary..." 
+          />
         </div>
       </div>
     );
@@ -39,7 +40,7 @@ function SummaryPanel({ summary, error, isCalculating, currency }) {
 
   if (!summary) {
     return (
-      <div className="panel summary-panel placeholder" id="summary-section">
+      <div className="panel summary-panel placeholder page-transition" id="summary-section">
         <div className="panel-header">
           <h2>📊 Financial Summary</h2>
         </div>
@@ -53,14 +54,14 @@ function SummaryPanel({ summary, error, isCalculating, currency }) {
   }
 
   return (
-    <div className="panel summary-panel" id="summary-section">
+    <div className="panel summary-panel page-transition" id="summary-section">
       <div className="panel-header">
         <h2>📊 Financial Summary</h2>
       </div>
       
       <div className="panel-body">
         {/* Key Metrics */}
-        <div className="metrics-grid">
+        <div className="metrics-grid stagger-item">
           <div className="metric-card">
             <div className="metric-label">Total Income</div>
             <div className="metric-value positive">

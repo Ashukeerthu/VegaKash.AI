@@ -27,6 +27,10 @@ anyio>=4.7.0
 # Rate Limiting
 slowapi>=0.1.9
 
+# PDF Generation
+reportlab>=4.0.0
+pillow>=10.0.0
+
 # TODO: Phase 2 - Add database dependencies
 # sqlalchemy==2.0.25
 # alembic==1.13.1

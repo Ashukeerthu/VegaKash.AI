@@ -4,8 +4,8 @@ Integrates with OpenAI to generate personalized financial plans
 """
 import json
 import logging
+import os
 from openai import OpenAI
-from config import config
 from schemas import FinancialInput, SummaryOutput, AIPlanOutput
 
 # Configure logging
@@ -121,8 +121,13 @@ def generate_ai_plan(financial_input: FinancialInput, summary: SummaryOutput) ->
         Exception: If OpenAI API call fails or response is invalid
     """
     try:
+        # Get API key from environment
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            raise ValueError("OPENAI_API_KEY environment variable is not set")
+        
         # Initialize OpenAI client
-        client = OpenAI(api_key=config.openai_api_key)
+        client = OpenAI(api_key=api_key)
         
         # Build the prompt
         user_prompt = build_ai_prompt(financial_input, summary)
@@ -130,8 +135,9 @@ def generate_ai_plan(financial_input: FinancialInput, summary: SummaryOutput) ->
         logger.info("Calling OpenAI API for financial plan generation...")
         
         # Call OpenAI API
+        model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
         response = client.chat.completions.create(
-            model=config.openai_model,
+            model=model,
             messages=[
                 {
                     "role": "system",

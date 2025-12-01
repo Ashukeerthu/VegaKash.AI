@@ -22,7 +22,9 @@ class Config:
         
         # Validate critical configuration
         if not self._openai_api_key:
-            raise ValueError(
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.warning(
                 "OPENAI_API_KEY environment variable is not set. "
                 "Please set it before running the application. "
                 "Example: set OPENAI_API_KEY=your-key-here (Windows) or export OPENAI_API_KEY=your-key-here (Linux/Mac)"

@@ -3,21 +3,26 @@
  * Layout and component-specific styles
  */
 
+/* Import enhanced theme variables */
+@import './theme.css';
+
 /* App Container */
 .app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: var(--bg-secondary);
 }
 
 /* Hero Section */
 .hero {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: var(--spacing-2xl) 0;
+  background: var(--bg-gradient-primary);
+  color: var(--color-white);
+  padding: var(--spacing-3xl) 0;
   text-align: center;
   position: relative;
   overflow: hidden;
+  box-shadow: var(--shadow-xl);
 }
 
 .hero::before {
@@ -132,6 +137,79 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xl);
+}
+
+/* Action Buttons Container */
+.action-buttons-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.action-btn {
+  padding: 15px 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.export-btn {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+}
+
+.export-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+}
+
+.dashboard-btn {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+}
+
+.dashboard-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
+}
+
+.recommendations-btn {
+  background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+  color: white;
+}
+
+.recommendations-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #e67e22 0%, #f39c12 100%);
+}
+
+.error-message-inline {
+  background-color: #fef5f5;
+  border-left: 4px solid #e74c3c;
+  padding: 15px;
+  border-radius: 8px;
+  color: #e74c3c;
+  margin-top: 15px;
+  font-size: 0.95rem;
+}
+
+/* Full Width Sections */
+.full-width-section {
+  margin-top: 40px;
+  padding-top: 40px;
+  border-top: 2px solid #e0e0e0;
 }
 
 /* Form Container */
