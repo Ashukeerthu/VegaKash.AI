@@ -5,29 +5,66 @@ Pure Python functions for rule-based financial calculations
 from schemas import FinancialInput, SummaryOutput, ExpensesInput, LoanInput
 
 
-def calculate_loan_emi(loan: LoanInput) -> float:
+def calculate_principal_from_emi(emi: float, interest_rate_annual: float, months: int) -> float:
     """
-    Calculate approximate monthly EMI for a loan
-    Uses simple EMI formula: P * r * (1+r)^n / ((1+r)^n - 1)
+    Calculate outstanding principal from known EMI (reverse EMI calculation)
     
     Args:
-        loan: LoanInput with principal, interest rate, and remaining months
+        emi: Monthly EMI amount
+        interest_rate_annual: Annual interest rate in percentage
+        months: Number of months remaining
+        
+    Returns:
+        Outstanding principal amount
+    """
+    annual_rate = interest_rate_annual / 100
+    monthly_rate = annual_rate / 12
+    
+    # Handle edge case of 0% interest
+    if monthly_rate == 0:
+        return emi * months
+    
+    # Reverse EMI formula: P = EMI * [((1+r)^n - 1) / (r * (1+r)^n)]
+    principal = emi * (((1 + monthly_rate) ** months - 1) / (monthly_rate * ((1 + monthly_rate) ** months)))
+    return round(principal, 2)
+
+
+def calculate_loan_emi(loan: LoanInput) -> float:
+    """
+    Calculate monthly EMI for a loan
+    Supports two modes:
+    1. EMI mode: Returns the provided EMI directly
+    2. Principal mode: Calculates EMI from principal
+    
+    Uses EMI formula: P * r * (1+r)^n / ((1+r)^n - 1)
+    
+    Args:
+        loan: LoanInput with either EMI or principal details
         
     Returns:
         Monthly EMI amount
     """
-    principal = loan.outstanding_principal
-    annual_rate = loan.interest_rate_annual / 100
-    monthly_rate = annual_rate / 12
-    months = loan.remaining_months
+    # Mode 1: User knows EMI (most common)
+    if loan.input_mode == "emi" and loan.monthly_emi:
+        return loan.monthly_emi
     
-    # Handle edge case of 0% interest
-    if monthly_rate == 0:
-        return principal / months
+    # Mode 2: User knows principal (calculate EMI)
+    if loan.input_mode == "principal" and loan.outstanding_principal:
+        principal = loan.outstanding_principal
+        annual_rate = loan.interest_rate_annual / 100
+        monthly_rate = annual_rate / 12
+        months = loan.remaining_months
+        
+        # Handle edge case of 0% interest
+        if monthly_rate == 0:
+            return round(principal / months, 2)
+        
+        # EMI formula
+        emi = principal * monthly_rate * ((1 + monthly_rate) ** months) / (((1 + monthly_rate) ** months) - 1)
+        return round(emi, 2)
     
-    # EMI formula
-    emi = principal * monthly_rate * ((1 + monthly_rate) ** months) / (((1 + monthly_rate) ** months) - 1)
-    return round(emi, 2)
+    # Fallback: if neither mode properly configured, raise error
+    raise ValueError(f"Invalid loan configuration: mode={loan.input_mode}, emi={loan.monthly_emi}, principal={loan.outstanding_principal}")
 
 
 def calculate_total_expenses(expenses: ExpensesInput, loans: list = None) -> float:
@@ -52,18 +89,40 @@ def calculate_total_expenses(expenses: ExpensesInput, loans: list = None) -> flo
         expenses.others
     )
     
-    # Add EMI from all loans
+    # Add EMI from all loans (supports both EMI-first and principal-first modes)
     total_emi = 0
     if loans:
         for loan in loans:
-            emi = calculate_emi(
-                loan.outstanding_principal,
-                loan.interest_rate_annual,
-                loan.remaining_months
-            )
+            emi = calculate_loan_emi(loan)
             total_emi += emi
     
     return base_expenses + total_emi
+
+
+def get_loan_principal(loan: LoanInput) -> float:
+    """
+    Get or calculate the outstanding principal for a loan
+    
+    Args:
+        loan: LoanInput with either EMI or principal details
+        
+    Returns:
+        Outstanding principal amount
+    """
+    # Mode 1: User knows EMI, calculate principal
+    if loan.input_mode == "emi" and loan.monthly_emi:
+        return calculate_principal_from_emi(
+            loan.monthly_emi,
+            loan.interest_rate_annual,
+            loan.remaining_months
+        )
+    
+    # Mode 2: User knows principal
+    if loan.input_mode == "principal" and loan.outstanding_principal:
+        return loan.outstanding_principal
+    
+    # Fallback
+    raise ValueError(f"Invalid loan configuration: mode={loan.input_mode}")
 
 
 def generate_basic_advice(

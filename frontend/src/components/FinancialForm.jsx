@@ -32,8 +32,11 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
 
   // Multiple loans state
   const [loans, setLoans] = useState([]);
+  const [loanInputMode, setLoanInputMode] = useState('emi'); // 'emi' or 'principal'
   const [currentLoan, setCurrentLoan] = useState({
     name: '',
+    input_mode: 'emi',
+    monthly_emi: '',
     outstanding_principal: '',
     interest_rate_annual: '',
     remaining_months: '',
@@ -100,9 +103,18 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
     const newErrors = {};
     
     if (!currentLoan.name) newErrors.loan_name = 'Loan name is required';
-    if (!currentLoan.outstanding_principal || parseFloat(currentLoan.outstanding_principal) <= 0) {
-      newErrors.loan_principal = 'Principal amount is required and must be greater than 0';
+    
+    // Validation based on input mode
+    if (loanInputMode === 'emi') {
+      if (!currentLoan.monthly_emi || parseFloat(currentLoan.monthly_emi) <= 0) {
+        newErrors.loan_emi = 'Monthly EMI is required and must be greater than 0';
+      }
+    } else {
+      if (!currentLoan.outstanding_principal || parseFloat(currentLoan.outstanding_principal) <= 0) {
+        newErrors.loan_principal = 'Principal amount is required and must be greater than 0';
+      }
     }
+    
     if (!currentLoan.interest_rate_annual || parseFloat(currentLoan.interest_rate_annual) <= 0) {
       newErrors.loan_interest = 'Interest rate is required and must be greater than 0';
     }
@@ -115,20 +127,28 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
       return;
     }
     
+    // Prepare loan data with correct mode
+    const loanData = {
+      ...currentLoan,
+      input_mode: loanInputMode,
+    };
+    
     if (editingLoanIndex !== null) {
       // Update existing loan
       const updatedLoans = [...loans];
-      updatedLoans[editingLoanIndex] = { ...currentLoan };
+      updatedLoans[editingLoanIndex] = loanData;
       setLoans(updatedLoans);
       setEditingLoanIndex(null);
     } else {
       // Add new loan
-      setLoans([...loans, { ...currentLoan }]);
+      setLoans([...loans, loanData]);
     }
     
     // Reset form
     setCurrentLoan({
       name: '',
+      input_mode: loanInputMode,
+      monthly_emi: '',
       outstanding_principal: '',
       interest_rate_annual: '',
       remaining_months: '',
@@ -140,7 +160,9 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
    * Edit loan
    */
   const handleEditLoan = (index) => {
-    setCurrentLoan({ ...loans[index] });
+    const loan = loans[index];
+    setCurrentLoan({ ...loan });
+    setLoanInputMode(loan.input_mode || 'emi');
     setEditingLoanIndex(index);
   };
 
@@ -153,6 +175,8 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
     if (editingLoanIndex === index) {
       setCurrentLoan({
         name: '',
+        input_mode: loanInputMode,
+        monthly_emi: '',
         outstanding_principal: '',
         interest_rate_annual: '',
         remaining_months: '',
@@ -167,6 +191,8 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
   const handleCancelLoanEdit = () => {
     setCurrentLoan({
       name: '',
+      input_mode: loanInputMode,
+      monthly_emi: '',
       outstanding_principal: '',
       interest_rate_annual: '',
       remaining_months: '',
@@ -214,12 +240,25 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
         primary_goal_type: formData.goals.primary_goal_type || null,
         primary_goal_amount: formData.goals.primary_goal_amount ? parseFloat(formData.goals.primary_goal_amount) : null,
       },
-      loans: loans.map(loan => ({
-        name: loan.name,
-        outstanding_principal: parseFloat(loan.outstanding_principal),
-        interest_rate_annual: parseFloat(loan.interest_rate_annual),
-        remaining_months: parseInt(loan.remaining_months),
-      })),
+      loans: loans.map(loan => {
+        const baseLoan = {
+          name: loan.name,
+          input_mode: loan.input_mode || 'emi',
+          interest_rate_annual: parseFloat(loan.interest_rate_annual),
+          remaining_months: parseInt(loan.remaining_months),
+        };
+        
+        // Add mode-specific fields
+        if (loan.input_mode === 'emi') {
+          baseLoan.monthly_emi = parseFloat(loan.monthly_emi);
+          baseLoan.outstanding_principal = null;
+        } else {
+          baseLoan.outstanding_principal = parseFloat(loan.outstanding_principal);
+          baseLoan.monthly_emi = null;
+        }
+        
+        return baseLoan;
+      }),
     };
     
     return data;
@@ -269,7 +308,9 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
     if (sampleData.loans && sampleData.loans.length > 0) {
       setLoans(sampleData.loans.map(loan => ({
         name: loan.name,
-        outstanding_principal: loan.outstanding_principal.toString(),
+        input_mode: loan.input_mode || 'emi',
+        monthly_emi: loan.monthly_emi ? loan.monthly_emi.toString() : '',
+        outstanding_principal: loan.outstanding_principal ? loan.outstanding_principal.toString() : '',
         interest_rate_annual: loan.interest_rate_annual.toString(),
         remaining_months: loan.remaining_months.toString(),
       })));
@@ -606,10 +647,14 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
                 }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: 600, marginBottom: '0.25rem', color: 'var(--text-primary)' }}>
-                      {loan.name}
+                      {loan.name} {loan.input_mode === 'emi' ? '💰' : '📊'}
                     </div>
                     <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-                      ₹{parseFloat(loan.outstanding_principal).toLocaleString()} @ {loan.interest_rate_annual}% • {loan.remaining_months} months
+                      {loan.input_mode === 'emi' ? (
+                        <>EMI: ₹{parseFloat(loan.monthly_emi || 0).toLocaleString()}/month</>
+                      ) : (
+                        <>Principal: ₹{parseFloat(loan.outstanding_principal || 0).toLocaleString()}</>
+                      )} @ {loan.interest_rate_annual}% • {loan.remaining_months} months
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -646,6 +691,66 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
               {editingLoanIndex !== null ? '✏️ Edit Loan' : '➕ Add New Loan'}
             </h4>
             
+            {/* Input Mode Toggle */}
+            <div style={{ marginBottom: '1.5rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                How would you like to enter your loan details?
+              </label>
+              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                <label style={{ 
+                  flex: '1', 
+                  minWidth: '200px',
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  padding: '1rem', 
+                  border: `2px solid ${loanInputMode === 'emi' ? '#667eea' : 'var(--border-color)'}`,
+                  borderRadius: 'var(--radius-md)',
+                  background: loanInputMode === 'emi' ? 'rgba(102, 126, 234, 0.05)' : 'white',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}>
+                  <input
+                    type="radio"
+                    name="loanInputMode"
+                    value="emi"
+                    checked={loanInputMode === 'emi'}
+                    onChange={(e) => setLoanInputMode(e.target.value)}
+                    style={{ marginRight: '0.75rem' }}
+                  />
+                  <div>
+                    <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>💰 I know my monthly EMI</div>
+                    <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Most common - Enter the amount you pay monthly</div>
+                  </div>
+                </label>
+                
+                <label style={{ 
+                  flex: '1', 
+                  minWidth: '200px',
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  padding: '1rem', 
+                  border: `2px solid ${loanInputMode === 'principal' ? '#667eea' : 'var(--border-color)'}`,
+                  borderRadius: 'var(--radius-md)',
+                  background: loanInputMode === 'principal' ? 'rgba(102, 126, 234, 0.05)' : 'white',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}>
+                  <input
+                    type="radio"
+                    name="loanInputMode"
+                    value="principal"
+                    checked={loanInputMode === 'principal'}
+                    onChange={(e) => setLoanInputMode(e.target.value)}
+                    style={{ marginRight: '0.75rem' }}
+                  />
+                  <div>
+                    <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>📊 I know the loan principal</div>
+                    <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Advanced - Enter outstanding balance</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+            
             <div className="form-row-2">
               <div className="form-group">
                 <label htmlFor="loan_name">Loan Name <span className="required">*</span></label>
@@ -663,23 +768,49 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
                 )}
               </div>
               
-              <div className="form-group">
-                <label htmlFor="loan_principal">Outstanding Principal <span className="required">*</span></label>
-                <input
-                  type="number"
-                  id="loan_principal"
-                  name="outstanding_principal"
-                  value={currentLoan.outstanding_principal}
-                  onChange={handleLoanChange}
-                  placeholder="e.g., 400000"
-                  min="0"
-                  step="0.01"
-                  className={`form-input ${errors.loan_principal ? 'error' : ''}`}
-                />
-                {errors.loan_principal && (
-                  <span className="error-message">{errors.loan_principal}</span>
-                )}
-              </div>
+              {loanInputMode === 'emi' ? (
+                <div className="form-group">
+                  <label htmlFor="loan_emi">Monthly EMI <span className="required">*</span></label>
+                  <input
+                    type="number"
+                    id="loan_emi"
+                    name="monthly_emi"
+                    value={currentLoan.monthly_emi}
+                    onChange={handleLoanChange}
+                    placeholder="e.g., 15000"
+                    min="0"
+                    step="0.01"
+                    className={`form-input ${errors.loan_emi ? 'error' : ''}`}
+                  />
+                  {errors.loan_emi && (
+                    <span className="error-message">{errors.loan_emi}</span>
+                  )}
+                  <small style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+                    The amount you pay monthly (check your bank statement)
+                  </small>
+                </div>
+              ) : (
+                <div className="form-group">
+                  <label htmlFor="loan_principal">Outstanding Principal <span className="required">*</span></label>
+                  <input
+                    type="number"
+                    id="loan_principal"
+                    name="outstanding_principal"
+                    value={currentLoan.outstanding_principal}
+                    onChange={handleLoanChange}
+                    placeholder="e.g., 400000"
+                    min="0"
+                    step="0.01"
+                    className={`form-input ${errors.loan_principal ? 'error' : ''}`}
+                  />
+                  {errors.loan_principal && (
+                    <span className="error-message">{errors.loan_principal}</span>
+                  )}
+                  <small style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+                    The remaining balance on your loan
+                  </small>
+                </div>
+              )}
             </div>
             
             <div className="form-row-2">

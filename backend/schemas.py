@@ -34,9 +34,20 @@ class GoalsInput(BaseModel):
 class LoanInput(BaseModel):
     """
     Details of a single loan
+    Supports two input modes:
+    1. 'emi' mode: User knows their monthly EMI (default, most common)
+    2. 'principal' mode: User knows the outstanding principal
     """
     name: str = Field(..., min_length=1, max_length=100, description="Name/type of loan (e.g., 'Car Loan', 'Personal Loan')")
-    outstanding_principal: float = Field(..., gt=0, le=100000000, description="Outstanding principal amount")
+    input_mode: str = Field(default="emi", description="Input mode: 'emi' or 'principal'")
+    
+    # EMI-first mode fields (when user knows monthly payment)
+    monthly_emi: Optional[float] = Field(default=None, gt=0, le=1000000, description="Monthly EMI amount (for emi mode)")
+    
+    # Principal-first mode fields (when user knows loan details)
+    outstanding_principal: Optional[float] = Field(default=None, gt=0, le=100000000, description="Outstanding principal amount (for principal mode)")
+    
+    # Common fields for both modes
     interest_rate_annual: float = Field(..., gt=0, le=30, description="Annual interest rate in percentage (0-30%)")
     remaining_months: int = Field(..., gt=0, le=600, description="Number of months remaining (max 50 years)")
 

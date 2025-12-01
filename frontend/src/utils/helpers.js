@@ -26,7 +26,8 @@ export const sampleData = {
   loans: [
     {
       name: "Car Loan",
-      outstanding_principal: 400000,
+      input_mode: "emi",
+      monthly_emi: 12764,
       interest_rate_annual: 8.5,
       remaining_months: 36,
     },

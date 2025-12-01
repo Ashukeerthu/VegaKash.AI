@@ -24,14 +24,21 @@ def build_ai_prompt(financial_input: FinancialInput, summary: SummaryOutput) -> 
     Returns:
         Formatted prompt string for the AI model
     """
-    # Format loans information
+    # Format loans information (support both EMI and principal modes)
+    from services.calculations import calculate_loan_emi, get_loan_principal
+    
     loans_info = ""
     if financial_input.loans:
-        loans_info = "\n".join([
-            f"- {loan.name}: ₹{loan.outstanding_principal:,.2f} principal, "
-            f"{loan.interest_rate_annual}% interest, {loan.remaining_months} months remaining"
-            for loan in financial_input.loans
-        ])
+        loan_details = []
+        for loan in financial_input.loans:
+            emi = calculate_loan_emi(loan)
+            principal = get_loan_principal(loan)
+            loan_details.append(
+                f"- {loan.name}: ₹{emi:,.2f}/month EMI, "
+                f"₹{principal:,.2f} outstanding principal, "
+                f"{loan.interest_rate_annual}% interest, {loan.remaining_months} months remaining"
+            )
+        loans_info = "\n".join(loan_details)
     else:
         loans_info = "No active loans"
     
