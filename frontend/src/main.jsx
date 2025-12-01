@@ -6,8 +6,16 @@ import './styles/index.css'
 // Performance monitoring and optimization
 import { reportWebVitals, logPerformanceMetrics, addResourceHints } from './utils/performance'
 
+// Google Analytics - only in production
+import { initGA } from './components/GoogleAnalytics'
+
 // Add resource hints for faster loading
 addResourceHints()
+
+// Initialize Google Analytics in production
+if (import.meta.env.PROD) {
+  initGA()
+}
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

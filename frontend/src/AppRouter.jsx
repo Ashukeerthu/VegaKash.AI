@@ -6,6 +6,7 @@ import Footer from './components/Footer';
 import CookieConsent from './components/CookieConsent';
 import LoadingSpinner from './components/LoadingSpinner';
 import SEO from './components/SEO';
+import GoogleAnalytics from './components/GoogleAnalytics';
 import './styles/App.css';
 import './styles/animations.css';
 
@@ -30,6 +31,9 @@ function App() {
   return (
     <HelmetProvider>
       <Router>
+        {/* Google Analytics - tracks page views automatically */}
+        <GoogleAnalytics />
+        
         <div className="app">
           {/* Global Navigation */}
           <Navbar />
