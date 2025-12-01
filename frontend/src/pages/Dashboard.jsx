@@ -7,6 +7,7 @@ import AIPlanPanel from '../components/AIPlanPanel';
 import DashboardCharts from '../components/Dashboard';
 import SmartRecommendations from '../components/SmartRecommendations';
 import { calculateSummary, generateAIPlan, exportPDF } from '../services/api';
+import { trackEvent } from '../components/GoogleAnalytics';
 
 /**
  * Dashboard Page - Main Financial Planning Interface
@@ -47,9 +48,22 @@ function Dashboard() {
     try {
       const result = await calculateSummary(data);
       setSummary(result);
+      
+      // Track successful calculation
+      trackEvent('calculate_summary', {
+        monthly_income: data.monthly_income_primary,
+        savings_rate: result.savings_rate_percent,
+        category: 'financial_calculation'
+      });
     } catch (error) {
       setSummaryError(error.message || 'Failed to calculate summary');
       setSummary(null);
+      
+      // Track error
+      trackEvent('calculation_error', {
+        error_message: error.message,
+        category: 'error'
+      });
     } finally {
       setIsCalculating(false);
     }
@@ -64,9 +78,21 @@ function Dashboard() {
     try {
       const result = await generateAIPlan(formData, summary);
       setAiPlan(result);
+      
+      // Track AI plan generation
+      trackEvent('generate_ai_plan', {
+        has_summary: !!summary,
+        category: 'ai_interaction'
+      });
     } catch (error) {
       setAiError(error.message || 'Failed to generate AI plan');
       setAiPlan(null);
+      
+      // Track error
+      trackEvent('ai_plan_error', {
+        error_message: error.message,
+        category: 'error'
+      });
     } finally {
       setIsGeneratingAI(false);
     }
@@ -80,8 +106,20 @@ function Dashboard() {
 
     try {
       await exportPDF(formData, summary, aiPlan);
+      
+      // Track PDF export
+      trackEvent('download_pdf', {
+        has_ai_plan: !!aiPlan,
+        category: 'export'
+      });
     } catch (error) {
       setPdfError(error.message || 'Failed to export PDF');
+      
+      // Track error
+      trackEvent('pdf_export_error', {
+        error_message: error.message,
+        category: 'error'
+      });
     } finally {
       setIsExportingPDF(false);
     }

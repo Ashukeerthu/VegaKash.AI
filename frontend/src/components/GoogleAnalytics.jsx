@@ -7,8 +7,7 @@ import { useLocation } from 'react-router-dom';
  */
 
 // Google Analytics 4 Measurement ID
-// Replace with your actual GA4 Measurement ID from Google Analytics
-const GA_MEASUREMENT_ID = 'G-XXXXXXXXXX'; // TODO: Replace with your GA4 ID
+const GA_MEASUREMENT_ID = 'G-P3Z6TRMRLT';
 
 /**
  * Initialize Google Analytics
