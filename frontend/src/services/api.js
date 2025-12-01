@@ -103,6 +103,20 @@ export const exportPDF = async (financialInput, summary, aiPlan = null) => {
       responseType: 'blob',
       timeout: 30000 // 30 seconds for PDF generation
     });
+    
+    // Create download link and trigger download
+    const blob = new Blob([response.data], { type: 'application/pdf' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `VegaKash_Financial_Plan_${new Date().toISOString().split('T')[0]}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    
+    // Cleanup
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+    
     return response.data;
   } catch (error) {
     console.error('Error exporting PDF:', error);
