@@ -1,16 +1,26 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import Dashboard from './pages/Dashboard';
-import EMICalculator from './pages/EMICalculator';
-import SIPCalculator from './pages/SIPCalculator';
-import VideoTutorials from './pages/VideoTutorials';
-import About from './pages/About';
+import CookieConsent from './components/CookieConsent';
+import LoadingSpinner from './components/LoadingSpinner';
 import SEO from './components/SEO';
 import './styles/App.css';
 import './styles/animations.css';
+
+// Lazy load pages for code splitting and faster initial load
+// Critical path: Dashboard loads immediately
+import Dashboard from './pages/Dashboard';
+
+// Non-critical pages: Load on demand
+const EMICalculator = lazy(() => import('./pages/EMICalculator'));
+const SIPCalculator = lazy(() => import('./pages/SIPCalculator'));
+const VideoTutorials = lazy(() => import('./pages/VideoTutorials'));
+const About = lazy(() => import('./pages/About'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const TermsAndConditions = lazy(() => import('./pages/TermsAndConditions'));
+const Disclaimer = lazy(() => import('./pages/Disclaimer'));
 
 /**
  * Main App Component with Routing
@@ -25,9 +35,10 @@ function App() {
           <Navbar />
           
           {/* Main Content with Routes */}
-          <Routes>
-            {/* Home - Dashboard */}
-            <Route path="/" element={<Dashboard />} />
+          <Suspense fallback={<LoadingSpinner />}>
+            <Routes>
+              {/* Home - Dashboard */}
+              <Route path="/" element={<Dashboard />} />
             
             {/* Calculators */}
             <Route path="/calculators/emi" element={<EMICalculator />} />
@@ -44,10 +55,19 @@ function App() {
             
             {/* About */}
             <Route path="/about" element={<About />} />
-          </Routes>
+            
+            {/* Legal Pages - Required for AdSense */}
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+            <Route path="/disclaimer" element={<Disclaimer />} />
+            </Routes>
+          </Suspense>
           
           {/* Global Footer */}
           <Footer />
+          
+          {/* Cookie Consent Banner */}
+          <CookieConsent />
         </div>
       </Router>
     </HelmetProvider>

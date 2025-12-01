@@ -12,6 +12,7 @@ import logging
 from typing import Dict
 from datetime import datetime
 
+import os
 from schemas import (
     FinancialInput, SummaryOutput, AIPlanRequest, AIPlanOutput,
     MultiLoanInput, DebtStrategyComparison, PDFExportRequest,
@@ -21,10 +22,18 @@ from services.calculations import calculate_summary
 from services.ai_planner import generate_ai_plan
 from services.multi_loan import compare_debt_strategies
 from services.smart_recommendations import generate_smart_recommendations
+# from services.cache import get_cache_stats  # Temporarily disabled
 from fastapi.responses import Response
 
 # Import PDF generator (ReportLab - pure Python, no GTK needed)
 from services.pdf_generator_reportlab import generate_pdf_bytes
+
+# Import security middleware (commented out temporarily - will add after testing)
+# from middleware.security import (
+#     SecurityHeadersMiddleware,
+#     RequestSizeLimitMiddleware,
+#     LogSanitizationMiddleware
+# )
 
 # Configure logging
 logging.basicConfig(
@@ -51,25 +60,38 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # ty
 
 # Configure CORS
 # Allow frontend to access backend from different origins
+# Production: vegaktools.com
+ALLOWED_ORIGINS = [
+    "http://localhost:3000",      # React default dev server
+    "http://127.0.0.1:3000",
+    "http://localhost:5173",      # Vite default port
+    "http://127.0.0.1:5173",
+    "https://vegaktools.com",     # Production domain
+    "https://www.vegaktools.com", # Production domain with www
+]
+
+# Add production domains from environment
+if os.getenv("PRODUCTION_DOMAIN"):
+    ALLOWED_ORIGINS.append(f"https://{os.getenv('PRODUCTION_DOMAIN')}")
+    ALLOWED_ORIGINS.append(f"https://www.{os.getenv('PRODUCTION_DOMAIN')}")
+
+frontend_url = os.getenv("FRONTEND_URL")
+if frontend_url:
+    ALLOWED_ORIGINS.append(frontend_url)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",      # React default dev server
-        "http://127.0.0.1:3000",
-        "http://localhost:3001",      # Vite alternate port
-        "http://127.0.0.1:3001",
-        "http://localhost:3002",      # Vite alternate port 2
-        "http://127.0.0.1:3002",
-        "http://localhost:5500",      # VS Code Live Server
-        "http://127.0.0.1:5500",
-        "http://localhost:5173",      # Vite default port
-        "http://127.0.0.1:5173",
-        # TODO: Phase 2 - Add production domain after hosting on Hostinger
-    ],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all HTTP methods
-    allow_headers=["*"],  # Allow all headers
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
+    max_age=3600,  # Cache preflight requests for 1 hour
 )
+
+# Add security middleware (commented out temporarily - will add after testing)
+# app.add_middleware(SecurityHeadersMiddleware)
+# app.add_middleware(RequestSizeLimitMiddleware)
+# app.add_middleware(LogSanitizationMiddleware)
 
 
 @app.exception_handler(Exception)
@@ -88,16 +110,50 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 @app.get("/health")
 @app.get("/api/v1/health")
-async def health_check() -> Dict[str, str]:
+async def health_check() -> Dict[str, str | bool]:
     """
     Health check endpoint
     Used to verify the API is running
     
     Returns:
-        Status message
+        Status message with system health information
     """
-    logger.info("Health check requested")
-    return {"status": "ok", "message": "VegaKash.AI API is running", "version": "1.0.0"}
+    return {
+        "status": "ok", 
+        "message": "VegaKash.AI API is running", 
+        "version": "1.0.0",
+        "timestamp": datetime.now().isoformat(),
+        "ai_configured": bool(os.getenv("OPENAI_API_KEY"))
+    }
+
+
+@app.get("/api/v1/stats")
+async def get_system_stats() -> Dict[str, object]:
+    """
+    Get system statistics for monitoring
+    
+    Returns:
+        System statistics including cache and rate limit info
+    """
+    try:
+        # cache_stats = get_cache_stats()  # Temporarily disabled
+        
+        return {
+            "status": "ok",
+            "timestamp": datetime.now().isoformat(),
+            # "cache": cache_stats,  # Temporarily disabled
+            "ai": {
+                "configured": bool(os.getenv("OPENAI_API_KEY")),
+                "model": os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+            },
+            "version": "1.0.0"
+        }
+    except Exception as e:
+        logger.error(f"Error getting system stats: {e}")
+        return {
+            "status": "error",
+            "message": str(e)
+        }
 
 
 @app.post("/api/calculate-summary", response_model=SummaryOutput)
