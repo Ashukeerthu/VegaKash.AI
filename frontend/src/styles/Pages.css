@@ -32,17 +32,31 @@
 /* Coming Soon Card */
 .coming-soon-card {
   background: white;
-  border-radius: 20px;
-  padding: 4rem 2rem;
+  border-radius: 24px;
+  padding: 5rem 3rem;
   text-align: center;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.12);
   animation: fadeInUp 0.6s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.coming-soon-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
 }
 
 .coming-soon-icon {
-  font-size: 5rem;
-  margin-bottom: 1.5rem;
+  font-size: 6rem;
+  margin-bottom: 2rem;
   animation: bounce 2s infinite;
+  filter: drop-shadow(0 10px 20px rgba(102, 126, 234, 0.3));
 }
 
 @keyframes bounce {
@@ -51,27 +65,35 @@
 }
 
 .coming-soon-card h2 {
-  font-size: 2rem;
-  color: #2c3e50;
-  margin-bottom: 1rem;
+  font-size: 2.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
 }
 
-.coming-soon-card p {
-  font-size: 1.1rem;
-  color: #7f8c8d;
-  margin-bottom: 1.5rem;
+.coming-soon-card > p {
+  font-size: 1.2rem;
+  color: #5a6c7d;
+  margin-bottom: 2rem;
+  font-weight: 500;
 }
 
 .feature-list {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  padding: 2rem;
-  border-radius: 12px;
-  font-size: 1.1rem;
-  line-height: 2;
+  padding: 2.5rem 3rem;
+  border-radius: 16px;
+  font-size: 1.15rem;
+  line-height: 2.2;
   display: inline-block;
   text-align: left;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  font-weight: 500;
 }
 
 /* About Page Styles */

@@ -58,14 +58,14 @@ function Navbar() {
 
         {/* Desktop Menu */}
         <ul className="navbar-menu" role="menubar">
-          {/* Dashboard */}
+          {/* AI Budget Planner */}
           <li className="navbar-item" role="none">
             <Link 
               to="/" 
               className={`navbar-link ${isActive('/') ? 'active' : ''}`}
               role="menuitem"
             >
-              Dashboard
+              AI Budget Planner
             </Link>
           </li>
 
@@ -89,8 +89,14 @@ function Navbar() {
             
             <ul className={`dropdown-menu ${activeDropdown === 'calculators' ? 'show' : ''}`} role="menu">
               <li role="none">
+                <Link to="/calculators" className="dropdown-item featured" role="menuitem">
+                  🧮 All Calculators
+                </Link>
+              </li>
+              <li className="dropdown-divider"></li>
+              <li role="none">
                 <Link to="/calculators/emi" className="dropdown-item" role="menuitem">
-                  💰 EMI Calculator
+                  🏠 EMI Calculator
                 </Link>
               </li>
               <li role="none">
@@ -99,23 +105,28 @@ function Navbar() {
                 </Link>
               </li>
               <li role="none">
-                <Link to="/calculators/loan" className="dropdown-item" role="menuitem">
-                  🏦 Loan Calculator
+                <Link to="/calculators/fd" className="dropdown-item" role="menuitem">
+                  🏦 FD Calculator
                 </Link>
               </li>
               <li role="none">
-                <Link to="/calculators/auto-loan" className="dropdown-item" role="menuitem">
-                  🚗 Auto Loan Calculator
+                <Link to="/calculators/rd" className="dropdown-item" role="menuitem">
+                  📅 RD Calculator
                 </Link>
               </li>
               <li role="none">
-                <Link to="/calculators/interest" className="dropdown-item" role="menuitem">
-                  📊 Interest Calculator
+                <Link to="/calculators/income-tax" className="dropdown-item" role="menuitem">
+                  📊 Income Tax Calculator
                 </Link>
               </li>
               <li role="none">
-                <Link to="/calculators/mortgage" className="dropdown-item" role="menuitem">
-                  🏠 Mortgage Calculator
+                <Link to="/calculators/savings-goal" className="dropdown-item" role="menuitem">
+                  🎯 Savings Goal Calculator
+                </Link>
+              </li>
+              <li role="none">
+                <Link to="/calculators/emergency-fund" className="dropdown-item" role="menuitem">
+                  🆘 Emergency Fund Calculator
                 </Link>
               </li>
             </ul>

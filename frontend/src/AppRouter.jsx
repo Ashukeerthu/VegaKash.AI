@@ -15,8 +15,11 @@ import './styles/animations.css';
 import Dashboard from './pages/Dashboard';
 
 // Non-critical pages: Load on demand
-const EMICalculator = lazy(() => import('./pages/EMICalculator'));
-const SIPCalculator = lazy(() => import('./pages/SIPCalculator'));
+const CalculatorHub = lazy(() => import('./pages/CalculatorHub'));
+const EMICalculator = lazy(() => import('./pages/calculators/EMICalculator'));
+const SIPCalculator = lazy(() => import('./pages/calculators/SIPCalculator'));
+const FDCalculator = lazy(() => import('./pages/calculators/FDCalculator'));
+const RDCalculator = lazy(() => import('./pages/calculators/RDCalculator'));
 const VideoTutorials = lazy(() => import('./pages/VideoTutorials'));
 const About = lazy(() => import('./pages/About'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
@@ -41,12 +44,24 @@ function App() {
           {/* Main Content with Routes */}
           <Suspense fallback={<LoadingSpinner />}>
             <Routes>
-              {/* Home - Dashboard */}
+              {/* Home - AI Budget Planner */}
               <Route path="/" element={<Dashboard />} />
             
-            {/* Calculators */}
+            {/* Calculators Hub */}
+            <Route path="/calculators" element={<CalculatorHub />} />
+            
+            {/* Financial Calculators - Top Priority */}
             <Route path="/calculators/emi" element={<EMICalculator />} />
             <Route path="/calculators/sip" element={<SIPCalculator />} />
+            <Route path="/calculators/fd" element={<FDCalculator />} />
+            <Route path="/calculators/rd" element={<RDCalculator />} />
+            
+            {/* Calculators - Coming Soon */}
+            <Route path="/calculators/income-tax" element={<ComingSoon title="Income Tax Calculator" />} />
+            <Route path="/calculators/savings-goal" element={<ComingSoon title="Savings Goal Calculator" />} />
+            <Route path="/calculators/emergency-fund" element={<ComingSoon title="Emergency Fund Calculator" />} />
+            <Route path="/calculators/retirement" element={<ComingSoon title="Retirement Calculator" />} />
+            <Route path="/calculators/home-loan-affordability" element={<ComingSoon title="Home Loan Affordability Calculator" />} />
             <Route path="/calculators/loan" element={<ComingSoon title="Loan Calculator" />} />
             <Route path="/calculators/auto-loan" element={<ComingSoon title="Auto Loan Calculator" />} />
             <Route path="/calculators/interest" element={<ComingSoon title="Interest Calculator" />} />
