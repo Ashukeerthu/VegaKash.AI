@@ -1,53 +1,100 @@
 # Hostinger Deployment Guide for VegaKash.AI
 
-Complete step-by-step guide to deploy VegaKash.AI on Hostinger.
+## Quick Pull & Deploy from GitHub
+
+### Method 1: Using Deployment Script (Fastest)
+
+1. **SSH into your Hostinger server:**
+   ```bash
+   ssh u277936268@vegaktools.com
+   ```
+
+2. **Navigate to repository:**
+   ```bash
+   cd /home/u277936268/domains/vegaktools.com/public_html/VegaKash.AI
+   ```
+
+3. **Pull latest code and deploy:**
+   ```bash
+   git pull origin main
+   chmod +x deploy-to-hostinger.sh
+   ./deploy-to-hostinger.sh
+   ```
+
+The script automatically handles:
+- Pull latest from GitHub
+- Backup current .env
+- Install/update dependencies
+- Build frontend
+- Restart services
+- Verify deployment
+
+---
+
+### Method 2: Manual Pull & Deploy
+
+#### Step 1: SSH into Hostinger
+```bash
+ssh u277936268@vegaktools.com
+```
+
+#### Step 2: Navigate to repository
+```bash
+cd /home/u277936268/domains/vegaktools.com/public_html/VegaKash.AI
+```
+
+#### Step 3: Pull latest code
+```bash
+git fetch origin
+git pull origin main
+```
+
+#### Step 4: Update backend
+```bash
+cd backend
+source venv/bin/activate
+pip install -r requirements.txt --upgrade
+```
+
+#### Step 5: Build frontend
+```bash
+cd ../frontend
+npm install
+npm run build
+```
+
+#### Step 6: Restart services
+```bash
+sudo systemctl restart vegakash-backend
+sudo systemctl reload nginx
+```
+
+#### Step 7: Verify deployment
+```bash
+curl http://localhost:8000/health
+curl -I https://vegaktools.com
+```
+
+---
 
 ## 📋 Prerequisites
 
 Before deployment, ensure you have:
-- ✅ Hostinger hosting plan (VPS or Cloud Hosting recommended)
-- ✅ Domain name (optional but recommended)
-- ✅ OpenAI API key
-- ✅ SSH access to your server
-- ✅ Basic knowledge of Linux commands
+- ✅ Hostinger VPS with SSH access
+- ✅ Domain: vegaktools.com
+- ✅ OpenAI API key configured
+- ✅ Git installed on server
+- ✅ Repository cloned at `/home/u277936268/domains/vegaktools.com/public_html/VegaKash.AI`
+
+---
 
 ## 🎯 Deployment Architecture
 
 ```
-Your Domain (e.g., vegakash.com)
-├── Frontend (/) → Serves static files from /dist
-└── Backend (/api) → Python FastAPI application
+vegaktools.com
+├── Frontend (/) → /var/www/VegaKash.AI/frontend/dist
+└── Backend (/api) → Proxied to localhost:8000
 ```
-
-## 📦 Step 1: Prepare Files for Upload
-
-Your production-ready files are now in:
-- **Frontend**: `frontend/dist/` folder (static HTML/CSS/JS)
-- **Backend**: `backend/` folder (Python application)
-
-## 🚀 Step 2: Deploy Backend (Python FastAPI)
-
-### 2.1 Upload Backend Files
-
-1. **Connect via SSH or FTP**:
-   ```bash
-   ssh username@your-server-ip
-   ```
-
-2. **Create application directory**:
-   ```bash
-   mkdir -p ~/vegakash-backend
-   cd ~/vegakash-backend
-   ```
-
-3. **Upload these files** (via FTP/SFTP or git clone):
-   - All files from `backend/` folder
-   - Specifically include:
-     - `main.py`
-     - `config.py`
-     - `schemas.py`
-     - `services/` folder
-     - `requirements-prod.txt`
      - `gunicorn_config.py`
      - `start.sh`
 
