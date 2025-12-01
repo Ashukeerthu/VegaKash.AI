@@ -2,7 +2,7 @@
 PDF Generation Service
 Creates professional PDF exports of financial plans
 """
-from weasyprint import HTML, CSS
+from weasyprint import HTML, CSS  # type: ignore
 from jinja2 import Template
 from datetime import datetime
 from typing import Optional
@@ -24,7 +24,7 @@ def generate_pdf_bytes(
     
     # Generate PDF
     pdf_file = io.BytesIO()
-    HTML(string=html_content).write_pdf(
+    HTML(string=html_content).write_pdf(  # type: ignore
         pdf_file,
         stylesheets=[CSS(string=css_content)]
     )
@@ -234,7 +234,6 @@ def _generate_html(
         "Transport": input_data.expenses.transport,
         "Utilities": input_data.expenses.utilities,
         "Insurance": input_data.expenses.insurance,
-        "EMI/Loans": input_data.expenses.emi_loans,
         "Entertainment": input_data.expenses.entertainment,
         "Subscriptions": input_data.expenses.subscriptions,
         "Others": input_data.expenses.others

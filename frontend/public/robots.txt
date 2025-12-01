@@ -1,0 +1,15 @@
+# VegaKash.AI Robots.txt
+# Allow all search engines to index the site
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://vegakash.ai/sitemap.xml
+
+# Crawl delay (optional)
+Crawl-delay: 1
+
+# Disallow admin or development paths if any
+# Disallow: /admin/
+# Disallow: /api/

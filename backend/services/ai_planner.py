@@ -58,7 +58,6 @@ Expenses (Monthly):
 - Transport: ₹{financial_input.expenses.transport:,.2f}
 - Utilities: ₹{financial_input.expenses.utilities:,.2f}
 - Insurance: ₹{financial_input.expenses.insurance:,.2f}
-- EMI/Loans: ₹{financial_input.expenses.emi_loans:,.2f}
 - Entertainment: ₹{financial_input.expenses.entertainment:,.2f}
 - Subscriptions: ₹{financial_input.expenses.subscriptions:,.2f}
 - Others: ₹{financial_input.expenses.others:,.2f}

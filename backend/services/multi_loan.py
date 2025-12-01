@@ -2,7 +2,7 @@
 Multi-Loan Management Service
 Implements debt snowball and avalanche strategies
 """
-from typing import List, Tuple
+from typing import List, Dict, Any
 from schemas import (
     LoanDetail, MultiLoanInput, DebtPayoffStrategy,
     LoanPayoffStep, DebtStrategyComparison
@@ -57,7 +57,7 @@ def _calculate_payoff_strategy(
     Core logic for calculating debt payoff strategy
     """
     # Create working copies of loans
-    active_loans = []
+    active_loans: List[Dict[str, Any]] = []
     for loan in sorted_loans:
         active_loans.append({
             'loan_id': loan.loan_id,
@@ -68,7 +68,7 @@ def _calculate_payoff_strategy(
             'paid_off': False
         })
     
-    monthly_breakdown = []
+    monthly_breakdown: List[LoanPayoffStep] = []
     total_interest = 0
     month = 0
     max_months = 600  # Safety limit: 50 years
@@ -119,7 +119,7 @@ def _calculate_payoff_strategy(
             ))
     
     # Generate summary
-    payoff_order = [loan['loan_id'] for loan in sorted_loans]
+    payoff_order: List[str] = [loan.loan_id for loan in sorted_loans]
     strategy_desc = (
         f"Snowball Strategy: Pay off smallest balance first for psychological wins"
         if strategy_type == "snowball"
@@ -130,7 +130,7 @@ def _calculate_payoff_strategy(
         f"{strategy_desc}\n"
         f"Total months to debt-free: {month}\n"
         f"Total interest paid: ₹{round(total_interest, 2):,}\n"
-        f"Payoff order: {', '.join([l['loan_name'] for l in sorted_loans])}"
+        f"Payoff order: {', '.join([l.loan_name for l in sorted_loans])}"
     )
     
     return DebtPayoffStrategy(
@@ -188,11 +188,11 @@ def compare_debt_strategies(multi_loan_input: MultiLoanInput) -> DebtStrategyCom
     )
 
 
-def generate_loan_details_from_input(loans: List) -> List[LoanDetail]:
+def generate_loan_details_from_input(loans: List[Any]) -> List[LoanDetail]:
     """
     Convert simple loan input to detailed loan objects
     """
-    detailed_loans = []
+    detailed_loans: List[LoanDetail] = []
     
     for loan in loans:
         loan_id = str(uuid.uuid4())[:8]

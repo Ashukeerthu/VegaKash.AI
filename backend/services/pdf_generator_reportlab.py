@@ -4,14 +4,14 @@ Pure Python PDF generation without GTK dependencies
 """
 from io import BytesIO
 from datetime import datetime
-from typing import Optional
-from reportlab.lib.pagesizes import letter, A4
+from typing import Optional, List
+from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageBreak
-from reportlab.platypus import KeepTogether
-from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_LEFT
+from reportlab.platypus import Flowable
+from reportlab.lib.enums import TA_CENTER
 
 from schemas import FinancialInput, SummaryOutput, AIPlanOutput
 
@@ -46,7 +46,7 @@ def generate_pdf_bytes(
     )
     
     # Container for PDF elements
-    elements = []
+    elements: List[Flowable] = []
     
     # Define styles
     styles = getSampleStyleSheet()
@@ -155,8 +155,6 @@ def generate_pdf_bytes(
          f"{(financial_input.expenses.utilities/summary.total_expenses*100):.1f}%" if summary.total_expenses > 0 else "0%"],
         ['Insurance', f"₹{financial_input.expenses.insurance:,.2f}",
          f"{(financial_input.expenses.insurance/summary.total_expenses*100):.1f}%" if summary.total_expenses > 0 else "0%"],
-        ['EMI/Loans', f"₹{financial_input.expenses.emi_loans:,.2f}",
-         f"{(financial_input.expenses.emi_loans/summary.total_expenses*100):.1f}%" if summary.total_expenses > 0 else "0%"],
         ['Entertainment', f"₹{financial_input.expenses.entertainment:,.2f}",
          f"{(financial_input.expenses.entertainment/summary.total_expenses*100):.1f}%" if summary.total_expenses > 0 else "0%"],
         ['Subscriptions', f"₹{financial_input.expenses.subscriptions:,.2f}",

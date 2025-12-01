@@ -17,7 +17,6 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
       transport: '',
       utilities: '',
       insurance: '',
-      emi_loans: '',
       entertainment: '',
       subscriptions: '',
       others: '',
@@ -31,15 +30,15 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
     loans: [],
   });
 
-  // Loan form state (for single loan in Phase 1)
-  const [loanData, setLoanData] = useState({
+  // Multiple loans state
+  const [loans, setLoans] = useState([]);
+  const [currentLoan, setCurrentLoan] = useState({
     name: '',
     outstanding_principal: '',
     interest_rate_annual: '',
     remaining_months: '',
   });
-
-  const [hasLoan, setHasLoan] = useState(false);
+  const [editingLoanIndex, setEditingLoanIndex] = useState(null);
   const [errors, setErrors] = useState({});
 
   /**
@@ -88,10 +87,92 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
    */
   const handleLoanChange = (e) => {
     const { name, value } = e.target;
-    setLoanData(prev => ({
+    setCurrentLoan(prev => ({
       ...prev,
       [name]: value,
     }));
+  };
+
+  /**
+   * Add or update loan
+   */
+  const handleAddLoan = () => {
+    const newErrors = {};
+    
+    if (!currentLoan.name) newErrors.loan_name = 'Loan name is required';
+    if (!currentLoan.outstanding_principal || parseFloat(currentLoan.outstanding_principal) <= 0) {
+      newErrors.loan_principal = 'Principal amount is required and must be greater than 0';
+    }
+    if (!currentLoan.interest_rate_annual || parseFloat(currentLoan.interest_rate_annual) <= 0) {
+      newErrors.loan_interest = 'Interest rate is required and must be greater than 0';
+    }
+    if (!currentLoan.remaining_months || parseInt(currentLoan.remaining_months) <= 0) {
+      newErrors.loan_months = 'Remaining months is required and must be greater than 0';
+    }
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    
+    if (editingLoanIndex !== null) {
+      // Update existing loan
+      const updatedLoans = [...loans];
+      updatedLoans[editingLoanIndex] = { ...currentLoan };
+      setLoans(updatedLoans);
+      setEditingLoanIndex(null);
+    } else {
+      // Add new loan
+      setLoans([...loans, { ...currentLoan }]);
+    }
+    
+    // Reset form
+    setCurrentLoan({
+      name: '',
+      outstanding_principal: '',
+      interest_rate_annual: '',
+      remaining_months: '',
+    });
+    setErrors({});
+  };
+
+  /**
+   * Edit loan
+   */
+  const handleEditLoan = (index) => {
+    setCurrentLoan({ ...loans[index] });
+    setEditingLoanIndex(index);
+  };
+
+  /**
+   * Remove loan
+   */
+  const handleRemoveLoan = (index) => {
+    const updatedLoans = loans.filter((_, i) => i !== index);
+    setLoans(updatedLoans);
+    if (editingLoanIndex === index) {
+      setCurrentLoan({
+        name: '',
+        outstanding_principal: '',
+        interest_rate_annual: '',
+        remaining_months: '',
+      });
+      setEditingLoanIndex(null);
+    }
+  };
+
+  /**
+   * Cancel loan editing
+   */
+  const handleCancelLoanEdit = () => {
+    setCurrentLoan({
+      name: '',
+      outstanding_principal: '',
+      interest_rate_annual: '',
+      remaining_months: '',
+    });
+    setEditingLoanIndex(null);
+    setErrors({});
   };
 
   /**
@@ -103,20 +184,6 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
     // Validate income
     if (!formData.monthly_income_primary || parseFloat(formData.monthly_income_primary) <= 0) {
       newErrors.monthly_income_primary = 'Primary income is required and must be greater than 0';
-    }
-    
-    // Validate loan data if loan checkbox is checked
-    if (hasLoan) {
-      if (!loanData.name) newErrors.loan_name = 'Loan name is required';
-      if (!loanData.outstanding_principal || parseFloat(loanData.outstanding_principal) <= 0) {
-        newErrors.loan_principal = 'Principal amount is required and must be greater than 0';
-      }
-      if (!loanData.interest_rate_annual || parseFloat(loanData.interest_rate_annual) <= 0) {
-        newErrors.loan_interest = 'Interest rate is required and must be greater than 0';
-      }
-      if (!loanData.remaining_months || parseInt(loanData.remaining_months) <= 0) {
-        newErrors.loan_months = 'Remaining months is required and must be greater than 0';
-      }
     }
     
     setErrors(newErrors);
@@ -137,7 +204,6 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
         transport: parseFloat(formData.expenses.transport) || 0,
         utilities: parseFloat(formData.expenses.utilities) || 0,
         insurance: parseFloat(formData.expenses.insurance) || 0,
-        emi_loans: parseFloat(formData.expenses.emi_loans) || 0,
         entertainment: parseFloat(formData.expenses.entertainment) || 0,
         subscriptions: parseFloat(formData.expenses.subscriptions) || 0,
         others: parseFloat(formData.expenses.others) || 0,
@@ -148,18 +214,13 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
         primary_goal_type: formData.goals.primary_goal_type || null,
         primary_goal_amount: formData.goals.primary_goal_amount ? parseFloat(formData.goals.primary_goal_amount) : null,
       },
-      loans: [],
+      loans: loans.map(loan => ({
+        name: loan.name,
+        outstanding_principal: parseFloat(loan.outstanding_principal),
+        interest_rate_annual: parseFloat(loan.interest_rate_annual),
+        remaining_months: parseInt(loan.remaining_months),
+      })),
     };
-    
-    // Add loan if provided
-    if (hasLoan && loanData.name) {
-      data.loans.push({
-        name: loanData.name,
-        outstanding_principal: parseFloat(loanData.outstanding_principal),
-        interest_rate_annual: parseFloat(loanData.interest_rate_annual),
-        remaining_months: parseInt(loanData.remaining_months),
-      });
-    }
     
     return data;
   };
@@ -192,7 +253,6 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
         transport: sampleData.expenses.transport.toString(),
         utilities: sampleData.expenses.utilities.toString(),
         insurance: sampleData.expenses.insurance.toString(),
-        emi_loans: sampleData.expenses.emi_loans.toString(),
         entertainment: sampleData.expenses.entertainment.toString(),
         subscriptions: sampleData.expenses.subscriptions.toString(),
         others: sampleData.expenses.others.toString(),
@@ -206,14 +266,13 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
       loans: [],
     });
     
-    if (sampleData.loans.length > 0) {
-      setHasLoan(true);
-      setLoanData({
-        name: sampleData.loans[0].name,
-        outstanding_principal: sampleData.loans[0].outstanding_principal.toString(),
-        interest_rate_annual: sampleData.loans[0].interest_rate_annual.toString(),
-        remaining_months: sampleData.loans[0].remaining_months.toString(),
-      });
+    if (sampleData.loans && sampleData.loans.length > 0) {
+      setLoans(sampleData.loans.map(loan => ({
+        name: loan.name,
+        outstanding_principal: loan.outstanding_principal.toString(),
+        interest_rate_annual: loan.interest_rate_annual.toString(),
+        remaining_months: loan.remaining_months.toString(),
+      })));
     }
   };
 
@@ -231,7 +290,6 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
         transport: '',
         utilities: '',
         insurance: '',
-        emi_loans: '',
         entertainment: '',
         subscriptions: '',
         others: '',
@@ -244,13 +302,14 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
       },
       loans: [],
     });
-    setLoanData({
+    setLoans([]);
+    setCurrentLoan({
       name: '',
       outstanding_principal: '',
       interest_rate_annual: '',
       remaining_months: '',
     });
-    setHasLoan(false);
+    setEditingLoanIndex(null);
     setErrors({});
     onReset();
   };
@@ -263,73 +322,71 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
       </div>
       
       <form onSubmit={handleSubmit} className="financial-form">
-        {/* Currency Selection */}
-        <div className="form-section">
-          <h3>Currency</h3>
-          <div className="form-group">
-            <label htmlFor="currency">Currency</label>
-            <select
-              id="currency"
-              name="currency"
-              value={formData.currency}
-              onChange={handleInputChange}
-              className="form-input"
-            >
-              {currencies.map(curr => (
-                <option key={curr.value} value={curr.value}>
-                  {curr.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Income Section */}
-        <div className="form-section">
-          <h3>💰 Monthly Income</h3>
+        {/* Currency & Income Section */}
+        <div className="form-section-inner">
+          <h3>💰 Income & Currency</h3>
           
-          <div className="form-group">
-            <label htmlFor="monthly_income_primary">
-              Primary Income <span className="required">*</span>
-            </label>
-            <input
-              type="number"
-              id="monthly_income_primary"
-              name="monthly_income_primary"
-              value={formData.monthly_income_primary}
-              onChange={handleInputChange}
-              placeholder="e.g., 75000"
-              min="0"
-              step="0.01"
-              className={`form-input ${errors.monthly_income_primary ? 'error' : ''}`}
-              required
-            />
-            {errors.monthly_income_primary && (
-              <span className="error-message">{errors.monthly_income_primary}</span>
-            )}
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="monthly_income_additional">Additional Income (Optional)</label>
-            <input
-              type="number"
-              id="monthly_income_additional"
-              name="monthly_income_additional"
-              value={formData.monthly_income_additional}
-              onChange={handleInputChange}
-              placeholder="e.g., 5000"
-              min="0"
-              step="0.01"
-              className="form-input"
-            />
+          <div className="form-row-3">
+            <div className="form-group">
+              <label htmlFor="currency">Currency</label>
+              <select
+                id="currency"
+                name="currency"
+                value={formData.currency}
+                onChange={handleInputChange}
+                className="form-input"
+              >
+                {currencies.map(curr => (
+                  <option key={curr.value} value={curr.value}>
+                    {curr.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="monthly_income_primary">
+                Primary Income <span className="required">*</span>
+              </label>
+              <input
+                type="number"
+                id="monthly_income_primary"
+                name="monthly_income_primary"
+                value={formData.monthly_income_primary}
+                onChange={handleInputChange}
+                placeholder="e.g., 75000"
+                min="0"
+                step="0.01"
+                className={`form-input ${errors.monthly_income_primary ? 'error' : ''}`}
+                required
+              />
+              {errors.monthly_income_primary && (
+                <span className="error-message">{errors.monthly_income_primary}</span>
+              )}
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="monthly_income_additional">Additional Income (Optional)</label>
+              <input
+                type="number"
+                id="monthly_income_additional"
+                name="monthly_income_additional"
+                value={formData.monthly_income_additional}
+                onChange={handleInputChange}
+                placeholder="e.g., 5000"
+                min="0"
+                step="0.01"
+                className="form-input"
+              />
+            </div>
           </div>
         </div>
 
         {/* Expenses Section */}
-        <div className="form-section">
+        <div className="form-section-inner">
           <h3>📊 Monthly Expenses</h3>
           
-          <div className="form-grid">
+          <div className="form-row-3">
             <div className="form-group">
               <label htmlFor="housing_rent">Housing / Rent</label>
               <input
@@ -406,21 +463,6 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
             </div>
             
             <div className="form-group">
-              <label htmlFor="emi_loans">EMI / Loans</label>
-              <input
-                type="number"
-                id="emi_loans"
-                name="expenses.emi_loans"
-                value={formData.expenses.emi_loans}
-                onChange={handleInputChange}
-                placeholder="e.g., 8000"
-                min="0"
-                step="0.01"
-                className="form-input"
-              />
-            </div>
-            
-            <div className="form-group">
               <label htmlFor="entertainment">Entertainment</label>
               <input
                 type="number"
@@ -468,58 +510,61 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
         </div>
 
         {/* Goals Section */}
-        <div className="form-section">
+        <div className="form-section-inner">
           <h3>🎯 Financial Goals</h3>
           
-          <div className="form-group">
-            <label htmlFor="monthly_savings_target">Monthly Savings Target</label>
-            <input
-              type="number"
-              id="monthly_savings_target"
-              name="goals.monthly_savings_target"
-              value={formData.goals.monthly_savings_target}
-              onChange={handleInputChange}
-              placeholder="e.g., 15000"
-              min="0"
-              step="0.01"
-              className="form-input"
-            />
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="emergency_fund_target">Emergency Fund Target</label>
-            <input
-              type="number"
-              id="emergency_fund_target"
-              name="goals.emergency_fund_target"
-              value={formData.goals.emergency_fund_target}
-              onChange={handleInputChange}
-              placeholder="e.g., 300000"
-              min="0"
-              step="0.01"
-              className="form-input"
-            />
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="primary_goal_type">Primary Goal Type</label>
-            <select
-              id="primary_goal_type"
-              name="goals.primary_goal_type"
-              value={formData.goals.primary_goal_type}
-              onChange={handleInputChange}
-              className="form-input"
-            >
-              {goalTypes.map(goal => (
-                <option key={goal.value} value={goal.value}>
-                  {goal.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          
-          {formData.goals.primary_goal_type && (
+          <div className="form-row-2">
             <div className="form-group">
+              <label htmlFor="monthly_savings_target">Monthly Savings Target</label>
+              <input
+                type="number"
+                id="monthly_savings_target"
+                name="goals.monthly_savings_target"
+                value={formData.goals.monthly_savings_target}
+                onChange={handleInputChange}
+                placeholder="e.g., 15000"
+                min="0"
+                step="0.01"
+                className="form-input"
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="emergency_fund_target">Emergency Fund Target</label>
+              <input
+                type="number"
+                id="emergency_fund_target"
+                name="goals.emergency_fund_target"
+                value={formData.goals.emergency_fund_target}
+                onChange={handleInputChange}
+                placeholder="e.g., 300000"
+                min="0"
+                step="0.01"
+                className="form-input"
+              />
+            </div>
+          </div>
+          
+          <div className="form-row-2">
+            <div className="form-group">
+              <label htmlFor="primary_goal_type">Primary Goal Type</label>
+              <select
+                id="primary_goal_type"
+                name="goals.primary_goal_type"
+                value={formData.goals.primary_goal_type}
+                onChange={handleInputChange}
+                className="form-input"
+              >
+                {goalTypes.map(goal => (
+                  <option key={goal.value} value={goal.value}>
+                    {goal.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            {formData.goals.primary_goal_type && (
+              <div className="form-group">
               <label htmlFor="primary_goal_amount">Primary Goal Amount</label>
               <input
                 type="number"
@@ -533,35 +578,84 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
                 className="form-input"
               />
             </div>
-          )}
+            )}
+          </div>
         </div>
 
         {/* Loans Section */}
-        <div className="form-section">
+        <div className="form-section-inner">
           <h3>💳 Active Loans (Optional)</h3>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1rem' }}>
+            Add all your active loans. The EMI for each loan will be automatically calculated.
+          </p>
           
-          <div className="form-group checkbox-group">
-            <label>
-              <input
-                type="checkbox"
-                checked={hasLoan}
-                onChange={(e) => setHasLoan(e.target.checked)}
-              />
-              <span>I have an active loan</span>
-            </label>
-          </div>
+          {/* Added Loans List */}
+          {loans.length > 0 && (
+            <div className="loans-list" style={{ marginBottom: '1.5rem' }}>
+              <h4 style={{ fontSize: '1rem', marginBottom: '0.75rem', color: 'var(--text-primary)' }}>Your Loans ({loans.length})</h4>
+              {loans.map((loan, index) => (
+                <div key={index} className="loan-item" style={{
+                  background: 'var(--bg-secondary)',
+                  padding: '1rem',
+                  borderRadius: 'var(--radius-md)',
+                  marginBottom: '0.75rem',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  border: '1px solid var(--border-color)'
+                }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: 600, marginBottom: '0.25rem', color: 'var(--text-primary)' }}>
+                      {loan.name}
+                    </div>
+                    <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                      ₹{parseFloat(loan.outstanding_principal).toLocaleString()} @ {loan.interest_rate_annual}% • {loan.remaining_months} months
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button
+                      type="button"
+                      onClick={() => handleEditLoan(index)}
+                      className="btn btn-outline"
+                      style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+                    >
+                      ✏️ Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveLoan(index)}
+                      className="btn"
+                      style={{ padding: '0.5rem 1rem', fontSize: '0.875rem', background: 'var(--danger-color)', color: 'white' }}
+                    >
+                      🗑️ Remove
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
           
-          {hasLoan && (
-            <div className="loan-form">
+          {/* Loan Input Form */}
+          <div className="loan-form" style={{
+            background: 'var(--bg-tertiary)',
+            padding: '1.5rem',
+            borderRadius: 'var(--radius-md)',
+            border: '2px dashed var(--border-color)'
+          }}>
+            <h4 style={{ fontSize: '1rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
+              {editingLoanIndex !== null ? '✏️ Edit Loan' : '➕ Add New Loan'}
+            </h4>
+            
+            <div className="form-row-2">
               <div className="form-group">
-                <label htmlFor="loan_name">Loan Name</label>
+                <label htmlFor="loan_name">Loan Name <span className="required">*</span></label>
                 <input
                   type="text"
                   id="loan_name"
                   name="name"
-                  value={loanData.name}
+                  value={currentLoan.name}
                   onChange={handleLoanChange}
-                  placeholder="e.g., Car Loan"
+                  placeholder="e.g., Car Loan, Home Loan"
                   className={`form-input ${errors.loan_name ? 'error' : ''}`}
                 />
                 {errors.loan_name && (
@@ -569,62 +663,83 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
                 )}
               </div>
               
-              <div className="form-grid">
-                <div className="form-group">
-                  <label htmlFor="loan_principal">Outstanding Principal</label>
-                  <input
-                    type="number"
-                    id="loan_principal"
-                    name="outstanding_principal"
-                    value={loanData.outstanding_principal}
-                    onChange={handleLoanChange}
-                    placeholder="e.g., 400000"
-                    min="0"
-                    step="0.01"
-                    className={`form-input ${errors.loan_principal ? 'error' : ''}`}
-                  />
-                  {errors.loan_principal && (
-                    <span className="error-message">{errors.loan_principal}</span>
-                  )}
-                </div>
-                
-                <div className="form-group">
-                  <label htmlFor="loan_interest">Annual Interest Rate (%)</label>
-                  <input
-                    type="number"
-                    id="loan_interest"
-                    name="interest_rate_annual"
-                    value={loanData.interest_rate_annual}
-                    onChange={handleLoanChange}
-                    placeholder="e.g., 8.5"
-                    min="0"
-                    step="0.01"
-                    className={`form-input ${errors.loan_interest ? 'error' : ''}`}
-                  />
-                  {errors.loan_interest && (
-                    <span className="error-message">{errors.loan_interest}</span>
-                  )}
-                </div>
-                
-                <div className="form-group">
-                  <label htmlFor="loan_months">Remaining Months</label>
-                  <input
-                    type="number"
-                    id="loan_months"
-                    name="remaining_months"
-                    value={loanData.remaining_months}
-                    onChange={handleLoanChange}
-                    placeholder="e.g., 36"
-                    min="1"
-                    className={`form-input ${errors.loan_months ? 'error' : ''}`}
-                  />
-                  {errors.loan_months && (
-                    <span className="error-message">{errors.loan_months}</span>
-                  )}
-                </div>
+              <div className="form-group">
+                <label htmlFor="loan_principal">Outstanding Principal <span className="required">*</span></label>
+                <input
+                  type="number"
+                  id="loan_principal"
+                  name="outstanding_principal"
+                  value={currentLoan.outstanding_principal}
+                  onChange={handleLoanChange}
+                  placeholder="e.g., 400000"
+                  min="0"
+                  step="0.01"
+                  className={`form-input ${errors.loan_principal ? 'error' : ''}`}
+                />
+                {errors.loan_principal && (
+                  <span className="error-message">{errors.loan_principal}</span>
+                )}
               </div>
             </div>
-          )}
+            
+            <div className="form-row-2">
+              <div className="form-group">
+                <label htmlFor="loan_interest">Annual Interest Rate (%) <span className="required">*</span></label>
+                <input
+                  type="number"
+                  id="loan_interest"
+                  name="interest_rate_annual"
+                  value={currentLoan.interest_rate_annual}
+                  onChange={handleLoanChange}
+                  placeholder="e.g., 8.5"
+                  min="0"
+                  step="0.01"
+                  className={`form-input ${errors.loan_interest ? 'error' : ''}`}
+                />
+                {errors.loan_interest && (
+                  <span className="error-message">{errors.loan_interest}</span>
+                )}
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="loan_months">Remaining Months <span className="required">*</span></label>
+                <input
+                  type="number"
+                  id="loan_months"
+                  name="remaining_months"
+                  value={currentLoan.remaining_months}
+                  onChange={handleLoanChange}
+                  placeholder="e.g., 36"
+                  min="1"
+                  className={`form-input ${errors.loan_months ? 'error' : ''}`}
+                />
+                {errors.loan_months && (
+                  <span className="error-message">{errors.loan_months}</span>
+                )}
+              </div>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
+              <button
+                type="button"
+                onClick={handleAddLoan}
+                className="btn btn-primary"
+                style={{ flex: 1 }}
+              >
+                {editingLoanIndex !== null ? '💾 Update Loan' : '➕ Add Loan'}
+              </button>
+              {editingLoanIndex !== null && (
+                <button
+                  type="button"
+                  onClick={handleCancelLoanEdit}
+                  className="btn btn-outline"
+                  style={{ flex: 1 }}
+                >
+                  ❌ Cancel
+                </button>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Action Buttons */}
@@ -662,6 +777,7 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
 
 export default FinancialForm;
 
-// TODO: Phase 2 - Add ability to add multiple loans with add/remove buttons
-// TODO: Phase 2 - Add input validation with real-time feedback
-// TODO: Phase 2 - Save form data to localStorage for persistence
+// ✅ Multiple loans with add/edit/remove functionality implemented
+// TODO: Add input validation with real-time feedback
+// TODO: Save form data to localStorage for persistence
+// TODO: Add loan type categorization (Home, Car, Personal, etc.)

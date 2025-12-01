@@ -194,18 +194,18 @@ function App() {
       {/* Main Content */}
       <main className="main-content">
         <div className="container">
-          <div className="content-grid">
-            {/* Left Column: Input Form */}
-            <div className="form-column">
-              <FinancialForm 
-                onCalculate={handleCalculateSummary}
-                onReset={handleReset}
-                isCalculating={isCalculating}
-              />
-            </div>
-            
-            {/* Right Column: Results */}
-            <div className="results-column">
+          {/* Input Form - Always Visible */}
+          <div className="form-section">
+            <FinancialForm 
+              onCalculate={handleCalculateSummary}
+              onReset={handleReset}
+              isCalculating={isCalculating}
+            />
+          </div>
+          
+          {/* Results Section */}
+          {(summary || isCalculating) && (
+            <div className="results-section">
               {/* Summary Panel */}
               <SummaryPanel 
                 summary={summary}
@@ -230,7 +230,7 @@ function App() {
                 <div className="action-buttons-container">
                   <button 
                     onClick={handleExportPDF}
-                    className="action-btn export-btn"
+                    className="action-btn export-btn ripple-button hover-lift"
                     disabled={isExportingPDF}
                   >
                     {isExportingPDF ? '⏳ Generating PDF...' : '📄 Download PDF Report'}
@@ -238,14 +238,14 @@ function App() {
                   
                   <button 
                     onClick={toggleDashboard}
-                    className="action-btn dashboard-btn"
+                    className="action-btn dashboard-btn ripple-button hover-lift"
                   >
                     {showDashboard ? '📊 Hide Dashboard' : '📊 View Dashboard'}
                   </button>
                   
                   <button 
                     onClick={toggleRecommendations}
-                    className="action-btn recommendations-btn"
+                    className="action-btn recommendations-btn ripple-button hover-lift"
                   >
                     {showRecommendations ? '💡 Hide Recommendations' : '💡 Get Smart Tips'}
                   </button>
@@ -258,7 +258,7 @@ function App() {
                 </div>
               )}
             </div>
-          </div>
+          )}
           
           {/* Dashboard Section */}
           {summary && showDashboard && (

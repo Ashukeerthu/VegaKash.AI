@@ -2,14 +2,14 @@
 PDF Generation Service using ReportLab
 Creates professional PDF exports of financial plans without GTK dependencies
 """
-from reportlab.lib.pagesizes import letter, A4
+from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.lib.units import inch
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageBreak, Image
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageBreak, Flowable
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
+from reportlab.lib.enums import TA_CENTER
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 import io
 from schemas import FinancialInput, SummaryOutput, AIPlanOutput
 
@@ -37,7 +37,7 @@ def generate_pdf_bytes(
     )
     
     # Container for PDF elements
-    elements = []
+    elements: List[Flowable] = []
     
     # Get styles
     styles = getSampleStyleSheet()
@@ -165,8 +165,6 @@ def generate_pdf_bytes(
          f'{(input_data.expenses.utilities/summary.total_income*100):.1f}%'],
         ['Insurance', f'₹{input_data.expenses.insurance:,.2f}',
          f'{(input_data.expenses.insurance/summary.total_income*100):.1f}%'],
-        ['EMI/Loans', f'₹{input_data.expenses.emi_loans:,.2f}',
-         f'{(input_data.expenses.emi_loans/summary.total_income*100):.1f}%'],
         ['Entertainment', f'₹{input_data.expenses.entertainment:,.2f}',
          f'{(input_data.expenses.entertainment/summary.total_income*100):.1f}%'],
         ['Subscriptions', f'₹{input_data.expenses.subscriptions:,.2f}',

@@ -30,27 +30,40 @@ def calculate_loan_emi(loan: LoanInput) -> float:
     return round(emi, 2)
 
 
-def calculate_total_expenses(expenses: ExpensesInput) -> float:
+def calculate_total_expenses(expenses: ExpensesInput, loans: list = None) -> float:
     """
-    Sum all expense categories
+    Sum all expense categories including EMI from loans
     
     Args:
         expenses: ExpensesInput object with all expense categories
+        loans: List of LoanInput objects to calculate total EMI
         
     Returns:
-        Total monthly expenses
+        Total monthly expenses including loan EMIs
     """
-    return (
+    base_expenses = (
         expenses.housing_rent +
         expenses.groceries_food +
         expenses.transport +
         expenses.utilities +
         expenses.insurance +
-        expenses.emi_loans +
         expenses.entertainment +
         expenses.subscriptions +
         expenses.others
     )
+    
+    # Add EMI from all loans
+    total_emi = 0
+    if loans:
+        for loan in loans:
+            emi = calculate_emi(
+                loan.outstanding_principal,
+                loan.interest_rate_annual,
+                loan.remaining_months
+            )
+            total_emi += emi
+    
+    return base_expenses + total_emi
 
 
 def generate_basic_advice(
@@ -129,8 +142,8 @@ def calculate_summary(financial_input: FinancialInput) -> SummaryOutput:
     # Calculate total income
     total_income = financial_input.monthly_income_primary + financial_input.monthly_income_additional
     
-    # Calculate total expenses
-    total_expenses = calculate_total_expenses(financial_input.expenses)
+    # Calculate total expenses (includes EMI from loans)
+    total_expenses = calculate_total_expenses(financial_input.expenses, financial_input.loans)
     
     # Calculate net savings
     net_savings = total_income - total_expenses

@@ -35,7 +35,7 @@ def _generate_spending_alerts(
     """
     Generate spending alerts based on financial patterns
     """
-    alerts = []
+    alerts: List[SpendingAlert] = []
     expenses = input_data.expenses
     total_income = summary.total_income
     
@@ -92,7 +92,7 @@ def _generate_personalized_recommendations(
     """
     Generate personalized recommendations
     """
-    recommendations = []
+    recommendations: List[PersonalizedRecommendation] = []
     expenses = input_data.expenses
     
     # Subscription optimization

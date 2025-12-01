@@ -16,7 +16,6 @@ class ExpensesInput(BaseModel):
     transport: float = Field(default=0, ge=0, description="Transportation costs")
     utilities: float = Field(default=0, ge=0, description="Utilities (electricity, water, internet)")
     insurance: float = Field(default=0, ge=0, description="Insurance premiums")
-    emi_loans: float = Field(default=0, ge=0, description="EMI for loans")
     entertainment: float = Field(default=0, ge=0, description="Entertainment expenses")
     subscriptions: float = Field(default=0, ge=0, description="Subscription services")
     others: float = Field(default=0, ge=0, description="Other miscellaneous expenses")

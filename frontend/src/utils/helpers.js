@@ -13,7 +13,6 @@ export const sampleData = {
     transport: 5000,
     utilities: 3000,
     insurance: 2500,
-    emi_loans: 8000,
     entertainment: 4000,
     subscriptions: 1500,
     others: 3000,
@@ -88,4 +87,46 @@ export const formatIndianNumber = (num) => {
 export const formatCurrency = (amount, currencyCode = "INR") => {
   const symbol = getCurrencySymbol(currencyCode);
   return `${symbol}${formatIndianNumber(amount)}`;
+};
+
+/**
+ * Format large numbers with abbreviations (K, L, Cr)
+ * For responsive display on mobile devices
+ */
+export const formatCompactNumber = (num, currencyCode = "INR") => {
+  if (num === null || num === undefined) return "0";
+  
+  const number = parseFloat(num);
+  if (isNaN(number)) return "0";
+  
+  const symbol = getCurrencySymbol(currencyCode);
+  const absNum = Math.abs(number);
+  
+  // For Indian system: Crore (10M), Lakh (100K), Thousand
+  if (absNum >= 10000000) {
+    return `${symbol}${(number / 10000000).toFixed(2)}Cr`;
+  } else if (absNum >= 100000) {
+    return `${symbol}${(number / 100000).toFixed(2)}L`;
+  } else if (absNum >= 1000) {
+    return `${symbol}${(number / 1000).toFixed(2)}K`;
+  }
+  
+  return `${symbol}${formatIndianNumber(number)}`;
+};
+
+/**
+ * Smart currency formatter - uses compact format on mobile
+ */
+export const formatSmartCurrency = (amount, currencyCode = "INR") => {
+  // Check if mobile device (screen width < 768px)
+  const isMobile = window.innerWidth < 768;
+  const absAmount = Math.abs(parseFloat(amount));
+  
+  // Use compact format on mobile for large numbers
+  if (isMobile && absAmount >= 100000) {
+    return formatCompactNumber(amount, currencyCode);
+  }
+  
+  // Use full format otherwise
+  return formatCurrency(amount, currencyCode);
 };
