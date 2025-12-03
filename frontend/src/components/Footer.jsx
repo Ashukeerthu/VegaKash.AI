@@ -61,6 +61,9 @@ function Footer() {
 
 export default Footer;
 
-// TODO: Phase 2 - Add social media links
-// TODO: Phase 2 - Add contact form
-// TODO: Phase 2 - Add newsletter signup
+// ===========================================
+// PHASE 2 ROADMAP
+// ===========================================
+// - Add social media links
+// - Add contact form
+// - Add newsletter signup

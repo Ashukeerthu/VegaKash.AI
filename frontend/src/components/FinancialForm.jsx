@@ -909,6 +909,9 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
 export default FinancialForm;
 
 // ✅ Multiple loans with add/edit/remove functionality implemented
-// TODO: Add input validation with real-time feedback
-// TODO: Save form data to localStorage for persistence
-// TODO: Add loan type categorization (Home, Car, Personal, etc.)
+// ===========================================
+// FUTURE ENHANCEMENTS
+// ===========================================
+// - Input validation with real-time feedback
+// - Save form data to localStorage for persistence
+// - Loan type categorization (Home, Car, Personal, etc.)

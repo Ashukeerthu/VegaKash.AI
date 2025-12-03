@@ -1,0 +1,86 @@
+# ===========================================
+# VegaKash.AI - Docker Compose Configuration
+# ===========================================
+# Production-ready multi-container setup
+
+version: '3.8'
+
+services:
+  # ===========================================
+  # Backend API Service
+  # ===========================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: vegakash-backend
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8000}:8000"
+    environment:
+      - ENVIRONMENT=production
+      - PORT=8000
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o-mini}
+      - API_TIMEOUT=${API_TIMEOUT:-60}
+      - FRONTEND_URL=${FRONTEND_URL:-https://www.vegaktools.com}
+      - PRODUCTION_DOMAIN=${PRODUCTION_DOMAIN:-vegaktools.com}
+    env_file:
+      - ./backend/.env
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - vegakash-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ===========================================
+  # Frontend Service (Optional - for full stack)
+  # ===========================================
+  # Uncomment if you want to serve frontend via Docker
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   container_name: vegakash-frontend
+  #   restart: unless-stopped
+  #   ports:
+  #     - "3000:80"
+  #   depends_on:
+  #     backend:
+  #       condition: service_healthy
+  #   networks:
+  #     - vegakash-network
+
+  # ===========================================
+  # Redis Cache (Phase 2)
+  # ===========================================
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: vegakash-redis
+  #   restart: unless-stopped
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis-data:/data
+  #   networks:
+  #     - vegakash-network
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+
+networks:
+  vegakash-network:
+    driver: bridge
+
+# volumes:
+#   redis-data:

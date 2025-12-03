@@ -1,299 +1,361 @@
 # VegaKash.AI - AI Budget Planner & Savings Assistant
 
-A full-stack web application that helps users plan their finances with AI-powered recommendations. Enter your income, expenses, and goals to get personalized budget breakdowns and savings strategies.
+[![CI](https://github.com/Ashukeerthu/VegaKash.AI/actions/workflows/ci.yml/badge.svg)](https://github.com/Ashukeerthu/VegaKash.AI/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+A production-ready, full-stack web application that helps users plan their finances with AI-powered recommendations. Enter your income, expenses, and goals to get personalized budget breakdowns and savings strategies.
+
+🌐 **Live Demo**: [https://www.vegaktools.com](https://www.vegaktools.com)
+
+---
 
 ## 🌟 Features
 
 - **Financial Summary**: Instant calculation of income, expenses, savings rate, and debt-to-income ratio
 - **AI-Powered Planning**: Personalized budget recommendations using OpenAI
 - **50-30-20 Rule**: Visual breakdown of recommended budget allocation
+- **Financial Calculators**: EMI, SIP, FD, RD, Auto Loan, Tax calculators
 - **Expense Optimization**: AI-generated tips to reduce spending
 - **Investment Guidance**: Generic investment allocation suggestions (SIP, FD, PPF, etc.)
 - **Debt Strategy**: Customized loan repayment recommendations
-- **Action Items**: Concrete 30-day action checklist
+- **PDF Export**: Download your financial plan as PDF
+- **Multi-Currency Support**: INR, USD, EUR, GBP, AUD, CAD, JPY
 - **No Login Required**: Privacy-focused - data is processed but not stored
 
-## 🏗️ Tech Stack
+---
 
-### Backend
-- **Python 3.10+**
-- **FastAPI** - Modern web framework
-- **Pydantic** - Data validation
-- **OpenAI API** - AI plan generation
-- **Uvicorn** - ASGI server
+## 🏗️ Architecture
 
-### Frontend
-- **React 18** - UI framework
-- **Vite** - Build tool
-- **Axios** - HTTP client
-- **CSS3** - Styling (no external UI library)
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         Client Browser                          │
+│                    (React 18 + Vite + CSS3)                     │
+└─────────────────────────┬───────────────────────────────────────┘
+                          │ HTTPS
+                          ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      Production Server                          │
+│                  (Nginx/Hostinger/VPS)                          │
+├─────────────────────────┬───────────────────────────────────────┤
+│   Static Frontend       │         Backend API                   │
+│   (dist/ files)         │   (Gunicorn + Uvicorn)               │
+└─────────────────────────┴───────────────────────────────────────┘
+                                    │
+                                    ▼
+                          ┌─────────────────┐
+                          │   OpenAI API    │
+                          │  (GPT-4o-mini)  │
+                          └─────────────────┘
+```
+
+### Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| **Frontend** | React 18, Vite, React Router, Axios, CSS3 |
+| **Backend** | Python 3.11+, FastAPI, Pydantic, OpenAI SDK |
+| **Server** | Gunicorn + Uvicorn (ASGI) |
+| **Container** | Docker, Docker Compose |
+| **CI/CD** | GitHub Actions |
+| **PDF Generation** | ReportLab |
+
+---
 
 ## 📁 Project Structure
 
 ```
 VegaKash.AI/
+├── .github/
+│   └── workflows/
+│       └── ci.yml              # GitHub Actions CI pipeline
 ├── backend/
-│   ├── __init__.py
-│   ├── main.py                 # FastAPI app & endpoints
-│   ├── config.py               # Configuration & environment variables
-│   ├── schemas.py              # Pydantic models
+│   ├── tests/                  # Unit tests
+│   │   ├── conftest.py
+│   │   ├── test_health.py
+│   │   └── test_root.py
 │   ├── services/
-│   │   ├── __init__.py
+│   │   ├── ai_planner.py       # OpenAI integration
 │   │   ├── calculations.py     # Financial calculations
-│   │   └── ai_planner.py       # OpenAI integration
-│   └── requirements.txt        # Python dependencies
-│
+│   │   └── pdf_generator*.py   # PDF export
+│   ├── middleware/
+│   │   └── security.py         # Security middleware
+│   ├── main.py                 # FastAPI application
+│   ├── config.py               # Configuration
+│   ├── schemas.py              # Pydantic models
+│   ├── Dockerfile              # Production Docker image
+│   ├── gunicorn_config.py      # Gunicorn settings
+│   ├── requirements.txt
+│   ├── .env.example
+│   └── .env                    # (gitignored)
 ├── frontend/
-│   ├── public/
 │   ├── src/
-│   │   ├── components/
-│   │   │   ├── Hero.jsx
-│   │   │   ├── FinancialForm.jsx
-│   │   │   ├── SummaryPanel.jsx
-│   │   │   ├── AIPlanPanel.jsx
-│   │   │   └── Footer.jsx
-│   │   ├── services/
-│   │   │   └── api.js          # API client
-│   │   ├── styles/
-│   │   │   ├── index.css       # Global styles
-│   │   │   └── App.css         # Component styles
-│   │   ├── utils/
-│   │   │   └── helpers.js      # Utility functions
-│   │   ├── App.jsx             # Main app component
-│   │   └── main.jsx            # Entry point
-│   ├── index.html
-│   ├── package.json
-│   └── vite.config.js
-│
+│   │   ├── components/         # React components
+│   │   ├── modules/            # Modular calculators
+│   │   ├── pages/              # Page components
+│   │   ├── router/             # React Router config
+│   │   ├── services/           # API client
+│   │   ├── styles/             # CSS files
+│   │   └── utils/              # Helpers
+│   ├── public/
+│   │   ├── sitemap.xml
+│   │   └── robots.txt
+│   └── package.json
+├── docker-compose.yml          # Multi-container setup
 └── README.md
 ```
 
-## 🚀 Getting Started
+---
+
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- **Python 3.10 or higher**
-- **Node.js 18 or higher**
+- **Python 3.11+**
+- **Node.js 18+**
 - **OpenAI API Key** ([Get one here](https://platform.openai.com/api-keys))
+- **Docker** (optional, for containerized deployment)
 
-### Backend Setup
+### Option 1: Local Development
 
-1. **Navigate to backend directory**
-   ```powershell
-   cd backend
-   ```
+```powershell
+# Clone the repository
+git clone https://github.com/Ashukeerthu/VegaKash.AI.git
+cd VegaKash.AI
 
-2. **Create a virtual environment** (recommended)
-   ```powershell
-   python -m venv venv
-   .\venv\Scripts\Activate.ps1
-   ```
+# Backend setup
+cd backend
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+copy .env.example .env
+# Edit .env and add your OPENAI_API_KEY
 
-3. **Install dependencies**
-   ```powershell
-   pip install -r requirements.txt
-   ```
+# Start backend
+uvicorn main:app --reload --port 8000
 
-4. **Configure environment variables**
-   ```powershell
-   # Copy the example file
-   copy .env.example .env
-   
-   # Edit .env and add your actual OpenAI API key
-   # OPENAI_API_KEY=sk-proj-your-actual-key-here
-   ```
-   
-   **⚠️ IMPORTANT**: Never commit your `.env` file to git! It's already in `.gitignore` for security.
-   
-   See [DEPLOYMENT.md](./DEPLOYMENT.md) for production deployment instructions.
+# In a new terminal - Frontend setup
+cd frontend
+npm install
+npm run dev
+```
 
-5. **Run the backend server**
-   ```powershell
-   # From the project root directory
-   cd ..
-   uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
-   ```
+- **Backend**: http://localhost:8000
+- **Frontend**: http://localhost:5173
+- **API Docs**: http://localhost:8000/api/v1/docs
 
-   Backend will be available at: `http://localhost:8000`
-   
-   API documentation: `http://localhost:8000/api/docs`
+### Option 2: Docker Deployment
 
-### Frontend Setup
+```bash
+# Clone and navigate
+git clone https://github.com/Ashukeerthu/VegaKash.AI.git
+cd VegaKash.AI
 
-1. **Open a new PowerShell terminal**
+# Create .env file
+cp backend/.env.example backend/.env
+# Edit backend/.env and add your OPENAI_API_KEY
 
-2. **Navigate to frontend directory**
-   ```powershell
-   cd frontend
-   ```
+# Build and run with Docker Compose
+docker-compose up --build -d
 
-3. **Install dependencies**
-   ```powershell
-   npm install
-   ```
+# Check health
+curl http://localhost:8000/health
+```
 
-4. **Start the development server**
-   ```powershell
-   npm run dev
-   ```
+---
 
-   Frontend will be available at: `http://localhost:3000`
+## ⚙️ Environment Variables
 
-## 🧪 Testing the Application
+Create `backend/.env` with these variables:
 
-1. **Verify backend is running**: Visit `http://localhost:8000/health`
-   - Should return: `{"status":"ok","message":"VegaKash.AI API is running"}`
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `OPENAI_API_KEY` | ✅ Yes | - | Your OpenAI API key |
+| `OPENAI_MODEL` | No | `gpt-4o-mini` | OpenAI model to use |
+| `API_TIMEOUT` | No | `60` | API request timeout (seconds) |
+| `ENVIRONMENT` | No | `development` | `development` or `production` |
+| `PORT` | No | `8000` | Backend server port |
+| `FRONTEND_URL` | No | `http://localhost:5173` | Allowed CORS origin |
+| `PRODUCTION_DOMAIN` | No | `vegaktools.com` | Production domain |
 
-2. **Open the frontend**: Visit `http://localhost:3000`
+**⚠️ SECURITY**: Never commit `.env` files! They're in `.gitignore`.
 
-3. **Use Sample Data**: Click the "📋 Use Sample Data" button to auto-fill the form
+---
 
-4. **Calculate Summary**: Click "🧮 Calculate Summary" to see financial metrics
+## 🧪 Running Tests
 
-5. **Generate AI Plan**: Click "✨ Generate AI Plan" to get personalized recommendations
+```powershell
+cd backend
+
+# Install test dependencies
+pip install pytest pytest-cov httpx
+
+# Run all tests
+pytest tests/ -v
+
+# Run with coverage
+pytest tests/ -v --cov=. --cov-report=html
+
+# Open coverage report
+start htmlcov/index.html
+```
+
+---
+
+## 🐳 Docker Commands
+
+```bash
+# Build and start all services
+docker-compose up --build -d
+
+# View logs
+docker-compose logs -f backend
+
+# Stop services
+docker-compose down
+
+# Rebuild after changes
+docker-compose up --build -d
+
+# Check container health
+docker ps
+docker inspect vegakash-backend --format='{{.State.Health.Status}}'
+```
+
+---
 
 ## 📊 API Endpoints
 
-### Health Check
-```
-GET /health
-```
-Returns API status.
+### Health & Monitoring
 
-### Calculate Summary
-```
-POST /api/calculate-summary
-Content-Type: application/json
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/health` | GET | Basic health check |
+| `/ready` | GET | Readiness check for orchestrators |
+| `/api/v1/stats` | GET | System statistics |
 
-{
-  "currency": "INR",
-  "monthly_income_primary": 75000,
-  "monthly_income_additional": 5000,
-  "expenses": { ... },
-  "goals": { ... },
-  "loans": [ ... ]
+### Financial Calculations
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/v1/calculate-summary` | POST | Calculate financial summary |
+| `/api/v1/generate-ai-plan` | POST | Generate AI-powered budget plan |
+| `/api/v1/smart-recommendations` | POST | Get smart alerts and tips |
+| `/api/v1/compare-debt-strategies` | POST | Compare debt repayment strategies |
+| `/api/v1/export-pdf` | POST | Export plan as PDF |
+
+### Rate Limits
+
+- `/api/v1/calculate-summary`: 30 requests/minute
+- `/api/v1/generate-ai-plan`: 5 requests/minute
+
+---
+
+## 🚢 Production Deployment
+
+### 1. Build Frontend
+
+```powershell
+cd frontend
+npm run build
+# Output: frontend/dist/
+```
+
+### 2. Deploy Backend with Gunicorn
+
+```bash
+cd backend
+gunicorn main:app \
+  --config gunicorn_config.py \
+  --workers 4 \
+  --worker-class uvicorn.workers.UvicornWorker
+```
+
+### 3. Configure Nginx (Example)
+
+```nginx
+server {
+    listen 80;
+    server_name vegaktools.com www.vegaktools.com;
+
+    # Frontend static files
+    location / {
+        root /var/www/vegaktools/frontend/dist;
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Backend API proxy
+    location /api {
+        proxy_pass http://localhost:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
 }
 ```
 
-### Generate AI Plan
+### 4. Environment Variables
+
+Set these in your hosting provider's control panel or systemd service:
+
+```bash
+export OPENAI_API_KEY="your-key-here"
+export ENVIRONMENT="production"
+export PRODUCTION_DOMAIN="vegaktools.com"
 ```
-POST /api/generate-ai-plan
-Content-Type: application/json
 
-{
-  "input": { ... },
-  "summary": { ... }
-}
-```
-
-## 🌐 Hosting on Hostinger
-
-### Backend Deployment
-
-1. **Choose a hosting plan** that supports Python (VPS or Cloud Hosting)
-
-2. **Upload backend files** via FTP or Git
-
-3. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Set environment variables** in Hostinger control panel:
-   - `OPENAI_API_KEY=your-key`
-
-5. **Configure WSGI server** (use Gunicorn):
-   ```bash
-   pip install gunicorn
-   gunicorn backend.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
-   ```
-
-6. **Update CORS settings** in `backend/main.py`:
-   ```python
-   allow_origins=[
-       "https://yourdomain.com",
-       # other origins...
-   ]
-   ```
-
-### Frontend Deployment
-
-1. **Build the production bundle**:
-   ```powershell
-   cd frontend
-   npm run build
-   ```
-
-2. **Upload the `dist` folder** to your web hosting directory
-
-3. **Update API URL**: Create `frontend/.env.production`:
-   ```
-   VITE_API_URL=https://api.yourdomain.com
-   ```
-
-4. **Configure web server** to serve `index.html` for all routes
-
-## 🔐 Security Notes
-
-- **API Keys**: Never commit API keys to version control
-- **CORS**: Update allowed origins before production deployment
-- **Environment Variables**: Use secure methods to store secrets in production
-- **HTTPS**: Always use HTTPS in production for secure communication
-
-## 🛠️ Development Tips
-
-### Backend Development
-
-- **Auto-reload**: The `--reload` flag automatically restarts the server on code changes
-- **API Docs**: Visit `/api/docs` for interactive API documentation (Swagger UI)
-- **Logging**: Check console output for request logs and errors
-
-### Frontend Development
-
-- **Hot Reload**: Vite automatically refreshes on file changes
-- **React DevTools**: Install browser extension for debugging
-- **Console**: Check browser console for errors and API responses
-
-## 📝 Phase 2 Roadmap (Future Features)
-
-- [ ] User authentication and accounts
-- [ ] Save and track multiple financial plans
-- [ ] Dashboard with financial progress over time
-- [ ] Export plans as PDF/Excel
-- [ ] Multiple loan management
-- [ ] Investment tracking
-- [ ] Bill reminders and notifications
-- [ ] Mobile app (React Native)
+---
 
 ## 🔒 Security
 
-### Environment Variables
-- **Never commit `.env` files** - Already protected by `.gitignore`
-- **Use `.env.example`** - Contains only placeholder values for reference
-- **Production deployment** - Set environment variables through your hosting provider's control panel
-- **API key rotation** - Use different keys for development and production
+- ✅ **No hardcoded secrets** - All sensitive data via environment variables
+- ✅ **CORS configured** - Restricted to specific origins
+- ✅ **Rate limiting** - Prevents API abuse
+- ✅ **Input validation** - Pydantic models for all inputs
+- ✅ **Security headers** - Optional middleware available
+- ✅ **Non-root Docker user** - Container runs as unprivileged user
+- ✅ **Health checks** - `/health` and `/ready` endpoints
 
-For detailed deployment and security guidelines, see [DEPLOYMENT.md](./DEPLOYMENT.md)
+---
+
+## 📝 Phase 2 Roadmap
+
+- [ ] User authentication and accounts
+- [ ] Database integration (PostgreSQL)
+- [ ] Save and track multiple financial plans
+- [ ] Dashboard with financial progress over time
+- [ ] Redis caching for AI responses
+- [ ] Multiple loan management
+- [ ] Bill reminders and notifications
+- [ ] Mobile app (React Native)
+
+---
 
 ## 🤝 Contributing
 
-This is a Phase 1 implementation. Contributions and suggestions are welcome!
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit changes: `git commit -m 'Add amazing feature'`
+4. Push to branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
+
+---
 
 ## ⚠️ Disclaimer
 
-This application provides general educational guidance only and is NOT certified financial advice. Always consult with a certified financial advisor for personalized recommendations. The AI recommendations are based on general financial principles and may not be suitable for all situations.
+This application provides general educational guidance only and is **NOT certified financial advice**. Always consult with a certified financial advisor for personalized recommendations.
+
+---
 
 ## 📄 License
 
-This project is for educational purposes. Modify and use as needed.
+MIT License - see [LICENSE](./LICENSE) for details.
+
+---
 
 ## 💡 Support
 
-For issues or questions:
-1. Check the API documentation at `/api/docs`
-2. Review browser console for frontend errors
-3. Check backend terminal for server logs
-4. Ensure OpenAI API key is correctly set
+- 📖 [API Documentation](https://www.vegaktools.com/api/v1/docs)
+- 🐛 [Report Issues](https://github.com/Ashukeerthu/VegaKash.AI/issues)
+- 💬 [Discussions](https://github.com/Ashukeerthu/VegaKash.AI/discussions)
 
 ---
 

@@ -158,12 +158,9 @@ export const compareDebtStrategies = async (loans, extraPayment = 0) => {
   }
 };
 
-// TODO: Phase 2 - Add authentication API calls
-// export const login = async (credentials) => { ... }
-// export const register = async (userData) => { ... }
-// export const logout = async () => { ... }
-
-// TODO: Phase 2 - Add plan management API calls
-// export const savePlan = async (planData) => { ... }
-// export const getUserPlans = async () => { ... }
-// export const deletePlan = async (planId) => { ... }
+// ===========================================
+// PHASE 2 ROADMAP (Future API Calls)
+// ===========================================
+// Authentication: login, register, logout
+// Plan Management: savePlan, getUserPlans, deletePlan
+// See: https://github.com/Ashukeerthu/VegaKash.AI/issues

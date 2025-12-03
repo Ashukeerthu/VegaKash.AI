@@ -284,7 +284,11 @@ function App() {
 
 export default App;
 
-// TODO: Phase 2 - Add user authentication and protected routes
-// TODO: Phase 2 - Add ability to save and compare multiple financial plans
-// TODO: Phase 2 - Add historical progress tracking over time
-// TODO: Phase 2 - Add multi-loan management with debt payoff strategies
+// ===========================================
+// PHASE 2 ROADMAP (Future Features)
+// ===========================================
+// - User authentication and protected routes
+// - Save and compare multiple financial plans
+// - Historical progress tracking over time
+// - Multi-loan management with debt payoff strategies
+// See: https://github.com/Ashukeerthu/VegaKash.AI/issues

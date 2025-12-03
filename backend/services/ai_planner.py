@@ -415,6 +415,10 @@ def generate_ai_plan(financial_input: FinancialInput, summary: SummaryOutput) ->
     return create_fallback_response()
 
 
-# TODO: Phase 2 - Add functionality to save AI plans to database
-# TODO: Phase 2 - Add user-specific context and history to improve AI recommendations
-# TODO: Phase 2 - Implement caching to reduce API costs for similar queries
+# ===========================================
+# PHASE 2 ROADMAP (Future Enhancements)
+# ===========================================
+# - Save AI plans to database for user history
+# - Add user-specific context to improve AI recommendations
+# - Implement Redis caching to reduce API costs for similar queries
+# See: https://github.com/Ashukeerthu/VegaKash.AI/issues

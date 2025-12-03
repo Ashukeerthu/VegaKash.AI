@@ -127,6 +127,24 @@ async def health_check() -> Dict[str, str | bool]:
     }
 
 
+@app.get("/ready")
+@app.get("/api/v1/ready")
+async def readiness_check() -> Dict[str, str | bool]:
+    """
+    Readiness check endpoint
+    Used by orchestrators (K8s, Docker) to verify the app is ready to receive traffic
+    Lightweight check - no external service calls
+    
+    Returns:
+        Status message indicating readiness
+    """
+    return {
+        "status": "ok",
+        "ready": True,
+        "timestamp": datetime.now().isoformat()
+    }
+
+
 @app.get("/api/v1/stats")
 async def get_system_stats() -> Dict[str, object]:
     """
@@ -341,11 +359,15 @@ async def get_smart_recommendations(request: Request, financial_input: Financial
         )
 
 
-# TODO: Phase 2 - Add authentication endpoints (login, register, logout)
-# TODO: Phase 2 - Add endpoint to save/retrieve user financial plans
-# TODO: Phase 2 - Add endpoint to get user dashboard data
-# TODO: Phase 2 - Add endpoint to track financial goals over time
-# TODO: Phase 2 - Add database integration for persistent storage
+# ===========================================
+# PHASE 2 ROADMAP (Future Features)
+# ===========================================
+# - Authentication endpoints (login, register, logout)
+# - Endpoint to save/retrieve user financial plans
+# - Endpoint to get user dashboard data
+# - Endpoint to track financial goals over time
+# - Database integration for persistent storage
+# See: https://github.com/Ashukeerthu/VegaKash.AI/issues
 
 
 if __name__ == "__main__":
