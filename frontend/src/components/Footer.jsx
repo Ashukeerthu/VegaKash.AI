@@ -25,8 +25,8 @@ function Footer() {
             <ul className="space-y-2">
               <li><Link to="/" className="footer-link">Home</Link></li>
               <li><Link to="/about" className="footer-link">About Us</Link></li>
-              <li><Link to="/calculators/emi" className="footer-link">EMI Calculator</Link></li>
-              <li><Link to="/calculators/sip" className="footer-link">SIP Calculator</Link></li>
+              <li><Link to="/emi-calculator" className="footer-link">EMI Calculator</Link></li>
+              <li><Link to="/sip-calculator" className="footer-link">SIP Calculator</Link></li>
             </ul>
           </div>
           

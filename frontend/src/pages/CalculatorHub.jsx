@@ -1,4 +1,5 @@
 import React from 'react';
+import SEO from '../components/SEO';
 import { Link } from 'react-router-dom';
 import './CalculatorHub.css';
 
@@ -16,7 +17,7 @@ function CalculatorHub() {
       icon: '🏠',
       category: 'Loans',
       priority: 'high',
-      route: '/calculators/emi'
+      route: '/emi-calculator'
     },
     {
       id: 'sip',
@@ -25,7 +26,7 @@ function CalculatorHub() {
       icon: '📈',
       category: 'Investments',
       priority: 'high',
-      route: '/calculators/sip'
+      route: '/sip-calculator'
     },
     {
       id: 'fd',
@@ -34,7 +35,7 @@ function CalculatorHub() {
       icon: '🏦',
       category: 'Savings',
       priority: 'high',
-      route: '/calculators/fd'
+      route: '/fd-calculator'
     },
     {
       id: 'rd',
@@ -43,7 +44,16 @@ function CalculatorHub() {
       icon: '📅',
       category: 'Savings',
       priority: 'high',
-      route: '/calculators/rd'
+      route: '/rd-calculator'
+    },
+    {
+      id: 'auto-loan',
+      title: 'Auto Loan Calculator',
+      description: 'Calculate car loan EMI and total interest',
+      icon: '🚗',
+      category: 'Loans',
+      priority: 'high',
+      route: '/car-loan-calculator'
     },
     {
       id: 'income-tax',
@@ -52,7 +62,7 @@ function CalculatorHub() {
       icon: '📊',
       category: 'Tax',
       priority: 'high',
-      route: '/calculators/income-tax',
+      route: '/income-tax-calculator',
       comingSoon: true
     },
     {
@@ -107,6 +117,30 @@ function CalculatorHub() {
 
   return (
     <div className="calculator-hub">
+      <SEO 
+        title="Financial Calculators | VegaKash.AI"
+        description="All financial calculators in one place — EMI, SIP, FD, RD, Car Loan, Income Tax and more."
+        keywords="financial calculators, emi calculator, sip calculator, fd calculator, rd calculator, car loan calculator, income tax calculator"
+        canonical="/calculators"
+        structuredData={{
+          "@graph": [
+            {
+              "@context": "https://schema.org",
+              "@type": "WebPage",
+              "name": "Financial Calculators",
+              "url": "https://vegaktools.com/calculators"
+            },
+            {
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://vegaktools.com/" },
+                { "@type": "ListItem", "position": 2, "name": "Calculators", "item": "https://vegaktools.com/calculators" }
+              ]
+            }
+          ]
+        }}
+      />
       <div className="hub-header">
         <h1>Financial Calculators</h1>
         <p>Free online calculators to plan your financial future</p>

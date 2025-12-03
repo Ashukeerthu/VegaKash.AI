@@ -7,7 +7,7 @@ import logging
 import os
 import re
 import time
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 from openai import OpenAI, OpenAIError, RateLimitError, APITimeoutError, APIConnectionError
 from schemas import FinancialInput, SummaryOutput, AIPlanOutput
 # from services.cache import get_cached_plan, set_cached_plan  # Temporarily disabled
@@ -151,7 +151,7 @@ def build_ai_prompt(financial_input: FinancialInput, summary: SummaryOutput) -> 
     
     loans_info = ""
     if financial_input.loans:
-        loan_details = []
+        loan_details: List[str] = []
         for loan in financial_input.loans:
             emi = calculate_loan_emi(loan)
             principal = get_loan_principal(loan)

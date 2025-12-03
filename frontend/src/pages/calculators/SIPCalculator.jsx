@@ -360,15 +360,15 @@ function SIPCalculator() {
               className="slider"
             />
             <div className="slider-labels">
-              <span>1Yr</span>
-              <span>40Yrs</span>
+              <span>1 Yr</span>
+              <span>40 Yrs</span>
             </div>
           </div>
         </div>
 
         {result && (
           <div className="calculator-results">
-            <h2>{investmentMode === 'sip' ? 'Your SIP Returns' : 'Your Investment Returns'}</h2>
+            <h2>{investmentMode === 'sip' ? 'Your SIP Breakdown' : 'Your Investment Breakdown'}</h2>
             <div className="result-cards">
               <div className="result-card highlight">
                 <div className="result-label">Future Value</div>
@@ -386,13 +386,13 @@ function SIPCalculator() {
               </div>
 
               <div className="result-card">
-                <div className="result-label">Return on Investment</div>
+                <div className="result-label">Return On Investment</div>
                 <div className="result-value">{((result.totalReturns / result.totalInvested) * 100).toFixed(1)}%</div>
               </div>
 
               <div className="result-card">
-                <div className="result-label">Total Months</div>
-                <div className="result-value">{duration * 12} months</div>
+                <div className="result-label">Total Duration</div>
+                <div className="result-value">{duration * 12} Months</div>
               </div>
 
               {investmentMode === 'sip' && monthlyInvestment > 0 && (
@@ -422,12 +422,12 @@ function SIPCalculator() {
               </div>
               <div className="chart-legend">
                 <div className="legend-item">
-                  <span className="legend-color invested"></span>
-                  <span>Invested amount: ₹{result.totalInvested.toLocaleString('en-IN')}</span>
+                  <span className="legend-color principal"></span>
+                  <span>Invested: {formatSmartCurrency(result.totalInvested)}</span>
                 </div>
                 <div className="legend-item">
-                  <span className="legend-color returns"></span>
-                  <span>Est. returns: ₹{result.totalReturns.toLocaleString('en-IN')}</span>
+                  <span className="legend-color interest"></span>
+                  <span>Returns: {formatSmartCurrency(result.totalReturns)}</span>
                 </div>
               </div>
             </div>
@@ -691,15 +691,15 @@ function SIPCalculator() {
           <h2>Related Financial Calculators</h2>
           <p>Explore our other calculators to plan your finances better:</p>
           <div className="calculator-grid">
-            <a href="/calculators/fd" className="calc-card">
+            <a href="/fd-calculator" className="calc-card">
               <h3>FD Calculator</h3>
               <p>Calculate fixed deposit maturity and interest</p>
             </a>
-            <a href="/calculators/rd" className="calc-card">
+            <a href="/rd-calculator" className="calc-card">
               <h3>RD Calculator</h3>
               <p>Calculate recurring deposit returns</p>
             </a>
-            <a href="/calculators/emi" className="calc-card">
+            <a href="/emi-calculator" className="calc-card">
               <h3>EMI Calculator</h3>
               <p>Calculate loan EMI and total interest</p>
             </a>

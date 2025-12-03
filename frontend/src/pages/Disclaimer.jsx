@@ -1,18 +1,26 @@
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import SEO from '../components/SEO';
+import { getBreadcrumbSchema } from '../utils/structuredData';
 
 /**
  * Disclaimer Page
  * Important legal disclaimer for financial tools
  */
 function Disclaimer() {
+  const breadcrumbData = getBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Disclaimer', url: '/disclaimer' }
+  ]);
   return (
     <>
-      <Helmet>
-        <title>Disclaimer - VegaKash.AI</title>
-        <meta name="description" content="Important disclaimer about VegaKash.AI's financial planning tools and AI-generated recommendations" />
-        <meta name="robots" content="index, follow" />
-      </Helmet>
+      <SEO
+        title="Disclaimer - VegaKash.AI"
+        description="Important disclaimer about VegaKash.AI's financial planning tools and AI-generated recommendations"
+        keywords="disclaimer, financial disclaimer, not financial advice, AI recommendations disclaimer, investment disclaimer"
+        ogType="website"
+        canonical="/disclaimer"
+        structuredData={breadcrumbData}
+      />
 
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
         
@@ -198,8 +206,8 @@ function Disclaimer() {
                 For questions about this disclaimer:
               </p>
               <div className="mt-4 p-4 bg-indigo-50 rounded-lg">
-                <p className="text-gray-800"><strong>Email:</strong> legal@vegakash.ai</p>
-                <p className="text-gray-800"><strong>Website:</strong> https://vegakash.ai</p>
+                <p className="text-gray-800"><strong>Email:</strong> legal@vegaktools.com</p>
+                <p className="text-gray-800"><strong>Website:</strong> https://vegaktools.com</p>
               </div>
             </section>
 

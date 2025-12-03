@@ -1,0 +1,86 @@
+/**
+ * PageLayout Component Styles
+ * 
+ * Provides consistent page-level spacing and max-width constraints
+ */
+
+/* Base Layout */
+.page-layout {
+  width: 100%;
+  margin: 0 auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Max Width Variants */
+.page-layout-sm {
+  max-width: 640px;
+}
+
+.page-layout-md {
+  max-width: 768px;
+}
+
+.page-layout-lg {
+  max-width: 1024px;
+}
+
+.page-layout-xl {
+  max-width: 1280px;
+}
+
+.page-layout-full {
+  max-width: 100%;
+}
+
+/* Spacing Variants */
+.page-layout-spacing-none {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.page-layout-spacing-small {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.page-layout-spacing-medium {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+.page-layout-spacing-large {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+/* Background Variants */
+.page-layout-bg-default {
+  background: transparent;
+}
+
+.page-layout-bg-gray {
+  background: #f8f9fa;
+}
+
+.page-layout-bg-gradient {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e3e7f0 100%);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page-layout {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .page-layout-spacing-large {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+  
+  .page-layout-spacing-medium {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+}

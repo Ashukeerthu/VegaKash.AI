@@ -15,7 +15,7 @@ function SEO({
   canonical,
   structuredData
 }) {
-  const siteUrl = 'https://vegakash.ai'; // Update with your actual domain
+  const siteUrl = 'https://vegaktools.com';
   const fullUrl = canonical ? `${siteUrl}${canonical}` : siteUrl;
 
   return (

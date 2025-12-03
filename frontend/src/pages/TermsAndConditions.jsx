@@ -1,18 +1,26 @@
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import SEO from '../components/SEO';
+import { getBreadcrumbSchema } from '../utils/structuredData';
 
 /**
  * Terms and Conditions Page
  * Required for AdSense approval
  */
 function TermsAndConditions() {
+  const breadcrumbData = getBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Terms and Conditions', url: '/terms-and-conditions' }
+  ]);
   return (
     <>
-      <Helmet>
-        <title>Terms and Conditions - VegaKash.AI</title>
-        <meta name="description" content="VegaKash.AI Terms and Conditions - Legal terms for using our financial planning tools" />
-        <meta name="robots" content="index, follow" />
-      </Helmet>
+      <SEO
+        title="Terms and Conditions - VegaKash.AI"
+        description="VegaKash.AI Terms and Conditions - Legal terms for using our financial planning tools"
+        keywords="terms and conditions, terms of service, VegaKash terms, legal agreement, user agreement"
+        ogType="website"
+        canonical="/terms-and-conditions"
+        structuredData={breadcrumbData}
+      />
 
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
         
@@ -175,8 +183,8 @@ function TermsAndConditions() {
                 For questions about these Terms and Conditions, contact us at:
               </p>
               <div className="mt-4 p-4 bg-indigo-50 rounded-lg">
-                <p className="text-gray-800"><strong>Email:</strong> legal@vegakash.ai</p>
-                <p className="text-gray-800"><strong>Website:</strong> https://vegakash.ai</p>
+                <p className="text-gray-800"><strong>Email:</strong> legal@vegaktools.com</p>
+                <p className="text-gray-800"><strong>Website:</strong> https://vegaktools.com</p>
               </div>
             </section>
 

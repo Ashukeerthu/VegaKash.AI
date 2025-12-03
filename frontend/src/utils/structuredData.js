@@ -10,8 +10,8 @@ export const getOrganizationSchema = () => ({
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "VegaKash.AI",
-  "url": "https://vegakash.ai",
-  "logo": "https://vegakash.ai/logo.png",
+  "url": "https://vegaktools.com",
+  "logo": "https://vegaktools.com/logo.png",
   "description": "AI-powered financial planning and budget management platform",
   "sameAs": [
     // Add your social media links here
@@ -37,7 +37,7 @@ export const getWebApplicationSchema = () => ({
   "offers": {
     "@type": "Offer",
     "price": "0",
-    "priceCurrency": "INR"
+    "priceCurrency": "USD"
   },
   "description": "Free AI-powered budget planner and financial calculator. Manage your finances, calculate EMI, SIP, and get personalized savings recommendations.",
   "featureList": [
@@ -50,7 +50,7 @@ export const getWebApplicationSchema = () => ({
     "Financial goal tracking",
     "PDF export of financial plans"
   ],
-  "screenshot": "https://vegakash.ai/screenshot.jpg",
+  "screenshot": "https://vegaktools.com/screenshot.jpg",
   "browserRequirements": "Requires JavaScript. Requires HTML5.",
   "softwareVersion": "1.0.0",
   "aggregateRating": {
@@ -70,7 +70,7 @@ export const getFinancialServiceSchema = () => ({
   "@type": "FinancialService",
   "name": "VegaKash.AI Financial Planning",
   "description": "Comprehensive financial planning service with AI-powered budget advice, loan calculators, and savings strategies",
-  "url": "https://vegakash.ai",
+  "url": "https://vegaktools.com",
   "serviceType": "Financial Planning",
   "areaServed": {
     "@type": "Country",
@@ -124,17 +124,32 @@ export const getCalculatorSchema = (calculatorType) => {
     emi: {
       name: "EMI Calculator",
       description: "Calculate Equated Monthly Installment (EMI) for loans with detailed amortization schedule",
-      url: "/calculators/emi"
+      url: "/emi-calculator"
     },
     sip: {
       name: "SIP Calculator",
       description: "Calculate returns on Systematic Investment Plan with compound interest",
-      url: "/calculators/sip"
+      url: "/sip-calculator"
     },
-    loan: {
-      name: "Loan Calculator",
-      description: "Compare different loan options and repayment strategies",
-      url: "/calculators/loan"
+    fd: {
+      name: "FD Calculator",
+      description: "Calculate Fixed Deposit maturity and interest earned",
+      url: "/fd-calculator"
+    },
+    rd: {
+      name: "RD Calculator",
+      description: "Calculate Recurring Deposit maturity and interest",
+      url: "/rd-calculator"
+    },
+    autoLoan: {
+      name: "Car Loan EMI Calculator",
+      description: "Calculate car loan EMI and total interest with payment schedule",
+      url: "/car-loan-calculator"
+    },
+    incomeTax: {
+      name: "Income Tax Calculator",
+      description: "Compare old vs new tax regime and estimate income tax",
+      url: "/income-tax-calculator"
     }
   };
 
@@ -146,11 +161,11 @@ export const getCalculatorSchema = (calculatorType) => {
     "name": info.name,
     "applicationCategory": "FinanceApplication",
     "description": info.description,
-    "url": `https://vegakash.ai${info.url}`,
+    "url": `https://vegaktools.com${info.url}`,
     "offers": {
       "@type": "Offer",
       "price": "0",
-      "priceCurrency": "INR"
+      "priceCurrency": "USD"
     },
     "operatingSystem": "Web Browser"
   };
@@ -216,7 +231,7 @@ export const getBreadcrumbSchema = (breadcrumbs) => ({
     "@type": "ListItem",
     "position": index + 1,
     "name": crumb.name,
-    "item": `https://vegakash.ai${crumb.url}`
+    "item": `https://vegaktools.com${crumb.url}`
   }))
 });
 

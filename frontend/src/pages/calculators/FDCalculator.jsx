@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { formatSmartCurrency } from '../../utils/helpers';
+import CurrencySelector from '../../components/CurrencySelector';
 import '../../styles/Calculator.css';
 
 /**
@@ -6,6 +8,7 @@ import '../../styles/Calculator.css';
  * Calculates Fixed Deposit maturity amount
  */
 function FDCalculator() {
+  const [currency, setCurrency] = useState('INR');
   const [depositAmount, setDepositAmount] = useState(100000);
   const [interestRate, setInterestRate] = useState(6.5);
   const [tenure, setTenure] = useState(12);
@@ -54,8 +57,15 @@ function FDCalculator() {
       </div>
 
       <div className="calculator-content">
-        <div className="calculator-inputs">
-          <div className="slider-group">
+        {/* Currency Selector */}
+        <CurrencySelector 
+          selectedCurrency={currency}
+          onCurrencyChange={setCurrency}
+        />
+
+        <div className="calculator-main-grid">
+          <div className="calculator-inputs">
+            <div className="slider-group">
             <div className="slider-header">
               <label>Deposit Amount</label>
               <input
@@ -197,30 +207,40 @@ function FDCalculator() {
               className="slider"
             />
             <div className="slider-labels">
-              <span>1 Month</span>
-              <span>120 Months</span>
+              <span>1 Mo</span>
+              <span>120 Mos</span>
             </div>
+          </div>
+
+          {/* Reset Button Inside Input Box */}
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
+            <button onClick={handleReset} className="btn-reset">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14 8C14 11.3137 11.3137 14 8 14C4.68629 14 2 8C2 4.68629 4.68629 2 8 2C9.84871 2 11.5151 2.87161 12.6 4.2M12.6 4.2V1M12.6 4.2H9.4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Reset to Default
+            </button>
           </div>
         </div>
 
         {result && (
           <div className="calculator-results">
-            <h2>Your FD Maturity Details</h2>
+            <h2>Your FD Breakdown</h2>
             
             <div className="result-card highlight">
-              <div className="result-label">MATURITY AMOUNT</div>
-              <div className="result-value">₹{Number(result.maturityAmount).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</div>
+              <div className="result-label">Maturity Amount</div>
+              <div className={`result-value ${String(result.maturityAmount).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.maturityAmount, currency)}</div>
             </div>
 
             <div className="result-cards">
               <div className="result-card">
-                <div className="result-label">DEPOSIT AMOUNT</div>
-                <div className="result-value">₹{Number(result.depositAmount).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</div>
+                <div className="result-label">Deposit Amount</div>
+                <div className={`result-value ${String(result.depositAmount).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.depositAmount, currency)}</div>
               </div>
 
               <div className="result-card">
-                <div className="result-label">INTEREST EARNED</div>
-                <div className="result-value">₹{Number(result.interestEarned).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</div>
+                <div className="result-label">Interest Earned</div>
+                <div className={`result-value ${String(result.interestEarned).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.interestEarned, currency)}</div>
               </div>
             </div>
 
@@ -251,15 +271,7 @@ function FDCalculator() {
             </div>
           </div>
         )}
-      </div>
-
-      <div className="calculator-external-actions">
-        <button onClick={handleReset} className="btn-reset">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M14 8C14 11.3137 11.3137 14 8 14C4.68629 14 2 11.3137 2 8C2 4.68629 4.68629 2 8 2C9.84871 2 11.5151 2.87161 12.6 4.2M12.6 4.2V1M12.6 4.2H9.4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          Reset to Default
-        </button>
+        </div>
       </div>
 
       {/* SEO Content Section */}
@@ -485,15 +497,15 @@ function FDCalculator() {
           <h2>Related Financial Calculators</h2>
           <p>Explore our other calculators to plan your finances better:</p>
           <div className="calculator-grid">
-            <a href="/calculators/rd" className="calc-card">
+            <a href="/rd-calculator" className="calc-card">
               <h3>RD Calculator</h3>
               <p>Calculate recurring deposit maturity and returns</p>
             </a>
-            <a href="/calculators/sip" className="calc-card">
+            <a href="/sip-calculator" className="calc-card">
               <h3>SIP Calculator</h3>
               <p>Calculate mutual fund SIP returns</p>
             </a>
-            <a href="/calculators/emi" className="calc-card">
+            <a href="/emi-calculator" className="calc-card">
               <h3>EMI Calculator</h3>
               <p>Calculate loan EMI and total interest</p>
             </a>

@@ -12,7 +12,7 @@ function IncomeTaxCalculator() {
         title="Income Tax Calculator - Coming Soon | VegaKash.AI"
         description="Compare old vs new tax regime and calculate income tax for FY 2024-25. Smart tax planning tool coming soon."
         keywords="income tax calculator, tax regime comparison, tax planning, FY 2024-25, old vs new regime"
-        canonical="/calculators/income-tax"
+        canonical="/income-tax-calculator"
       />
       
       <div className="page-container">

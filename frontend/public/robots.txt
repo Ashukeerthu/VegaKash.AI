@@ -4,8 +4,8 @@
 User-agent: *
 Allow: /
 
-# Sitemap location
-Sitemap: https://vegakash.ai/sitemap.xml
+# Sitemap location (production)
+Sitemap: https://vegaktools.com/sitemap.xml
 
 # Crawl delay (optional)
 Crawl-delay: 1

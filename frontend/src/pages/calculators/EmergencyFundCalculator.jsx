@@ -1,6 +1,7 @@
 ﻿import React from 'react';
 import SEO from '../../components/SEO';
 import '../../styles/Calculator.css';
+import '../../styles/Pages.css';
 
 /**
  * Emergency Fund Calculator - Coming Soon
@@ -17,13 +18,13 @@ function EmergencyFundCalculator() {
       
       <div className="page-container">
         <div className="page-header">
-          <h1> Emergency Fund Calculator</h1>
+          <h1>🛡️ Emergency Fund Calculator</h1>
           <p>Calculate emergency fund requirements</p>
         </div>
         
         <div className="page-content">
           <div className="coming-soon-card">
-            <div className="coming-soon-icon"></div>
+            <div className="coming-soon-icon">🛡️</div>
             <h2>Coming Soon</h2>
             <p>Calculate your ideal emergency fund for financial security!</p>
             <p className="feature-list">

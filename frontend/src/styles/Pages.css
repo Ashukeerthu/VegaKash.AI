@@ -9,19 +9,28 @@
 .page-header {
   text-align: center;
   margin-bottom: 3rem;
+  padding: 2rem 1rem;
   animation: fadeInDown 0.6s ease;
 }
 
 .page-header h1 {
-  font-size: 2.5rem;
-  color: #2c3e50;
+  font-size: 3rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin-bottom: 1rem;
-  font-weight: 700;
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1.2;
 }
 
 .page-header p {
-  font-size: 1.2rem;
-  color: #7f8c8d;
+  font-size: 1.3rem;
+  color: #5a6c7d;
+  font-weight: 500;
+  max-width: 700px;
+  margin: 0 auto;
 }
 
 .page-content {
@@ -213,8 +222,14 @@
     padding: 1rem;
   }
 
+  .page-header {
+    padding: 1rem 0.5rem;
+    margin-bottom: 2rem;
+  }
+
   .page-header h1 {
     font-size: 2rem;
+    letter-spacing: -0.5px;
   }
 
   .page-header p {

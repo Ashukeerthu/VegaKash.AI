@@ -17,7 +17,7 @@ function SIPCalculator() {
         title="SIP Calculator - Mutual Fund SIP Return Calculator | VegaKash.AI"
         description="Free SIP calculator to calculate returns on your systematic investment plan. Plan your mutual fund investments and estimate future value."
         keywords="SIP calculator, mutual fund calculator, systematic investment plan, SIP returns, investment calculator"
-        canonical="/calculators/sip"
+        canonical="/sip-calculator"
         structuredData={structuredData}
       />
       

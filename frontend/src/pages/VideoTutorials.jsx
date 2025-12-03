@@ -10,6 +10,24 @@ function VideoTutorials() {
         description="Learn financial planning, budgeting, investing, and money management through our comprehensive video tutorials. Free financial education for everyone."
         keywords="financial planning videos, budgeting tutorials, investment learning, money management videos, financial education"
         canonical="/learning/videos"
+        structuredData={{
+          "@graph": [
+            {
+              "@context": "https://schema.org",
+              "@type": "WebPage",
+              "name": "Financial Planning Video Tutorials",
+              "url": "https://vegaktools.com/learning/videos"
+            },
+            {
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://vegaktools.com/" },
+                { "@type": "ListItem", "position": 2, "name": "Learning Videos", "item": "https://vegaktools.com/learning/videos" }
+              ]
+            }
+          ]
+        }}
       />
       
       <div className="page-container">

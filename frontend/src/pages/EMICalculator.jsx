@@ -22,7 +22,7 @@ function EMICalculator() {
         title="EMI Calculator - Calculate Loan EMI Instantly | VegaKash.AI"
         description="Free EMI calculator to calculate your loan EMI, total interest payable, and payment schedule. Calculate EMI for home loans, car loans, personal loans instantly."
         keywords="EMI calculator, loan EMI, home loan EMI, car loan EMI, personal loan calculator, monthly installment"
-        canonical="/calculators/emi"
+        canonical="/emi-calculator"
         structuredData={structuredData}
       />
       

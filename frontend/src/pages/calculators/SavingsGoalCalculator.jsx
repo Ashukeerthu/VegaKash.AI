@@ -1,6 +1,7 @@
 ﻿import React from 'react';
 import SEO from '../../components/SEO';
 import '../../styles/Calculator.css';
+import '../../styles/Pages.css';
 
 /**
  * Savings Goal Calculator - Coming Soon
@@ -17,13 +18,13 @@ function SavingsGoalCalculator() {
       
       <div className="page-container">
         <div className="page-header">
-          <h1> Savings Goal Calculator</h1>
+          <h1>🎯 Savings Goal Calculator</h1>
           <p>Plan monthly investments to reach financial goals</p>
         </div>
         
         <div className="page-content">
           <div className="coming-soon-card">
-            <div className="coming-soon-icon"></div>
+            <div className="coming-soon-icon">🎯</div>
             <h2>Coming Soon</h2>
             <p>Smart goal-based savings planner with timeline tracking!</p>
             <p className="feature-list">

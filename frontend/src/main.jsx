@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import AppRouter from './AppRouter.jsx'
 import './styles/index.css'
+import './styles/SEOContent.css'
 
 // Performance monitoring and optimization
 import { reportWebVitals, logPerformanceMetrics, addResourceHints } from './utils/performance'

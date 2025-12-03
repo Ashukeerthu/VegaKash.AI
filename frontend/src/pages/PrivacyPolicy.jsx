@@ -1,5 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
+import SEO from '../components/SEO';
 
 /**
  * Privacy Policy Page
@@ -8,11 +9,30 @@ import { Helmet } from 'react-helmet-async';
 function PrivacyPolicy() {
   return (
     <>
-      <Helmet>
-        <title>Privacy Policy - VegaKash.AI</title>
-        <meta name="description" content="VegaKash.AI Privacy Policy - Learn how we handle your data and protect your privacy" />
-        <meta name="robots" content="index, follow" />
-      </Helmet>
+      <SEO 
+        title="Privacy Policy - VegaKash.AI"
+        description="VegaKash.AI Privacy Policy - Learn how we handle your data and protect your privacy"
+        keywords="privacy policy, data protection, VegaKash privacy, user data, financial data security"
+        canonical="/privacy-policy"
+        structuredData={{
+          "@graph": [
+            {
+              "@context": "https://schema.org",
+              "@type": "WebPage",
+              "name": "Privacy Policy",
+              "url": "https://vegaktools.com/privacy-policy"
+            },
+            {
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://vegaktools.com/" },
+                { "@type": "ListItem", "position": 2, "name": "Privacy Policy", "item": "https://vegaktools.com/privacy-policy" }
+              ]
+            }
+          ]
+        }}
+      />
 
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
         
@@ -144,8 +164,8 @@ function PrivacyPolicy() {
                 If you have questions or concerns about this Privacy Policy or our data practices, please contact us at:
               </p>
               <div className="mt-4 p-4 bg-indigo-50 rounded-lg">
-                <p className="text-gray-800"><strong>Email:</strong> privacy@vegakash.ai</p>
-                <p className="text-gray-800"><strong>Website:</strong> https://vegakash.ai</p>
+                <p className="text-gray-800"><strong>Email:</strong> privacy@vegaktools.com</p>
+                <p className="text-gray-800"><strong>Website:</strong> https://vegaktools.com</p>
               </div>
             </section>
           </div>

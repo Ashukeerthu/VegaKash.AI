@@ -52,10 +52,16 @@ export const goalTypes = [
  * Currency options
  */
 export const currencies = [
-  { value: "INR", label: "₹ INR (Indian Rupee)", symbol: "₹" },
-  { value: "USD", label: "$ USD (US Dollar)", symbol: "$" },
-  { value: "EUR", label: "€ EUR (Euro)", symbol: "€" },
-  { value: "GBP", label: "£ GBP (British Pound)", symbol: "£" },
+  { value: "INR", label: "₹ INR (Indian Rupee)", symbol: "₹", locale: "en-IN" },
+  { value: "USD", label: "$ USD (US Dollar)", symbol: "$", locale: "en-US" },
+  { value: "EUR", label: "€ EUR (Euro)", symbol: "€", locale: "de-DE" },
+  { value: "GBP", label: "£ GBP (British Pound)", symbol: "£", locale: "en-GB" },
+  { value: "AUD", label: "A$ AUD (Australian Dollar)", symbol: "A$", locale: "en-AU" },
+  { value: "CAD", label: "C$ CAD (Canadian Dollar)", symbol: "C$", locale: "en-CA" },
+  { value: "SGD", label: "S$ SGD (Singapore Dollar)", symbol: "S$", locale: "en-SG" },
+  { value: "AED", label: "د.إ AED (UAE Dirham)", symbol: "د.إ", locale: "ar-AE" },
+  { value: "JPY", label: "¥ JPY (Japanese Yen)", symbol: "¥", locale: "ja-JP" },
+  { value: "CNY", label: "¥ CNY (Chinese Yuan)", symbol: "¥", locale: "zh-CN" },
 ];
 
 /**
@@ -67,19 +73,35 @@ export const getCurrencySymbol = (currencyCode) => {
 };
 
 /**
- * Format number with commas for Indian numbering system
+ * Get currency locale by code
  */
-export const formatIndianNumber = (num) => {
+export const getCurrencyLocale = (currencyCode) => {
+  const currency = currencies.find(c => c.value === currencyCode);
+  return currency ? currency.locale : 'en-IN';
+};
+
+/**
+ * Format number with locale-specific formatting
+ */
+export const formatNumber = (num, currencyCode = "INR") => {
   if (num === null || num === undefined) return "0";
   
   const number = parseFloat(num);
   if (isNaN(number)) return "0";
   
-  // Indian numbering system: XX,XX,XXX
-  return number.toLocaleString('en-IN', {
+  const locale = getCurrencyLocale(currencyCode);
+  return number.toLocaleString(locale, {
     maximumFractionDigits: 2,
     minimumFractionDigits: 0,
   });
+};
+
+/**
+ * @deprecated Use formatNumber instead
+ * Format number with commas for Indian numbering system
+ */
+export const formatIndianNumber = (num) => {
+  return formatNumber(num, "INR");
 };
 
 /**
@@ -87,7 +109,7 @@ export const formatIndianNumber = (num) => {
  */
 export const formatCurrency = (amount, currencyCode = "INR") => {
   const symbol = getCurrencySymbol(currencyCode);
-  return `${symbol}${formatIndianNumber(amount)}`;
+  return `${symbol}${formatNumber(amount, currencyCode)}`;
 };
 
 /**

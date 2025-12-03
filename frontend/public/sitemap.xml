@@ -1,85 +1,102 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  
-  <!-- Home Page -->
+
   <url>
-    <loc>https://vegakash.ai/</loc>
-    <lastmod>2025-12-01</lastmod>
+    <loc>https://vegaktools.com/</loc>
+    <lastmod>2025-12-03</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
-  
-  <!-- Calculators -->
+
   <url>
-    <loc>https://vegakash.ai/calculators/emi</loc>
-    <lastmod>2025-12-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <url>
-    <loc>https://vegakash.ai/calculators/sip</loc>
-    <lastmod>2025-12-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <url>
-    <loc>https://vegakash.ai/calculators/loan</loc>
-    <lastmod>2025-12-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <url>
-    <loc>https://vegakash.ai/calculators/auto-loan</loc>
-    <lastmod>2025-12-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <url>
-    <loc>https://vegakash.ai/calculators/interest</loc>
-    <lastmod>2025-12-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <url>
-    <loc>https://vegakash.ai/calculators/mortgage</loc>
-    <lastmod>2025-12-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <!-- Learning Section -->
-  <url>
-    <loc>https://vegakash.ai/learning/videos</loc>
-    <lastmod>2025-12-01</lastmod>
+    <loc>https://vegaktools.com/budget-planner</loc>
+    <lastmod>2025-12-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
-  
+
   <url>
-    <loc>https://vegakash.ai/learning/guides</loc>
-    <lastmod>2025-12-01</lastmod>
+    <loc>https://vegaktools.com/ai-budget-planner</loc>
+    <lastmod>2025-12-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
-  
+
   <url>
-    <loc>https://vegakash.ai/learning/blog</loc>
-    <lastmod>2025-12-01</lastmod>
+    <loc>https://vegaktools.com/emi-calculator</loc>
+    <lastmod>2025-12-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://vegaktools.com/sip-calculator</loc>
+    <lastmod>2025-12-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://vegaktools.com/fd-calculator</loc>
+    <lastmod>2025-12-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://vegaktools.com/rd-calculator</loc>
+    <lastmod>2025-12-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://vegaktools.com/car-loan-calculator</loc>
+    <lastmod>2025-12-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://vegaktools.com/income-tax-calculator</loc>
+    <lastmod>2025-12-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://vegaktools.com/calculators</loc>
+    <lastmod>2025-12-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://vegaktools.com/learning/blog</loc>
+    <lastmod>2025-12-03</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
-  
-  <!-- About Page -->
+
   <url>
-    <loc>https://vegakash.ai/about</loc>
-    <lastmod>2025-12-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <loc>https://vegaktools.com/learning/videos</loc>
+    <lastmod>2025-12-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
   </url>
-  
+
+  <url>
+    <loc>https://vegaktools.com/about</loc>
+    <lastmod>2025-12-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://vegaktools.com/learning/blog/create-monthly-budget-ai</loc>
+    <lastmod>2025-12-03</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
 </urlset>

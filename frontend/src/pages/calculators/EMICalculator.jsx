@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { formatSmartCurrency } from '../../utils/helpers';
 import '../../styles/Calculator.css';
 
 /**
@@ -225,26 +226,26 @@ function EMICalculator() {
 
         {result && (
           <div className="calculator-results">
-            <h2>Your EMI Breakdown</h2>
+            <h2>Your Loan Breakdown</h2>
             <div className="result-cards">
               <div className="result-card highlight">
                 <div className="result-label">Monthly EMI</div>
-                <div className="result-value">₹{Number(result.emi).toLocaleString('en-IN')}</div>
+                <div className={`result-value ${String(result.emi).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.emi)}</div>
               </div>
 
               <div className="result-card">
                 <div className="result-label">Principal Amount</div>
-                <div className="result-value">₹{Number(result.principal).toLocaleString('en-IN')}</div>
+                <div className={`result-value ${String(result.principal).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.principal)}</div>
               </div>
 
               <div className="result-card">
                 <div className="result-label">Total Interest</div>
-                <div className="result-value">₹{Number(result.totalInterest).toLocaleString('en-IN')}</div>
+                <div className={`result-value ${String(result.totalInterest).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.totalInterest)}</div>
               </div>
 
               <div className="result-card">
                 <div className="result-label">Total Amount Payable</div>
-                <div className="result-value">₹{Number(result.totalAmount).toLocaleString('en-IN')}</div>
+                <div className={`result-value ${String(result.totalAmount).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.totalAmount)}</div>
               </div>
             </div>
 
@@ -576,19 +577,19 @@ function EMICalculator() {
           <h2>Related Financial Calculators</h2>
           <p>Explore our other calculators to plan your finances better:</p>
           <div className="calculator-grid">
-            <a href="/calculators/sip" className="calc-card">
+            <a href="/sip-calculator" className="calc-card">
               <h3>SIP Calculator</h3>
               <p>Calculate returns on systematic investment plans</p>
             </a>
-            <a href="/calculators/fd" className="calc-card">
+            <a href="/fd-calculator" className="calc-card">
               <h3>FD Calculator</h3>
               <p>Compute fixed deposit maturity amount</p>
             </a>
-            <a href="/calculators/income-tax" className="calc-card">
+            <a href="/income-tax-calculator" className="calc-card">
               <h3>Income Tax Calculator</h3>
               <p>Calculate tax liability for FY 2024-25</p>
             </a>
-            <a href="/calculators/rd" className="calc-card">
+            <a href="/rd-calculator" className="calc-card">
               <h3>RD Calculator</h3>
               <p>Calculate recurring deposit returns</p>
             </a>

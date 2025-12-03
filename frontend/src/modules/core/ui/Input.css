@@ -1,0 +1,261 @@
+/**
+ * Input Component Styles - Industry Standard Design System
+ * 
+ * Features:
+ * - Label, prefix, suffix, icon support
+ * - Error and help text display
+ * - Focus, disabled, read-only states
+ * - Password toggle visibility
+ * - Multiple sizes
+ * - Full accessibility
+ */
+
+/* Input Container */
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.input-full-width {
+  width: 100%;
+}
+
+/* Input Label */
+.input-label {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.25rem;
+}
+
+.input-required {
+  color: #eb3349;
+  margin-left: 0.25rem;
+  font-size: 1.1em;
+}
+
+/* Input Wrapper */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 2px solid #e1e8ed;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.input-focused .input-wrapper {
+  border-color: #667eea;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+}
+
+.input-error .input-wrapper {
+  border-color: #eb3349;
+}
+
+.input-error.input-focused .input-wrapper {
+  box-shadow: 0 0 0 4px rgba(235, 51, 73, 0.15);
+}
+
+.input-disabled .input-wrapper {
+  background: #f5f7fa;
+  border-color: #e1e8ed;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Input Field */
+.input-field {
+  flex: 1;
+  min-width: 0;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #2c3e50;
+  border: none;
+  background: transparent;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.input-field::placeholder {
+  color: #94a3b8;
+}
+
+.input-field:disabled {
+  cursor: not-allowed;
+}
+
+.input-field[readonly] {
+  cursor: default;
+  color: #64748b;
+}
+
+/* Input Sizes */
+.input-size-small .input-field {
+  padding: 0.5rem 0.875rem;
+  font-size: 0.875rem;
+}
+
+.input-size-small .input-wrapper {
+  border-radius: 8px;
+}
+
+.input-size-medium .input-field {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+}
+
+.input-size-large .input-field {
+  padding: 1rem 1.25rem;
+  font-size: 1.125rem;
+}
+
+.input-size-large .input-wrapper {
+  border-radius: 14px;
+}
+
+/* Input Icon */
+.input-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+  color: #64748b;
+  font-size: 1.25em;
+  pointer-events: none;
+}
+
+.input-has-icon .input-field {
+  padding-left: 0;
+}
+
+/* Input Prefix/Suffix */
+.input-prefix,
+.input-suffix {
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #64748b;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.input-has-prefix .input-field {
+  padding-left: 0;
+}
+
+.input-has-suffix .input-field {
+  padding-right: 0;
+}
+
+/* Password Toggle */
+.input-password-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.25rem;
+  color: #64748b;
+  transition: color 0.2s ease;
+}
+
+.input-password-toggle:hover {
+  color: #667eea;
+}
+
+.input-password-toggle:focus {
+  outline: none;
+  color: #667eea;
+}
+
+/* Error Message */
+.input-error-message {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin: 0;
+  font-size: 0.875rem;
+  color: #eb3349;
+  font-weight: 500;
+}
+
+.input-error-message::before {
+  content: '⚠';
+  font-size: 1em;
+}
+
+/* Help Text */
+.input-help-text {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+/* Number Input - Remove Arrows */
+.input-field[type='number']::-webkit-inner-spin-button,
+.input-field[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.input-field[type='number'] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+/* Autofill Styles */
+.input-field:-webkit-autofill,
+.input-field:-webkit-autofill:hover,
+.input-field:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px white inset;
+  -webkit-text-fill-color: #2c3e50;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .input-label {
+    font-size: 0.875rem;
+  }
+  
+  .input-size-large .input-field {
+    padding: 0.875rem 1rem;
+    font-size: 1rem;
+  }
+  
+  .input-field {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}
+
+/* Accessibility - High Contrast Mode */
+@media (prefers-contrast: high) {
+  .input-wrapper {
+    border-width: 3px;
+  }
+  
+  .input-focused .input-wrapper {
+    border-width: 3px;
+    outline: 3px solid;
+  }
+}
+
+/* Accessibility - Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .input-wrapper,
+  .input-field,
+  .input-password-toggle {
+    transition: none;
+  }
+}

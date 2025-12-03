@@ -8,8 +8,8 @@ function About() {
     "@type": "Organization",
     "name": "VegaKash.AI",
     "description": "AI-powered financial planning and budget management platform",
-    "url": "https://vegakash.ai",
-    "logo": "https://vegakash.ai/logo.png",
+    "url": "https://vegaktools.com",
+    "logo": "https://vegaktools.com/logo.png",
     "sameAs": [
       "https://twitter.com/vegakashai",
       "https://facebook.com/vegakashai",
@@ -24,7 +24,19 @@ function About() {
         description="Learn about VegaKash.AI, the intelligent financial planning platform helping thousands manage their money better with AI-powered insights."
         keywords="about vegakash, financial planning platform, AI budget planner, money management tool"
         canonical="/about"
-        structuredData={structuredData}
+        structuredData={{
+          "@graph": [
+            structuredData,
+            {
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://vegaktools.com/" },
+                { "@type": "ListItem", "position": 2, "name": "About", "item": "https://vegaktools.com/about" }
+              ]
+            }
+          ]
+        }}
       />
       
       <div className="page-container">

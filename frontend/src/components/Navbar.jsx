@@ -61,8 +61,8 @@ function Navbar() {
           {/* AI Budget Planner */}
           <li className="navbar-item" role="none">
             <Link 
-              to="/" 
-              className={`navbar-link ${isActive('/') ? 'active' : ''}`}
+              to="/budget-planner" 
+              className={`navbar-link ${isActive('/budget-planner') || isActive('/ai-budget-planner') || isActive('/') ? 'active' : ''}`}
               role="menuitem"
             >
               AI Budget Planner
@@ -95,27 +95,32 @@ function Navbar() {
               </li>
               <li className="dropdown-divider"></li>
               <li role="none">
-                <Link to="/calculators/emi" className="dropdown-item" role="menuitem">
+                <Link to="/emi-calculator" className="dropdown-item" role="menuitem">
                   🏠 EMI Calculator
                 </Link>
               </li>
               <li role="none">
-                <Link to="/calculators/sip" className="dropdown-item" role="menuitem">
+                <Link to="/sip-calculator" className="dropdown-item" role="menuitem">
                   📈 SIP Calculator
                 </Link>
               </li>
               <li role="none">
-                <Link to="/calculators/fd" className="dropdown-item" role="menuitem">
+                <Link to="/fd-calculator" className="dropdown-item" role="menuitem">
                   🏦 FD Calculator
                 </Link>
               </li>
               <li role="none">
-                <Link to="/calculators/rd" className="dropdown-item" role="menuitem">
+                <Link to="/rd-calculator" className="dropdown-item" role="menuitem">
                   📅 RD Calculator
                 </Link>
               </li>
               <li role="none">
-                <Link to="/calculators/income-tax" className="dropdown-item" role="menuitem">
+                <Link to="/car-loan-calculator" className="dropdown-item" role="menuitem">
+                  🚗 Auto Loan Calculator
+                </Link>
+              </li>
+              <li role="none">
+                <Link to="/income-tax-calculator" className="dropdown-item" role="menuitem">
                   📊 Income Tax Calculator
                 </Link>
               </li>
@@ -198,8 +203,8 @@ function Navbar() {
       <div className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}>
         <ul className="mobile-menu-list">
           <li>
-            <Link to="/" className={isActive('/') ? 'active' : ''}>
-              Dashboard
+            <Link to="/budget-planner" className={isActive('/budget-planner') || isActive('/ai-budget-planner') || isActive('/') ? 'active' : ''}>
+              🤖 AI Budget Planner
             </Link>
           </li>
           
@@ -214,12 +219,13 @@ function Navbar() {
               Calculators <span className="dropdown-arrow">▼</span>
             </button>
             <ul className={`mobile-dropdown-menu ${activeDropdown === 'mobile-calculators' ? 'show' : ''}`}>
-              <li><Link to="/calculators/emi">💰 EMI Calculator</Link></li>
-              <li><Link to="/calculators/sip">📈 SIP Calculator</Link></li>
-              <li><Link to="/calculators/loan">🏦 Loan Calculator</Link></li>
-              <li><Link to="/calculators/auto-loan">🚗 Auto Loan Calculator</Link></li>
-              <li><Link to="/calculators/interest">📊 Interest Calculator</Link></li>
-              <li><Link to="/calculators/mortgage">🏠 Mortgage Calculator</Link></li>
+              <li><Link to="/calculators">🧮 All Calculators</Link></li>
+              <li><Link to="/emi-calculator">💰 EMI Calculator</Link></li>
+              <li><Link to="/sip-calculator">📈 SIP Calculator</Link></li>
+              <li><Link to="/fd-calculator">🏦 FD Calculator</Link></li>
+              <li><Link to="/rd-calculator">💵 RD Calculator</Link></li>
+              <li><Link to="/car-loan-calculator">🚗 Auto Loan Calculator</Link></li>
+              <li><Link to="/income-tax-calculator">📊 Income Tax Calculator</Link></li>
             </ul>
           </li>
           
