@@ -3,6 +3,7 @@ Pytest configuration and fixtures for VegaKash.AI tests
 """
 import pytest
 from fastapi.testclient import TestClient
+from typing import Any, Dict, Generator
 import sys
 import os
 
@@ -13,7 +14,7 @@ from main import app
 
 
 @pytest.fixture
-def client():
+def client() -> Generator[TestClient, None, None]:
     """
     Create a test client for the FastAPI application
     """
@@ -22,7 +23,7 @@ def client():
 
 
 @pytest.fixture
-def sample_financial_input():
+def sample_financial_input() -> Dict[str, Any]:
     """
     Sample financial input data for testing that matches FinancialInput schema
     """
@@ -59,7 +60,7 @@ def sample_financial_input():
 
 
 @pytest.fixture
-def minimal_financial_input():
+def minimal_financial_input() -> Dict[str, Any]:
     """
     Minimal valid financial input for testing
     """
