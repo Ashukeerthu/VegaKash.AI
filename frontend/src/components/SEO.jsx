@@ -13,7 +13,8 @@ function SEO({
   ogType = 'website',
   ogImage = '/og-image.jpg',
   canonical,
-  structuredData
+  structuredData,
+  noindex = false
 }) {
   const siteUrl = 'https://vegaktools.com';
   const fullUrl = canonical ? `${siteUrl}${canonical}` : siteUrl;
@@ -26,7 +27,7 @@ function SEO({
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords} />
       <meta name="author" content={author} />
-      <meta name="robots" content="index, follow" />
+      <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
       <meta name="language" content="English" />
       <meta name="revisit-after" content="7 days" />
       

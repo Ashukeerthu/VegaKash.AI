@@ -14,6 +14,7 @@ function EmergencyFundCalculator() {
         description="Calculate how much emergency fund you need based on your monthly expenses and financial situation. Build financial security."
         keywords="emergency fund calculator, financial security, emergency savings, 3-6 months expenses"
         canonical="/calculators/emergency-fund"
+        noindex={true}
       />
       
       <div className="page-container">

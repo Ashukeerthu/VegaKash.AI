@@ -1,0 +1,5 @@
+{
+  "host": "vegaktools.com",
+  "key": "7002fea9ae0a2f5eeee601427574483f34a5127e23018725c604defb8afdea770911779a6b8a10d3c99dbf0a296275ea77a8a5a9e8e58ab626b2ba71d71f9805",
+  "keyLocation": "https://vegaktools.com/7002fea9ae0a2f5eeee601427574483f34a5127e23018725c604defb8afdea770911779a6b8a10d3c99dbf0a296275ea77a8a5a9e8e58ab626b2ba71d71f9805.txt"
+}

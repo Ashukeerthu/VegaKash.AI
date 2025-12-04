@@ -21,6 +21,9 @@ const AutoLoanCalculator = lazy(() => import('../modules/calculators/autoloan'))
 const SavingsGoalCalculator = lazy(() => import('../pages/calculators/SavingsGoalCalculator'));
 const EmergencyFundCalculator = lazy(() => import('../pages/calculators/EmergencyFundCalculator'));
 
+// Redirect target for removed routes
+const CalculatorHub = lazy(() => import('../pages/CalculatorHub'));
+
 /**
  * Calculator Routes Configuration
  */
@@ -135,6 +138,36 @@ export const calculatorRoutes = [
   }
 ];
 
+// ==================== REDIRECT ROUTES ====================
+/**
+ * Redirect Routes for removed/non-existent calculators
+ * Redirects to Calculator Hub to avoid 404s in Google Search
+ * Note: CalculatorHub imported at top of file
+ */
+export const redirectRoutes = [
+  {
+    path: '/calculators/interest',
+    element: CalculatorHub,
+    title: 'Financial Calculators',
+    description: 'Explore all financial calculators',
+    redirect: true
+  },
+  {
+    path: '/calculators/loan',
+    element: CalculatorHub,
+    title: 'Financial Calculators',
+    description: 'Explore all financial calculators',
+    redirect: true
+  },
+  {
+    path: '/calculators/mortgage',
+    element: CalculatorHub,
+    title: 'Financial Calculators',
+    description: 'Explore all financial calculators',
+    redirect: true
+  }
+];
+
 // ==================== BUDGET ROUTES ====================
 // Budget planning modules - lazy loaded
 const MonthlyBudget = lazy(() => import('../modules/budgets/monthly'));
@@ -237,7 +270,7 @@ export const blogRoutes = [
 
 // ==================== CONTENT ROUTES ====================
 // Static pages and content
-const CalculatorHub = lazy(() => import('../pages/CalculatorHub'));
+// Note: CalculatorHub already imported at top for redirect routes
 const About = lazy(() => import('../pages/About'));
 const VideoTutorials = lazy(() => import('../pages/VideoTutorials'));
 const PrivacyPolicy = lazy(() => import('../pages/PrivacyPolicy'));
@@ -293,6 +326,7 @@ export const contentRoutes = [
 export const allRoutes = [
   ...budgetRoutes,
   ...calculatorRoutes,
+  ...redirectRoutes,
   ...blogRoutes,
   ...contentRoutes
 ];

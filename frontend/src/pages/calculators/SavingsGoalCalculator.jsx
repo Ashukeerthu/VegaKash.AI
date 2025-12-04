@@ -14,6 +14,7 @@ function SavingsGoalCalculator() {
         description="Plan monthly investments to reach your financial goals. Calculate how much to save for dream purchases, education, or retirement."
         keywords="savings goal calculator, financial planning, goal-based investment, monthly savings planner"
         canonical="/calculators/savings-goal"
+        noindex={true}
       />
       
       <div className="page-container">
