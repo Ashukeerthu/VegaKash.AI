@@ -1,16 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { sampleData, goalTypes, currencies } from '../utils/helpers';
+import { getCountries, getLifestyleOptions } from '../services/budgetPlannerApi';
+import CitySelector from './CitySelector';
 
 /**
- * Financial Form Component
+ * Financial Form Component - V1.2 Enhanced
  * Main input form for user's financial data
+ * Now includes: CitySelector, Household info, Lifestyle, Multiple goals
  */
 function FinancialForm({ onCalculate, onReset, isCalculating }) {
-  // Form state
+  // Form state - V1.2 Enhanced
   const [formData, setFormData] = useState({
     currency: 'INR',
     monthly_income_primary: '',
     monthly_income_additional: '',
+    
+    // V1.2: Location data
+    country: '',
+    state: '',
+    city: '',
+    cityTier: 'other',
+    col_multiplier: 1.0,
+    
+    // V1.2: Household & Lifestyle
+    family_size: 1,
+    lifestyle: 'moderate',
+    
+    // V1.2: Separated Fixed and Variable Expenses
+    fixed_expenses: {
+      housing_rent: '',
+      utilities: '',
+      insurance: '',
+      medical: '',
+      other_fixed: '',
+    },
+    variable_expenses: {
+      groceries_food: '',
+      transport: '',
+      subscriptions: '',
+      entertainment: '',
+      shopping: '',
+      dining_out: '',
+      other_variable: '',
+    },
+    
+    // Legacy expenses (for compatibility)
     expenses: {
       housing_rent: '',
       groceries_food: '',
@@ -21,6 +55,7 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
       subscriptions: '',
       others: '',
     },
+    
     goals: {
       monthly_savings_target: '',
       emergency_fund_target: '',
@@ -29,6 +64,20 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
     },
     loans: [],
   });
+  
+  // V1.2: Location & Lifestyle state
+  const [countriesData, setCountriesData] = useState(null);
+  const [availableStates, setAvailableStates] = useState([]);
+  const [availableCities, setAvailableCities] = useState([]);
+  const [lifestyleOptions, setLifestyleOptions] = useState([
+    { value: 'minimal', label: 'Minimal', description: 'Essential spending only' },
+    { value: 'moderate', label: 'Moderate', description: 'Balanced lifestyle' },
+    { value: 'comfort', label: 'Comfort', description: 'Comfortable living' },
+    { value: 'premium', label: 'Premium', description: 'Luxury lifestyle' }
+  ]);
+  
+  // V1.2: Multiple savings goals
+  const [savingsGoals, setSavingsGoals] = useState([]);
 
   // Multiple loans state
   const [loans, setLoans] = useState([]);
@@ -43,14 +92,125 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
   });
   const [editingLoanIndex, setEditingLoanIndex] = useState(null);
   const [errors, setErrors] = useState({});
+  
+  // V1.2: Load countries and lifestyle options on mount
+  useEffect(() => {
+    const loadOptions = async () => {
+      try {
+        const [countriesResponse, lifestyleResponse] = await Promise.all([
+          getCountries(),
+          getLifestyleOptions()
+        ]);
+        
+        // Transform countries data
+        if (countriesResponse && countriesResponse.countries) {
+          const transformed = {};
+          countriesResponse.countries.forEach(country => {
+            transformed[country.name] = {
+              code: country.code,
+              currency: country.currency,
+              states: getDefaultStatesForCountry(country.name)
+            };
+          });
+          setCountriesData({ countries: transformed });
+        }
+        
+        if (lifestyleResponse && lifestyleResponse.lifestyles) {
+          setLifestyleOptions(lifestyleResponse.lifestyles);
+        }
+      } catch (error) {
+        console.error('Error loading options:', error);
+      }
+    };
+    
+    loadOptions();
+  }, []);
+  
+  // V1.2: Helper function for default states/cities
+  const getDefaultStatesForCountry = (countryName) => {
+    const statesMap = {
+      'India': {
+        'Maharashtra': ['Mumbai', 'Pune', 'Nagpur'],
+        'Karnataka': ['Bangalore', 'Mysore'],
+        'Tamil Nadu': ['Chennai', 'Coimbatore'],
+        'Delhi': ['New Delhi'],
+      },
+      'United States': {
+        'California': ['San Francisco', 'Los Angeles'],
+        'New York': ['New York City', 'Buffalo'],
+        'Texas': ['Austin', 'Houston', 'Dallas'],
+      },
+    };
+    return statesMap[countryName] || { 'State 1': ['City 1'] };
+  };
+  
+  // V1.2: Handle location changes
+  const handleLocationChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    
+    if (field === 'country') {
+      setFormData(prev => ({ ...prev, state: '', city: '' }));
+      if (countriesData && countriesData.countries[value]) {
+        setAvailableStates(Object.keys(countriesData.countries[value].states));
+      }
+    } else if (field === 'state') {
+      setFormData(prev => ({ ...prev, city: '' }));
+      if (countriesData && countriesData.countries[formData.country]) {
+        setAvailableCities(countriesData.countries[formData.country].states[value] || []);
+      }
+    }
+  };
+  
+  // V1.2: Handle savings goal management
+  const addSavingsGoal = () => {
+    setSavingsGoals([...savingsGoals, {
+      name: '',
+      target: '',
+      timeline: '',
+      priority: 3
+    }]);
+  };
+  
+  const updateSavingsGoal = (index, field, value) => {
+    const updated = [...savingsGoals];
+    updated[index][field] = value;
+    setSavingsGoals(updated);
+  };
+  
+  const removeSavingsGoal = (index) => {
+    setSavingsGoals(savingsGoals.filter((_, i) => i !== index));
+  };
 
   /**
-   * Handle input changes
+   * Handle input changes - V1.2 Enhanced
    */
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     
-    if (name.startsWith('expenses.')) {
+    // V1.2: Handle fixed_expenses
+    if (name.startsWith('fixed_expenses.')) {
+      const expenseKey = name.replace('fixed_expenses.', '');
+      setFormData(prev => ({
+        ...prev,
+        fixed_expenses: {
+          ...prev.fixed_expenses,
+          [expenseKey]: value,
+        },
+      }));
+    }
+    // V1.2: Handle variable_expenses
+    else if (name.startsWith('variable_expenses.')) {
+      const expenseKey = name.replace('variable_expenses.', '');
+      setFormData(prev => ({
+        ...prev,
+        variable_expenses: {
+          ...prev.variable_expenses,
+          [expenseKey]: value,
+        },
+      }));
+    }
+    // Legacy: Handle expenses (for backward compatibility)
+    else if (name.startsWith('expenses.')) {
       const expenseKey = name.replace('expenses.', '');
       setFormData(prev => ({
         ...prev,
@@ -224,22 +384,66 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
       currency: formData.currency,
       monthly_income_primary: parseFloat(formData.monthly_income_primary) || 0,
       monthly_income_additional: parseFloat(formData.monthly_income_additional) || 0,
-      expenses: {
-        housing_rent: parseFloat(formData.expenses.housing_rent) || 0,
-        groceries_food: parseFloat(formData.expenses.groceries_food) || 0,
-        transport: parseFloat(formData.expenses.transport) || 0,
-        utilities: parseFloat(formData.expenses.utilities) || 0,
-        insurance: parseFloat(formData.expenses.insurance) || 0,
-        entertainment: parseFloat(formData.expenses.entertainment) || 0,
-        subscriptions: parseFloat(formData.expenses.subscriptions) || 0,
-        others: parseFloat(formData.expenses.others) || 0,
+      
+      // V1.2: Location data with COL multiplier
+      country: formData.country || null,
+      state: formData.state || null,
+      city: formData.city || null,
+      city_tier: formData.cityTier || 'other',
+      col_multiplier: parseFloat(formData.col_multiplier) || 1.0,
+      
+      // V1.2: Household & Lifestyle
+      family_size: parseInt(formData.family_size) || 1,
+      lifestyle: formData.lifestyle || 'moderate',
+      
+      // V1.2: Fixed expenses
+      fixed_expenses: {
+        housing_rent: parseFloat(formData.fixed_expenses?.housing_rent || formData.expenses?.housing_rent) || 0,
+        utilities: parseFloat(formData.fixed_expenses?.utilities || formData.expenses?.utilities) || 0,
+        insurance: parseFloat(formData.fixed_expenses?.insurance || formData.expenses?.insurance) || 0,
+        medical: parseFloat(formData.fixed_expenses?.medical) || 0,
+        other_fixed: parseFloat(formData.fixed_expenses?.other_fixed || formData.expenses?.others) || 0,
       },
+      
+      // V1.2: Variable expenses
+      variable_expenses: {
+        groceries_food: parseFloat(formData.variable_expenses?.groceries_food || formData.expenses?.groceries_food) || 0,
+        transport: parseFloat(formData.variable_expenses?.transport || formData.expenses?.transport) || 0,
+        subscriptions: parseFloat(formData.variable_expenses?.subscriptions || formData.expenses?.subscriptions) || 0,
+        entertainment: parseFloat(formData.variable_expenses?.entertainment || formData.expenses?.entertainment) || 0,
+        shopping: parseFloat(formData.variable_expenses?.shopping) || 0,
+        dining_out: parseFloat(formData.variable_expenses?.dining_out) || 0,
+        other_variable: parseFloat(formData.variable_expenses?.other_variable) || 0,
+      },
+      
+      // Legacy expenses (for backward compatibility) - map from fixed/variable to legacy format
+      expenses: {
+        housing_rent: parseFloat(formData.fixed_expenses?.housing_rent || formData.expenses?.housing_rent) || 0,
+        groceries_food: parseFloat(formData.variable_expenses?.groceries_food || formData.expenses?.groceries_food) || 0,
+        transport: parseFloat(formData.variable_expenses?.transport || formData.expenses?.transport) || 0,
+        utilities: parseFloat(formData.fixed_expenses?.utilities || formData.expenses?.utilities) || 0,
+        insurance: parseFloat(formData.fixed_expenses?.insurance || formData.expenses?.insurance) || 0,
+        entertainment: parseFloat(formData.variable_expenses?.entertainment || formData.expenses?.entertainment) || 0,
+        subscriptions: parseFloat(formData.variable_expenses?.subscriptions || formData.expenses?.subscriptions) || 0,
+        others: parseFloat(formData.fixed_expenses?.other_fixed || formData.variable_expenses?.other_variable || formData.expenses?.others) || 0,
+      },
+      
+      // Goals (legacy format)
       goals: {
         monthly_savings_target: parseFloat(formData.goals.monthly_savings_target) || 0,
         emergency_fund_target: parseFloat(formData.goals.emergency_fund_target) || 0,
         primary_goal_type: formData.goals.primary_goal_type || null,
         primary_goal_amount: formData.goals.primary_goal_amount ? parseFloat(formData.goals.primary_goal_amount) : null,
       },
+      
+      // V1.2: Multiple savings goals
+      savings_goals: savingsGoals.map(goal => ({
+        name: goal.name,
+        target: parseFloat(goal.target) || 0,
+        timeline: parseInt(goal.timeline) || 12,
+        priority: parseInt(goal.priority) || 3,
+      })).filter(g => g.target > 0),
+      
       loans: loans.map(loan => {
         const baseLoan = {
           name: loan.name,
@@ -422,9 +626,255 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
             </div>
           </div>
         </div>
-
-        {/* Expenses Section */}
+        
+        {/* V1.2: City Selector Section (Enhanced with CitySelector Component) */}
+        <CitySelector
+          selectedCountry={formData.country}
+          selectedState={formData.state}
+          selectedCity={formData.city}
+          selectedTier={formData.cityTier}
+          colMultiplier={formData.col_multiplier || 1.0}
+          onChange={(cityData) => {
+            setFormData(prev => ({
+              ...prev,
+              country: cityData.country,
+              state: cityData.state,
+              city: cityData.city,
+              cityTier: cityData.city_tier,
+              col_multiplier: cityData.col_multiplier
+            }));
+          }}
+          disabled={isCalculating}
+        />
+        
+        {/* V1.2: Household & Lifestyle Section */}
         <div className="form-section-inner">
+          <h3>👥 Household & Lifestyle</h3>
+          
+          <div className="form-row-2">
+            <div className="form-group">
+              <label htmlFor="family_size">Family Size</label>
+              <input
+                type="number"
+                id="family_size"
+                name="family_size"
+                value={formData.family_size}
+                onChange={handleInputChange}
+                min="1"
+                max="10"
+                className="form-input"
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="lifestyle">Lifestyle</label>
+              <select
+                id="lifestyle"
+                name="lifestyle"
+                value={formData.lifestyle}
+                onChange={handleInputChange}
+                className="form-input"
+              >
+                {lifestyleOptions.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label} - {option.description}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* V1.2: Fixed Expenses Section */}
+        <div className="form-section-inner">
+          <h3>🏠 Fixed Expenses</h3>
+          <p className="section-description">Regular monthly expenses that don't change much</p>
+          
+          <div className="form-row-3">
+            <div className="form-group">
+              <label htmlFor="fixed_housing_rent">
+                Rent/Mortgage
+                <span className="tooltip-icon" title="Enter your monthly rent OR home loan EMI (not both). This is your total monthly housing cost.">ℹ️</span>
+              </label>
+              <input
+                type="number"
+                id="fixed_housing_rent"
+                name="fixed_expenses.housing_rent"
+                value={formData.fixed_expenses.housing_rent}
+                onChange={handleInputChange}
+                placeholder="e.g., 20000"
+                min="0"
+                className="form-input"
+              />
+              <small className="field-helper">Monthly rent or home loan EMI</small>
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="fixed_utilities">Utilities</label>
+              <input
+                type="number"
+                id="fixed_utilities"
+                name="fixed_expenses.utilities"
+                value={formData.fixed_expenses.utilities}
+                onChange={handleInputChange}
+                placeholder="e.g., 3000"
+                min="0"
+                className="form-input"
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="fixed_insurance">Insurance</label>
+              <input
+                type="number"
+                id="fixed_insurance"
+                name="fixed_expenses.insurance"
+                value={formData.fixed_expenses.insurance}
+                onChange={handleInputChange}
+                placeholder="e.g., 5000"
+                min="0"
+                className="form-input"
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="fixed_medical">Medical</label>
+              <input
+                type="number"
+                id="fixed_medical"
+                name="fixed_expenses.medical"
+                value={formData.fixed_expenses.medical}
+                onChange={handleInputChange}
+                placeholder="e.g., 2000"
+                min="0"
+                className="form-input"
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="fixed_other">Other Fixed</label>
+              <input
+                type="number"
+                id="fixed_other"
+                name="fixed_expenses.other_fixed"
+                value={formData.fixed_expenses.other_fixed}
+                onChange={handleInputChange}
+                placeholder="e.g., 1000"
+                min="0"
+                className="form-input"
+              />
+            </div>
+          </div>
+        </div>
+        
+        {/* V1.2: Variable Expenses Section */}
+        <div className="form-section-inner">
+          <h3>💳 Variable Expenses</h3>
+          <p className="section-description">Flexible monthly expenses that can vary</p>
+          
+          <div className="form-row-3">
+            <div className="form-group">
+              <label htmlFor="var_groceries">Groceries</label>
+              <input
+                type="number"
+                id="var_groceries"
+                name="variable_expenses.groceries_food"
+                value={formData.variable_expenses.groceries_food}
+                onChange={handleInputChange}
+                placeholder="e.g., 15000"
+                min="0"
+                className="form-input"
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="var_transport">Transport</label>
+              <input
+                type="number"
+                id="var_transport"
+                name="variable_expenses.transport"
+                value={formData.variable_expenses.transport}
+                onChange={handleInputChange}
+                placeholder="e.g., 5000"
+                min="0"
+                className="form-input"
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="var_subscriptions">Subscriptions</label>
+              <input
+                type="number"
+                id="var_subscriptions"
+                name="variable_expenses.subscriptions"
+                value={formData.variable_expenses.subscriptions}
+                onChange={handleInputChange}
+                placeholder="e.g., 2000"
+                min="0"
+                className="form-input"
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="var_entertainment">Entertainment</label>
+              <input
+                type="number"
+                id="var_entertainment"
+                name="variable_expenses.entertainment"
+                value={formData.variable_expenses.entertainment}
+                onChange={handleInputChange}
+                placeholder="e.g., 3000"
+                min="0"
+                className="form-input"
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="var_shopping">Shopping</label>
+              <input
+                type="number"
+                id="var_shopping"
+                name="variable_expenses.shopping"
+                value={formData.variable_expenses.shopping}
+                onChange={handleInputChange}
+                placeholder="e.g., 5000"
+                min="0"
+                className="form-input"
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="var_dining">Dining Out</label>
+              <input
+                type="number"
+                id="var_dining"
+                name="variable_expenses.dining_out"
+                value={formData.variable_expenses.dining_out}
+                onChange={handleInputChange}
+                placeholder="e.g., 4000"
+                min="0"
+                className="form-input"
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="var_other">Other Variable</label>
+              <input
+                type="number"
+                id="var_other"
+                name="variable_expenses.other_variable"
+                value={formData.variable_expenses.other_variable}
+                onChange={handleInputChange}
+                placeholder="e.g., 2000"
+                min="0"
+                className="form-input"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Legacy Expenses Section (Hidden, kept for compatibility) */}
+        <div className="form-section-inner" style={{display: 'none'}}>
           <h3>📊 Monthly Expenses</h3>
           
           <div className="form-row-3">
@@ -621,6 +1071,118 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
             </div>
             )}
           </div>
+        </div>
+        
+        {/* V1.2: Multiple Savings Goals */}
+        <div className="form-section-inner">
+          <h3>🎯 Savings Goals (V1.2)</h3>
+          <p className="section-description">Add up to 5 specific savings goals with timelines</p>
+          
+          {savingsGoals.length > 0 && (
+            <div style={{ marginBottom: '1.5rem' }}>
+              {savingsGoals.map((goal, index) => (
+                <div key={index} style={{
+                  background: 'var(--bg-secondary, #f8fafc)',
+                  padding: '1rem',
+                  borderRadius: '8px',
+                  marginBottom: '1rem',
+                  border: '1px solid var(--border-color, #e2e8f0)'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                    <strong>Goal #{index + 1}</strong>
+                    <button
+                      type="button"
+                      onClick={() => removeSavingsGoal(index)}
+                      style={{
+                        background: '#fef2f2',
+                        color: '#dc2626',
+                        border: 'none',
+                        padding: '0.25rem 0.75rem',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '0.875rem'
+                      }}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  
+                  <div className="form-row-2">
+                    <div className="form-group">
+                      <label>Goal Name</label>
+                      <input
+                        type="text"
+                        value={goal.name}
+                        onChange={(e) => updateSavingsGoal(index, 'name', e.target.value)}
+                        placeholder="e.g., Emergency Fund"
+                        className="form-input"
+                      />
+                    </div>
+                    
+                    <div className="form-group">
+                      <label>Target Amount</label>
+                      <input
+                        type="number"
+                        value={goal.target}
+                        onChange={(e) => updateSavingsGoal(index, 'target', e.target.value)}
+                        placeholder="e.g., 500000"
+                        min="0"
+                        className="form-input"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="form-row-2">
+                    <div className="form-group">
+                      <label>Timeline (Months)</label>
+                      <input
+                        type="number"
+                        value={goal.timeline}
+                        onChange={(e) => updateSavingsGoal(index, 'timeline', e.target.value)}
+                        placeholder="e.g., 24"
+                        min="1"
+                        className="form-input"
+                      />
+                    </div>
+                    
+                    <div className="form-group">
+                      <label>Priority (1-5)</label>
+                      <select
+                        value={goal.priority}
+                        onChange={(e) => updateSavingsGoal(index, 'priority', e.target.value)}
+                        className="form-input"
+                      >
+                        <option value="5">5 - Highest</option>
+                        <option value="4">4 - High</option>
+                        <option value="3">3 - Medium</option>
+                        <option value="2">2 - Low</option>
+                        <option value="1">1 - Lowest</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          
+          {savingsGoals.length < 5 && (
+            <button
+              type="button"
+              onClick={addSavingsGoal}
+              style={{
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                color: 'white',
+                border: 'none',
+                padding: '0.75rem 1.5rem',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '1rem',
+                fontWeight: '600'
+              }}
+            >
+              + Add Savings Goal ({savingsGoals.length}/5)
+            </button>
+          )}
         </div>
 
         {/* Loans Section */}

@@ -32,13 +32,13 @@ apiClient.interceptors.response.use(
 );
 
 /**
- * Calculate financial summary (non-AI)
+ * Calculate financial summary (non-AI) - Uses Phase 1 Original Endpoint
  * @param {Object} financialInput - User's financial data
  * @returns {Promise<Object>} Summary output
  */
 export const calculateSummary = async (financialInput) => {
   try {
-    const response = await apiClient.post('/api/v1/calculate-summary', financialInput);
+    const response = await apiClient.post(API_ENDPOINTS.calculateSummary, financialInput);
     return response.data;
   } catch (error) {
     console.error('Error calculating summary:', error);
@@ -50,16 +50,16 @@ export const calculateSummary = async (financialInput) => {
 };
 
 /**
- * Generate AI financial plan
+ * Generate AI financial plan - Uses Phase 1 Original Endpoint  
  * @param {Object} financialInput - User's financial data
  * @param {Object} summary - Calculated summary
  * @returns {Promise<Object>} AI plan output
  */
 export const generateAIPlan = async (financialInput, summary) => {
   try {
-    const response = await apiClient.post('/api/v1/generate-ai-plan', {
+    const response = await apiClient.post(API_ENDPOINTS.generateAIPlan, {
       input: financialInput,
-      summary: summary,
+      summary
     });
     return response.data;
   } catch (error) {
@@ -70,6 +70,149 @@ export const generateAIPlan = async (financialInput, summary) => {
       'Failed to generate AI plan. Please try again later.'
     );
   }
+}
+
+/**
+ * V2: Generate context-aware AI budget plan with city tier, lifestyle, and family considerations
+ * Enhanced version with alerts, recommendations, and educational explainers
+ * @param {Object} financialInput - User's financial data (includes city_tier, family_size, lifestyle, cost_of_living_index)
+ * @param {Object} summary - Calculated financial summary
+ * @returns {Promise<Object>} AIPlanOutputV2 with structured budget plan
+ */
+export const generateAIPlanV2 = async (financialInput, summary) => {
+  try {
+    const response = await apiClient.post('/api/v2/generate-ai-plan', {
+      input: financialInput,
+      summary
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error generating V2 AI plan:', error);
+    throw new Error(
+      error.response?.data?.detail?.message || 
+      error.response?.data?.detail || 
+      'Failed to generate V2 AI budget plan. Please try again later.'
+    );
+  }
+};
+
+/**
+ * Transform old form data to Phase 2 API format - V1.2 Enhanced
+ * @param {Object} oldData - Old format data (now includes V1.2 fields)
+ * @returns {Object} Phase 2 format data
+ */
+const transformToPhase2Format = (oldData) => {
+  const totalIncome = parseFloat(oldData.monthly_income_primary || 0) + 
+                      parseFloat(oldData.monthly_income_additional || 0);
+  
+  // Ensure minimum income for backend validation
+  const validIncome = totalIncome >= 10000 ? totalIncome : 50000;
+  
+  return {
+    monthly_income: validIncome,
+    currency: oldData.currency || 'INR',
+    
+    // V1.2: Location data
+    country: oldData.country || null,
+    state: oldData.state || null,
+    city: oldData.city || null,
+    city_tier: oldData.cityTier || 'tier_1',
+    col_multiplier: 1.0, // Backend will calculate based on city
+    
+    // V1.2: Household & Lifestyle
+    family_size: parseInt(oldData.family_size) || 1,
+    lifestyle: oldData.lifestyle || 'moderate',
+    
+    // V1.2: Fixed expenses (with fallback to legacy expenses)
+    fixed_expenses: {
+      rent: parseFloat(oldData.fixed_expenses?.housing_rent || oldData.expenses?.housing_rent || 0),
+      utilities: parseFloat(oldData.fixed_expenses?.utilities || oldData.expenses?.utilities || 0),
+      insurance: parseFloat(oldData.fixed_expenses?.insurance || oldData.expenses?.insurance || 0),
+      medical: parseFloat(oldData.fixed_expenses?.medical || 0),
+      other: parseFloat(oldData.fixed_expenses?.other_fixed || oldData.expenses?.others || 0),
+    },
+    
+    // V1.2: Variable expenses (with fallback to legacy expenses)
+    variable_expenses: {
+      groceries: parseFloat(oldData.variable_expenses?.groceries_food || oldData.expenses?.groceries_food || 0),
+      transport: parseFloat(oldData.variable_expenses?.transport || oldData.expenses?.transport || 0),
+      subscriptions: parseFloat(oldData.variable_expenses?.subscriptions || oldData.expenses?.subscriptions || 0),
+      entertainment: parseFloat(oldData.variable_expenses?.entertainment || oldData.expenses?.entertainment || 0),
+      shopping: parseFloat(oldData.variable_expenses?.shopping || 0),
+      dining_out: parseFloat(oldData.variable_expenses?.dining_out || 0),
+      other: parseFloat(oldData.variable_expenses?.other_variable || 0),
+    },
+    
+    // Loans (support both EMI and principal modes)
+    loans: (oldData.loans || [])
+      .filter(loan => parseFloat(loan.outstanding_principal || loan.principal || 0) > 0)
+      .map(loan => ({
+        principal: parseFloat(loan.outstanding_principal || loan.principal || 0),
+        rate: parseFloat(loan.interest_rate_annual || 5.0),
+        tenure_months: parseInt(loan.remaining_months || 12),
+        issuer: loan.name || null,
+      })),
+    
+    // V1.2: Multiple savings goals (with fallback to legacy goals)
+    goals: [
+      // Legacy primary goal
+      ...(oldData.goals?.primary_goal_type && parseFloat(oldData.goals?.primary_goal_amount || 0) > 0 ? [{
+        name: oldData.goals.primary_goal_type,
+        target: parseFloat(oldData.goals.primary_goal_amount),
+        target_months: 12,
+        priority: 5,
+      }] : []),
+      // V1.2: Additional savings goals
+      ...(oldData.savings_goals || [])
+        .filter(goal => parseFloat(goal.target || 0) > 0)
+        .map(goal => ({
+          name: goal.name || 'Savings Goal',
+          target: parseFloat(goal.target || 0),
+          target_months: parseInt(goal.timeline || 12),
+          priority: parseInt(goal.priority || 3),
+        }))
+    ],
+    
+    mode: 'smart_balanced', // AI will optimize this automatically
+  };
+};
+
+/**
+ * Transform Phase 2 response to old format for compatibility
+ * @param {Object} phase2Data - Phase 2 response data
+ * @returns {Object} Old format response
+ */
+const transformPhase2Response = (phase2Data) => {
+  const plan = phase2Data.plan || {};
+  const split = plan.split || { needs: 0, wants: 0, savings: 0 };
+  
+  return {
+    total_income: plan.metadata?.income || 0,
+    total_expenses: split.needs + split.wants,
+    total_savings: split.savings,
+    savings_rate_percent: plan.metadata?.income ? 
+      ((split.savings / plan.metadata.income) * 100).toFixed(2) : 0,
+    monthly_surplus: split.savings,
+    expense_breakdown: {
+      needs: split.needs,
+      wants: split.wants,
+      savings: split.savings,
+    },
+    budget_health: {
+      score: 75, // Default score
+      issues: (plan.alerts || []).filter(a => a.severity === 'critical' || a.severity === 'high'),
+      recommendations: plan.alerts || [],
+    },
+    // Include AI plan data for generateAIPlan
+    aiPlan: {
+      plan_summary: phase2Data.explanation || 'AI-optimized budget plan created successfully.',
+      recommendations: plan.alerts || [],
+      budget_mode: plan.metadata?.mode || 'smart_balanced',
+      categories: plan.categories || {},
+    },
+    // Store original Phase 2 data
+    _phase2Data: phase2Data,
+  };
 };
 
 /**

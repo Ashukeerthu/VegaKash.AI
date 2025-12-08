@@ -10,6 +10,80 @@ import './CalculatorHub.css';
 function CalculatorHub() {
   const calculators = [
     // TOP PRIORITY - HIGHEST SEO VALUE
+    // === Global Calculators ===
+    {
+      id: 'mortgage-us',
+      title: 'US Mortgage Calculator',
+      description: 'Calculate US mortgage monthly payment, total interest, and amortization.',
+      icon: '🇺🇸',
+      category: 'Global',
+      priority: 'high',
+      route: '/calculators/mortgage-us'
+    },
+    {
+      id: 'loan-payment-us',
+      title: 'US Loan Payment Calculator',
+      description: 'Calculate US loan monthly payment and total interest.',
+      icon: '🇺🇸',
+      category: 'Global',
+      priority: 'high',
+      route: '/calculators/loan-payment-us'
+    },
+    {
+      id: 'credit-card-payoff-us',
+      title: 'US Credit Card Payoff',
+      description: 'Calculate months to pay off and total interest for US credit card debt.',
+      icon: '🇺🇸',
+      category: 'Global',
+      priority: 'high',
+      route: '/calculators/credit-card-payoff-us'
+    },
+    {
+      id: '401k-retirement-us',
+      title: 'US 401(k) Retirement',
+      description: 'Estimate 401k retirement savings growth for US users.',
+      icon: '🇺🇸',
+      category: 'Global',
+      priority: 'high',
+      route: '/calculators/401k-retirement-us'
+    },
+    {
+      id: 'savings-growth-us',
+      title: 'US Savings Growth',
+      description: 'Estimate future value of US savings with regular deposits.',
+      icon: '🇺🇸',
+      category: 'Global',
+      priority: 'high',
+      route: '/calculators/savings-growth-us'
+    },
+    {
+      id: 'vat-uk',
+      title: 'UK VAT Calculator',
+      description: 'Calculate VAT and total price for UK purchases.',
+      icon: '🇬🇧',
+      category: 'Global',
+      priority: 'high',
+      route: '/calculators/vat-uk'
+    },
+    {
+      id: 'mortgage-affordability-uk',
+      title: 'UK Mortgage Affordability',
+      description: 'Estimate how much mortgage you can afford in the UK.',
+      icon: '🇬🇧',
+      category: 'Global',
+      priority: 'high',
+      route: '/calculators/mortgage-affordability-uk'
+    },
+    {
+      id: 'savings-interest-uk',
+      title: 'UK Savings Interest',
+      description: 'Estimate interest earned on UK savings accounts.',
+      icon: '🇬🇧',
+      category: 'Global',
+      priority: 'high',
+      route: '/calculators/savings-interest-uk'
+    },
+    // === India/Default Calculators ===
     {
       id: 'emi',
       title: 'EMI Calculator',

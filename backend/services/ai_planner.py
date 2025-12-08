@@ -9,7 +9,10 @@ import re
 import time
 from typing import Optional, Dict, Any, List
 from openai import OpenAI, OpenAIError, RateLimitError, APITimeoutError, APIConnectionError
-from schemas import FinancialInput, SummaryOutput, AIPlanOutput
+from schemas import (
+    FinancialInput, SummaryOutput, AIPlanOutput,
+    AIPlanOutputV2, AlertV2, MetadataV2, TotalsV2, SplitV2, ExplainersV2, ExpenseBreakdownV2
+)
 # from services.cache import get_cached_plan, set_cached_plan  # Temporarily disabled
 
 # Configure logging
@@ -22,6 +25,24 @@ AI_RETRY_DELAY = 2  # seconds
 AI_TIMEOUT = 30  # seconds
 AI_MAX_TOKENS = 1500  # Reduced from 2000 for cost optimization
 AI_TEMPERATURE = 0.3  # Lower temperature for more predictable outputs
+
+
+# V2: AI Budget Planner Configuration
+AI_MAX_TOKENS_V2 = 2000  # V2 needs more tokens for detailed breakdown
+
+# V2: City Tier Budget Split Rules (Modified 40-30-20)
+TIER_SPLITS = {
+    "Tier 1": {"needs": 45, "wants": 25, "savings": 30},    # Metro: High COL
+    "Tier 2": {"needs": 40, "wants": 30, "savings": 30},    # City: Moderate COL
+    "Tier 3": {"needs": 35, "wants": 30, "savings": 35},    # Town: Lower COL
+}
+
+# V2: Budget Plan Modes
+PLAN_MODES = {
+    "basic": "Standard budget following city tier guidelines",
+    "aggressive": "Maximize savings to 40%+ for goal achievement",
+    "smart": "Balance between comfort (wants) and financial security (savings)"
+}
 
 
 def extract_json_from_text(text: str) -> Optional[Dict[Any, Any]]:
@@ -135,6 +156,85 @@ def create_fallback_response() -> AIPlanOutput:
     )
 
 
+def create_fallback_response_v2(income: float) -> AIPlanOutputV2:
+    """
+    V2: Create a fallback budget plan when AI fails
+    
+    Args:
+        income: Monthly income for calculations
+        
+    Returns:
+        Default AIPlanOutputV2 with conservative estimates
+    """
+    needs = int(income * 0.40)
+    wants = int(income * 0.30)
+    savings = int(income * 0.30)
+    
+    return AIPlanOutputV2(
+        plan_mode="basic",
+        metadata=MetadataV2(
+            city="Unknown",
+            city_tier="Tier 2",
+            col_multiplier=1.0,
+            reasoning_summary="Default fallback plan using conservative 40-30-30 split"
+        ),
+        totals=TotalsV2(
+            income=int(income),
+            total_expenses=int(income * 0.70),
+            net_savings=int(income * 0.30),
+            savings_rate_percent=30.0
+        ),
+        split=SplitV2(
+            needs_percent=40,
+            wants_percent=30,
+            savings_percent=30
+        ),
+        breakdown=ExpenseBreakdownV2(
+            needs={
+                "rent": int(needs * 0.40),
+                "groceries": int(needs * 0.25),
+                "utilities": int(needs * 0.10),
+                "transport": int(needs * 0.10),
+                "emi": 0,
+                "medical": int(needs * 0.10),
+                "insurance": int(needs * 0.05),
+                "other_needs": 0
+            },
+            wants={
+                "dining": int(wants * 0.30),
+                "entertainment": int(wants * 0.25),
+                "shopping": int(wants * 0.25),
+                "subscriptions": int(wants * 0.10),
+                "other_wants": int(wants * 0.10)
+            },
+            savings={
+                "emergency": int(savings * 0.40),
+                "sips_investment": int(savings * 0.40),
+                "fd_rd": int(savings * 0.15),
+                "goals_saving": int(savings * 0.05)
+            }
+        ),
+        alerts=[
+            AlertV2(
+                code="LOW_DATA",
+                message="Unable to generate personalized plan",
+                severity="info",
+                suggestion="Please provide detailed expense information for a more accurate budget"
+            )
+        ],
+        recommendations=[
+            "Track all expenses for 30 days to understand spending patterns",
+            "Build an emergency fund covering 3-6 months of expenses",
+            "Review and cancel unused subscriptions",
+            "Start with small SIPs (Systematic Investment Plan) in index funds",
+            "Create a written budget and review it monthly"
+        ],
+        explainers=ExplainersV2(
+            why_split="Conservative split prioritizes financial safety while building savings",
+            how_to_save="Categorize expenses, automate transfers to savings account, use zero-based budgeting",
+            city_impact="Default tier assumptions may need adjustment based on your actual city cost of living"
+        )
+    )
 def build_ai_prompt(financial_input: FinancialInput, summary: SummaryOutput) -> str:
     """
     Build a comprehensive prompt for the AI model
@@ -166,10 +266,13 @@ def build_ai_prompt(financial_input: FinancialInput, summary: SummaryOutput) -> 
     
     # Format primary goal
     goal_info = "Not specified"
-    if financial_input.goals.primary_goal_type:
-        goal_info = f"{financial_input.goals.primary_goal_type}"
-        if financial_input.goals.primary_goal_amount:
-            goal_info += f" (Target: ₹{financial_input.goals.primary_goal_amount:,.2f})"
+    expenses = financial_input.expenses
+    goals = financial_input.goals
+    
+    if goals and goals.primary_goal_type:
+        goal_info = f"{goals.primary_goal_type}"
+        if goals.primary_goal_amount:
+            goal_info += f" (Target: ₹{goals.primary_goal_amount:,.2f})"
     
     prompt = f"""
 You are analyzing the financial situation of a person in India. Based on the data below, provide a comprehensive financial plan.
@@ -182,14 +285,14 @@ Income:
 - Total Income: ₹{summary.total_income:,.2f}
 
 Expenses (Monthly):
-- Housing/Rent: ₹{financial_input.expenses.housing_rent:,.2f}
-- Groceries & Food: ₹{financial_input.expenses.groceries_food:,.2f}
-- Transport: ₹{financial_input.expenses.transport:,.2f}
-- Utilities: ₹{financial_input.expenses.utilities:,.2f}
-- Insurance: ₹{financial_input.expenses.insurance:,.2f}
-- Entertainment: ₹{financial_input.expenses.entertainment:,.2f}
-- Subscriptions: ₹{financial_input.expenses.subscriptions:,.2f}
-- Others: ₹{financial_input.expenses.others:,.2f}
+- Housing/Rent: ₹{expenses.housing_rent if expenses else 0:,.2f}
+- Groceries & Food: ₹{expenses.groceries_food if expenses else 0:,.2f}
+- Transport: ₹{expenses.transport if expenses else 0:,.2f}
+- Utilities: ₹{expenses.utilities if expenses else 0:,.2f}
+- Insurance: ₹{expenses.insurance if expenses else 0:,.2f}
+- Entertainment: ₹{expenses.entertainment if expenses else 0:,.2f}
+- Subscriptions: ₹{expenses.subscriptions if expenses else 0:,.2f}
+- Others: ₹{expenses.others if expenses else 0:,.2f}
 - Total Expenses: ₹{summary.total_expenses:,.2f}
 
 Current Financial Status:
@@ -199,8 +302,8 @@ Current Financial Status:
 - Financial Status: {"DEFICIT ⚠️" if summary.has_deficit else "SURPLUS ✓"}
 
 Goals:
-- Monthly Savings Target: ₹{financial_input.goals.monthly_savings_target:,.2f}
-- Emergency Fund Target: ₹{financial_input.goals.emergency_fund_target:,.2f}
+- Monthly Savings Target: ₹{goals.monthly_savings_target if goals else 0:,.2f}
+- Emergency Fund Target: ₹{goals.emergency_fund_target if goals else 0:,.2f}
 - Primary Goal: {goal_info}
 
 Active Loans:
@@ -288,15 +391,15 @@ def generate_ai_plan(financial_input: FinancialInput, summary: SummaryOutput) ->
                     {
                         "role": "system",
                         "content": (
-                            "You are a helpful financial planning assistant for users in India. "
-                            "You are NOT a certified financial advisor, but you provide general, "
-                            "educational guidance on budgeting, saving, and debt strategy. "
-                            "Always provide practical advice considering the Indian financial context. "
+                            "You are an experienced financial planning assistant for users in India. "
+                            "You provide practical, conservative, and actionable guidance on budgeting, saving, and debt strategy. "
+                            "You are NOT a certified financial advisor; this is educational guidance only. "
+                            "Always favor feasibility over optimism and consider the Indian financial context. "
                             "Return responses in valid JSON format only with these exact keys: "
                             "summary_text, budget_breakdown, expense_optimizations, "
                             "savings_and_investment_plan, debt_strategy, goal_plan, "
                             "action_items_30_days, disclaimer. "
-                            "Never include speculative or unrealistic recommendations."
+                            "Never include speculative or unrealistic recommendations. Be concise and action-oriented."
                         )
                     },
                     {

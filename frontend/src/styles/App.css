@@ -19,12 +19,13 @@
   overflow-x: hidden;
 }
 
-/* Hero Section */
-.hero {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-  color: var(--color-white);
-  padding: var(--spacing-3xl) var(--spacing-md);
-  text-align: center;
+/* Hero Section - Budget Planner */
+.hero,
+.hero-budget-planner {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%) !important;
+  color: var(--color-white) !important;
+  padding: var(--spacing-3xl) var(--spacing-md) !important;
+  text-align: center !important;
   position: relative;
   overflow: hidden;
   box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
@@ -49,7 +50,7 @@
   100% { transform: translateX(60px) translateY(60px); }
 }
 
-.hero-content {
+.hero .hero-content {
   max-width: 800px;
   margin: 0 auto;
   padding: 0 var(--spacing-lg);
@@ -57,7 +58,20 @@
   z-index: 1;
 }
 
-.hero-title {
+.hero-budget-planner .hero-content {
+  max-width: 800px !important;
+  margin: 0 auto !important;
+  padding: 0 var(--spacing-lg) !important;
+  position: relative;
+  z-index: 1;
+  display: block !important;
+  grid-template-columns: unset !important;
+  gap: unset !important;
+  align-items: unset !important;
+  text-align: center !important;
+}
+
+.hero .hero-title {
   font-size: clamp(2rem, 5vw, 3rem);
   margin-bottom: var(--spacing-md);
   font-weight: 700;
@@ -65,14 +79,31 @@
   word-wrap: break-word;
 }
 
-.hero-subtitle {
+.hero-budget-planner .hero-title {
+  font-size: clamp(2rem, 5vw, 3rem) !important;
+  margin-bottom: var(--spacing-md) !important;
+  font-weight: 700 !important;
+  animation: fadeInUp 0.8s ease-out;
+  word-wrap: break-word;
+  text-align: center !important;
+}
+
+.hero .hero-subtitle {
   font-size: clamp(1.25rem, 3.5vw, 1.75rem);
   margin-bottom: var(--spacing-lg);
   font-weight: 500;
   animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
-.hero-description {
+.hero-budget-planner .hero-subtitle {
+  font-size: clamp(1.25rem, 3.5vw, 1.75rem) !important;
+  margin-bottom: var(--spacing-lg) !important;
+  font-weight: 500 !important;
+  animation: fadeInUp 0.8s ease-out 0.2s both;
+  text-align: center !important;
+}
+
+.hero .hero-description {
   font-size: clamp(0.95rem, 2vw, 1.125rem);
   margin-bottom: var(--spacing-xl);
   line-height: 1.8;
@@ -80,11 +111,19 @@
   animation: fadeInUp 0.8s ease-out 0.4s both;
 }
 
+.hero-budget-planner .hero-description {
+  font-size: clamp(0.95rem, 2vw, 1.125rem) !important;
+  margin-bottom: var(--spacing-xl) !important;
+  line-height: 1.8 !important;
+  opacity: 0.95 !important;
+  animation: fadeInUp 0.8s ease-out 0.4s both;
+}
+
 /* Hero CTA Button - High specificity to prevent overrides */
 .hero .cta-button,
 .hero-content .cta-button {
-  background-color: white !important;
-  color: #667eea !important;
+  background-color: white;
+  color: #667eea;
   padding: 0.875rem 2rem;
   font-size: clamp(1rem, 2vw, 1.125rem);
   font-weight: 600;
@@ -100,6 +139,28 @@
   -webkit-tap-highlight-color: transparent;
   text-decoration: none;
   display: inline-block;
+}
+
+.hero-budget-planner .cta-button {
+  background-color: white !important;
+  color: #667eea !important;
+  padding: 0.875rem 2rem !important;
+  font-size: clamp(1rem, 2vw, 1.125rem) !important;
+  font-weight: 600 !important;
+  border: none !important;
+  border-radius: var(--radius-lg) !important;
+  cursor: pointer !important;
+  transition: all var(--transition-base) !important;
+  box-shadow: var(--shadow-lg) !important;
+  animation: fadeInUp 0.8s ease-out 0.6s both;
+  position: relative !important;
+  overflow: hidden;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  text-decoration: none !important;
+  display: inline-block !important;
+  margin: 0 auto !important;
+  vertical-align: middle !important;
 }
 
 .hero .cta-button::before,
@@ -126,6 +187,13 @@
 .hero-content .cta-button:hover {
   transform: translateY(-3px);
   box-shadow: var(--shadow-xl);
+  background-color: white;
+  color: #667eea;
+}
+
+.hero-budget-planner .cta-button:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: var(--shadow-xl) !important;
   background-color: white !important;
   color: #667eea !important;
 }
@@ -387,6 +455,26 @@
 .form-group label .required {
   color: var(--danger-color);
   margin-left: 2px;
+}
+
+.form-group label .tooltip-icon {
+  margin-left: 0.5rem;
+  font-size: 0.875rem;
+  cursor: help;
+  opacity: 0.7;
+  transition: opacity var(--transition-fast);
+}
+
+.form-group label .tooltip-icon:hover {
+  opacity: 1;
+}
+
+.field-helper {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+  font-style: italic;
 }
 
 .form-input,

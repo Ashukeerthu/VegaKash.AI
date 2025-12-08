@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { formatSmartCurrency } from '../../utils/helpers';
 import CurrencySelector from '../../components/CurrencySelector';
+import { EnhancedSEO } from '../../components/EnhancedSEO';
 import '../../styles/Calculator.css';
 
 /**
- * FD Calculator Component
- * Calculates Fixed Deposit maturity amount
+ * FD Calculator Component - GLOBAL & COUNTRY-SPECIFIC
+ * Calculates Fixed Deposit maturity amount with proper SEO
  */
 function FDCalculator() {
+  const { country } = useParams();
   const [currency, setCurrency] = useState('INR');
   const [depositAmount, setDepositAmount] = useState(100000);
   const [interestRate, setInterestRate] = useState(6.5);
@@ -49,14 +52,35 @@ function FDCalculator() {
     setTenure(12);
   };
 
-  return (
-    <div className="calculator-container">
-      <div className="calculator-header">
-        <h1>FD Calculator</h1>
-        <p>Calculate Fixed Deposit maturity amount and interest earned</p>
-      </div>
+  // SEO configuration for global/country-specific versions
+  const seoConfig = {
+    title: country 
+      ? `FD Calculator for ${country.toUpperCase()}`
+      : 'FD Calculator - Free Fixed Deposit Calculator',
+    description: country
+      ? `Calculate FD maturity amount, interest and returns for ${country.toUpperCase()}. Free fixed deposit calculator with detailed breakdown.`
+      : 'Free FD calculator to calculate fixed deposit maturity amount, interest earned and returns. Get accurate breakdown with compounding.',
+    keywords: country
+      ? `FD calculator ${country.toUpperCase()}, fixed deposit, FD interest, maturity amount`
+      : 'FD calculator, fixed deposit calculator, FD interest calculator, maturity amount',
+    tool: 'fd',
+    country: country || undefined,
+    supportedCountries: ['in', 'us', 'uk'],
+    isGlobal: !country,
+  };
 
-      <div className="calculator-content">
+  return (
+    <>
+      {/* SEO Tags - Global & Country-Specific */}
+      <EnhancedSEO {...seoConfig} />
+      
+      <div className="calculator-container">
+        <div className="calculator-header">
+          <h1>{country ? `FD Calculator (${country.toUpperCase()})` : 'FD Calculator'}</h1>
+          <p>Calculate Fixed Deposit maturity amount and interest earned</p>
+        </div>
+
+        <div className="calculator-content">
         {/* Currency Selector */}
         <CurrencySelector 
           selectedCurrency={currency}
@@ -497,26 +521,27 @@ function FDCalculator() {
           <h2>Related Financial Calculators</h2>
           <p>Explore our other calculators to plan your finances better:</p>
           <div className="calculator-grid">
-            <a href="/rd-calculator" className="calc-card">
+            <Link to="/rd-calculator" className="calc-card">
               <h3>RD Calculator</h3>
               <p>Calculate recurring deposit maturity and returns</p>
-            </a>
-            <a href="/sip-calculator" className="calc-card">
+            </Link>
+            <Link to="/sip-calculator" className="calc-card">
               <h3>SIP Calculator</h3>
               <p>Calculate mutual fund SIP returns</p>
-            </a>
-            <a href="/emi-calculator" className="calc-card">
+            </Link>
+            <Link to="/emi-calculator" className="calc-card">
               <h3>EMI Calculator</h3>
               <p>Calculate loan EMI and total interest</p>
-            </a>
-            <a href="/calculators/savings-goal" className="calc-card">
+            </Link>
+            <Link to="/calculators/savings-goal" className="calc-card">
               <h3>Savings Goal Calculator</h3>
               <p>Plan monthly investment for your financial goals</p>
-            </a>
+            </Link>
           </div>
         </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

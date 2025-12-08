@@ -1,15 +1,33 @@
 # VegaKash.AI Robots.txt
-# Allow all search engines to index the site
+# Global routing configuration for international SEO
 
 User-agent: *
 Allow: /
 
-# Sitemap location (production)
-Sitemap: https://vegaktools.com/sitemap.xml
+# Sitemaps
+Sitemap: https://vegakash.ai/sitemap.xml
 
-# Crawl delay (optional)
+# Priority URLs for crawling
+# Global calculators (x-default versions)
+Allow: /calculators/
+
+# Country-specific calculators
+Allow: /us/calculators/
+Allow: /uk/calculators/
+Allow: /in/calculators/
+
+# Other content
+Allow: /learning/
+Allow: /about
+Allow: /privacy
+Allow: /terms
+Allow: /disclaimer
+
+# Crawl delay
 Crawl-delay: 1
 
-# Disallow admin or development paths if any
+# Disallow any development or admin paths if applicable
 # Disallow: /admin/
-# Disallow: /api/
+# Disallow: /.env
+# Disallow: /config/
+

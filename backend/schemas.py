@@ -2,8 +2,8 @@
 Pydantic schemas for VegaKash.AI
 Defines data models for request/response validation
 """
-from pydantic import BaseModel, Field
-from typing import Optional, List
+from pydantic import BaseModel, Field, model_validator
+from typing import Optional, List, Dict, Any
 
 
 class ExpensesInput(BaseModel):
@@ -17,6 +17,10 @@ class ExpensesInput(BaseModel):
     utilities: float = Field(default=0, ge=0, description="Utilities (electricity, water, internet)")
     insurance: float = Field(default=0, ge=0, description="Insurance premiums")
     entertainment: float = Field(default=0, ge=0, description="Entertainment expenses")
+    shopping: float = Field(default=0, ge=0, description="Shopping/Retail expenses (V2)")
+    dining: float = Field(default=0, ge=0, description="Dining out/Restaurant expenses (V2)")
+    medical: float = Field(default=0, ge=0, description="Medical/Healthcare expenses (V2)")
+    emi_total: float = Field(default=0, ge=0, description="Total EMI from all loans (V2)")
     subscriptions: float = Field(default=0, ge=0, description="Subscription services")
     others: float = Field(default=0, ge=0, description="Other miscellaneous expenses")
 
@@ -52,17 +56,88 @@ class LoanInput(BaseModel):
     remaining_months: int = Field(..., gt=0, le=600, description="Number of months remaining (max 50 years)")
 
 
+class FixedExpensesInput(BaseModel):
+    """
+    V1.2: Fixed monthly expenses (essentials)
+    """
+    housing_rent: float = Field(default=0, ge=0, description="Rent/Mortgage")
+    utilities: float = Field(default=0, ge=0, description="Utilities (electricity, water, internet)")
+    insurance: float = Field(default=0, ge=0, description="Insurance premiums")
+    medical: float = Field(default=0, ge=0, description="Medical expenses")
+    other_fixed: float = Field(default=0, ge=0, description="Other fixed expenses")
+
+
+class VariableExpensesInput(BaseModel):
+    """
+    V1.2: Variable monthly expenses (discretionary)
+    """
+    groceries_food: float = Field(default=0, ge=0, description="Groceries and food")
+    transport: float = Field(default=0, ge=0, description="Transportation")
+    subscriptions: float = Field(default=0, ge=0, description="Subscriptions (Netflix, Spotify, etc.)")
+    entertainment: float = Field(default=0, ge=0, description="Entertainment")
+    shopping: float = Field(default=0, ge=0, description="Shopping")
+    dining_out: float = Field(default=0, ge=0, description="Dining out")
+    other_variable: float = Field(default=0, ge=0, description="Other variable expenses")
+
+
+class SavingsGoalInput(BaseModel):
+    """
+    V1.2: Individual savings goal
+    """
+    name: str = Field(..., min_length=1, description="Goal name (e.g., Emergency Fund, Vacation)")
+    target: float = Field(..., gt=0, description="Target amount")
+    timeline: int = Field(..., ge=1, le=360, description="Timeline in months")
+    priority: int = Field(default=3, ge=1, le=5, description="Priority (1=lowest, 5=highest)")
+
+
 class FinancialInput(BaseModel):
     """
-    Complete financial input from user
+    Complete financial input from user - Enhanced V1.2
     This is the main request body for calculations
+    Supports both legacy format and V1.2 enhanced format
     """
+    # Basic Income
     currency: str = Field(default="INR", max_length=10, description="Currency code (INR, USD, etc.)")
     monthly_income_primary: float = Field(..., gt=0, le=10000000, description="Primary monthly income (must be positive)")
     monthly_income_additional: float = Field(default=0, ge=0, le=10000000, description="Additional monthly income")
-    expenses: ExpensesInput = Field(..., description="Breakdown of monthly expenses")
-    goals: GoalsInput = Field(..., description="Financial goals")
+    
+    # V1.2: Location Data (Optional)
+    country: Optional[str] = Field(default=None, description="Country name")
+    state: Optional[str] = Field(default=None, description="State/Province name")
+    city: Optional[str] = Field(default=None, description="City name (V2)")
+    city_tier: Optional[str] = Field(default=None, description="City tier: tier_1, tier_2, tier_3, other")
+    cost_of_living_index: Optional[float] = Field(default=1.0, ge=0.5, le=2.0, description="COL multiplier: 1.0=national avg, >1.0=higher cost (V2)")
+    col_multiplier: Optional[float] = Field(default=None, ge=0.5, le=2.0, description="Alias for cost_of_living_index")
+    
+    # V1.2: Household & Lifestyle (Optional)
+    family_size: Optional[int] = Field(default=1, ge=1, le=10, description="Number of family members")
+    lifestyle: Optional[str] = Field(default="moderate", description="Lifestyle (minimal, moderate, comfort, premium)")
+    
+    # V1.2: Enhanced Expenses (Optional - if not provided, use legacy expenses)
+    fixed_expenses: Optional[FixedExpensesInput] = Field(default=None, description="V1.2: Fixed expenses breakdown")
+    variable_expenses: Optional[VariableExpensesInput] = Field(default=None, description="V1.2: Variable expenses breakdown")
+    
+    # Legacy Expenses (For backward compatibility)
+    expenses: Optional[ExpensesInput] = Field(default=None, description="Legacy: Expenses breakdown")
+    
+    # V1.2: Multiple Savings Goals (Optional)
+    savings_goals: Optional[List[SavingsGoalInput]] = Field(default=None, max_length=5, description="V1.2: Multiple savings goals (max 5)")
+    
+    # Legacy Goals (For backward compatibility)
+    goals: Optional[GoalsInput] = Field(default=None, description="Legacy: Financial goals")
+    
+    # Loans (same for both versions)
     loans: List[LoanInput] = Field(default_factory=lambda: [], max_length=20, description="List of active loans (max 20)")
+
+    @model_validator(mode='before')
+    @classmethod
+    def handle_col_multiplier_alias(cls, data: Any) -> Any:
+        """Handle col_multiplier as alias for cost_of_living_index"""
+        if isinstance(data, dict):
+            # If col_multiplier is provided but cost_of_living_index is not, use col_multiplier
+            if 'col_multiplier' in data and 'cost_of_living_index' not in data:
+                data['cost_of_living_index'] = data['col_multiplier']
+        return data
 
 
 class SummaryOutput(BaseModel):
@@ -208,3 +283,79 @@ class SmartRecommendationsOutput(BaseModel):
     alerts: List[SpendingAlert] = Field(..., description="Spending alerts")
     recommendations: List[PersonalizedRecommendation] = Field(..., description="Personalized recommendations")
     seasonal_reminders: List[str] = Field(..., description="Upcoming seasonal expenses")
+
+
+# ========================================
+# V2 AI PLAN SCHEMAS (Context-Aware)
+# ========================================
+
+class AlertV2(BaseModel):
+    """
+    V2: Budget alert with severity levels
+    """
+    code: str = Field(..., description="Alert code: HIGH_RENT, HIGH_EMI, NEGATIVE_CASHFLOW, LOW_SAVINGS, HIGH_WANTS")
+    message: str = Field(..., description="Human-readable alert message")
+    severity: str = Field(..., description="Severity: info, moderate, high, critical")
+    suggestion: str = Field(..., description="Actionable suggestion to address alert")
+
+
+class ExpenseBreakdownV2(BaseModel):
+    """
+    V2: Detailed expense breakdown by category
+    """
+    needs: Dict[str, float] = Field(..., description="Needs: rent, groceries, utilities, transport, emi, medical, insurance, other")
+    wants: Dict[str, float] = Field(..., description="Wants: dining, entertainment, shopping, subscriptions, other")
+    savings: Dict[str, float] = Field(..., description="Savings: emergency, sips_investment, fd_rd, goals_saving")
+
+
+class MetadataV2(BaseModel):
+    """
+    V2: Metadata about the plan
+    """
+    city: Optional[str] = Field(default=None, description="City name")
+    city_tier: Optional[str] = Field(default=None, description="City tier: Tier 1, Tier 2, Tier 3")
+    col_multiplier: float = Field(..., description="Cost of living multiplier")
+    reasoning_summary: str = Field(..., description="Summary of why this split was chosen")
+
+
+class TotalsV2(BaseModel):
+    """
+    V2: Total financial summary
+    """
+    income: float = Field(..., ge=0, description="Total monthly income")
+    total_expenses: float = Field(..., ge=0, description="Total monthly expenses")
+    net_savings: float = Field(..., description="Net savings (can be negative)")
+    savings_rate_percent: float = Field(..., description="Savings rate as percentage")
+
+
+class SplitV2(BaseModel):
+    """
+    V2: Budget split percentages
+    """
+    needs_percent: float = Field(..., ge=0, le=100, description="Percentage for needs")
+    wants_percent: float = Field(..., ge=0, le=100, description="Percentage for wants")
+    savings_percent: float = Field(..., ge=0, le=100, description="Percentage for savings")
+
+
+class ExplainersV2(BaseModel):
+    """
+    V2: Educational explanations
+    """
+    why_split: str = Field(..., description="Explain why this split was chosen")
+    how_to_save: str = Field(..., description="How to improve savings rate")
+    city_impact: str = Field(..., description="How city tier affected the budget")
+
+
+class AIPlanOutputV2(BaseModel):
+    """
+    V2: AI-generated context-aware budget plan
+    Includes city tier, family size, lifestyle considerations
+    """
+    plan_mode: str = Field(..., description="Plan mode: basic, aggressive, smart")
+    metadata: MetadataV2 = Field(..., description="Metadata about the plan")
+    totals: TotalsV2 = Field(..., description="Total income, expenses, savings")
+    split: SplitV2 = Field(..., description="Budget percentages")
+    breakdown: ExpenseBreakdownV2 = Field(..., description="Detailed breakdown by category")
+    alerts: List[AlertV2] = Field(..., description="List of alerts with severity")
+    recommendations: List[str] = Field(..., description="Actionable recommendations")
+    explainers: ExplainersV2 = Field(..., description="Educational explanations")

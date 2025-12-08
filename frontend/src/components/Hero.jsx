@@ -13,7 +13,7 @@ function Hero() {
   };
 
   return (
-    <header className="hero">
+    <header className="hero hero-budget-planner">
       <div className="hero-content">
         <h1 className="hero-title">
           <span className="highlight">VegaKash.AI</span>

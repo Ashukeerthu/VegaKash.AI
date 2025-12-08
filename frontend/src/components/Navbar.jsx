@@ -33,10 +33,14 @@ function Navbar() {
     setActiveDropdown(activeDropdown === menu ? null : menu);
   };
 
-  // Close dropdown when clicking outside
+  // Close dropdown when clicking outside (but not on links)
   useEffect(() => {
-    const handleClickOutside = () => {
+    const handleClickOutside = (e) => {
       if (activeDropdown) {
+        // Don't close if clicking on a link or navigation element
+        if (e.target.closest('a, .navbar-link, .dropdown-item')) {
+          return;
+        }
         setActiveDropdown(null);
       }
     };
@@ -73,16 +77,16 @@ function Navbar() {
           <li 
             className="navbar-item has-dropdown" 
             role="none"
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleDropdown('calculators');
-            }}
           >
             <button 
               className={`navbar-link dropdown-trigger ${activeDropdown === 'calculators' ? 'active' : ''}`}
               role="menuitem"
               aria-haspopup="true"
               aria-expanded={activeDropdown === 'calculators'}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleDropdown('calculators');
+              }}
             >
               Calculators <span className="dropdown-arrow">▼</span>
             </button>
@@ -95,32 +99,32 @@ function Navbar() {
               </li>
               <li className="dropdown-divider"></li>
               <li role="none">
-                <Link to="/emi-calculator" className="dropdown-item" role="menuitem">
+                <Link to="/calculators/emi" className="dropdown-item" role="menuitem">
                   🏠 EMI Calculator
                 </Link>
               </li>
               <li role="none">
-                <Link to="/sip-calculator" className="dropdown-item" role="menuitem">
+                <Link to="/calculators/sip" className="dropdown-item" role="menuitem">
                   📈 SIP Calculator
                 </Link>
               </li>
               <li role="none">
-                <Link to="/fd-calculator" className="dropdown-item" role="menuitem">
+                <Link to="/calculators/fd" className="dropdown-item" role="menuitem">
                   🏦 FD Calculator
                 </Link>
               </li>
               <li role="none">
-                <Link to="/rd-calculator" className="dropdown-item" role="menuitem">
+                <Link to="/calculators/rd" className="dropdown-item" role="menuitem">
                   📅 RD Calculator
                 </Link>
               </li>
               <li role="none">
-                <Link to="/car-loan-calculator" className="dropdown-item" role="menuitem">
+                <Link to="/calculators/emi" className="dropdown-item" role="menuitem">
                   🚗 Auto Loan Calculator
                 </Link>
               </li>
               <li role="none">
-                <Link to="/income-tax-calculator" className="dropdown-item" role="menuitem">
+                <Link to="/calculators/tax" className="dropdown-item" role="menuitem">
                   📊 Income Tax Calculator
                 </Link>
               </li>
@@ -134,6 +138,48 @@ function Navbar() {
                   🆘 Emergency Fund Calculator
                 </Link>
               </li>
+              <li className="dropdown-divider"></li>
+              <li className="dropdown-header">🌍 Global Calculators</li>
+              <li role="none">
+                <Link to="/us/calculators/mortgage" className="dropdown-item" role="menuitem">
+                  🇺🇸 US Mortgage Calculator
+                </Link>
+              </li>
+              <li role="none">
+                <Link to="/us/calculators/loan" className="dropdown-item" role="menuitem">
+                  🇺🇸 US Loan Payment Calculator
+                </Link>
+              </li>
+              <li role="none">
+                <Link to="/us/calculators/credit-card" className="dropdown-item" role="menuitem">
+                  🇺🇸 US Credit Card Payoff
+                </Link>
+              </li>
+              <li role="none">
+                <Link to="/us/calculators/401k" className="dropdown-item" role="menuitem">
+                  🇺🇸 US 401(k) Retirement
+                </Link>
+              </li>
+              <li role="none">
+                <Link to="/us/calculators/savings" className="dropdown-item" role="menuitem">
+                  🇺🇸 US Savings Growth
+                </Link>
+              </li>
+              <li role="none">
+                <Link to="/uk/calculators/vat" className="dropdown-item" role="menuitem">
+                  🇬🇧 UK VAT Calculator
+                </Link>
+              </li>
+              <li role="none">
+                <Link to="/uk/calculators/mortgage" className="dropdown-item" role="menuitem">
+                  🇬🇧 UK Mortgage Affordability
+                </Link>
+              </li>
+              <li role="none">
+                <Link to="/uk/calculators/savings" className="dropdown-item" role="menuitem">
+                  🇬🇧 UK Savings Interest
+                </Link>
+              </li>
             </ul>
           </li>
 
@@ -141,16 +187,16 @@ function Navbar() {
           <li 
             className="navbar-item has-dropdown" 
             role="none"
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleDropdown('learning');
-            }}
           >
             <button 
               className={`navbar-link dropdown-trigger ${activeDropdown === 'learning' ? 'active' : ''}`}
               role="menuitem"
               aria-haspopup="true"
               aria-expanded={activeDropdown === 'learning'}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleDropdown('learning');
+              }}
             >
               Learning <span className="dropdown-arrow">▼</span>
             </button>
@@ -220,12 +266,22 @@ function Navbar() {
             </button>
             <ul className={`mobile-dropdown-menu ${activeDropdown === 'mobile-calculators' ? 'show' : ''}`}>
               <li><Link to="/calculators">🧮 All Calculators</Link></li>
-              <li><Link to="/emi-calculator">💰 EMI Calculator</Link></li>
-              <li><Link to="/sip-calculator">📈 SIP Calculator</Link></li>
-              <li><Link to="/fd-calculator">🏦 FD Calculator</Link></li>
-              <li><Link to="/rd-calculator">💵 RD Calculator</Link></li>
-              <li><Link to="/car-loan-calculator">🚗 Auto Loan Calculator</Link></li>
-              <li><Link to="/income-tax-calculator">📊 Income Tax Calculator</Link></li>
+              <li><Link to="/calculators/emi">💰 EMI Calculator</Link></li>
+              <li><Link to="/calculators/sip">📈 SIP Calculator</Link></li>
+              <li><Link to="/calculators/fd">🏦 FD Calculator</Link></li>
+              <li><Link to="/calculators/rd">💵 RD Calculator</Link></li>
+              <li><Link to="/calculators/emi">🚗 Auto Loan Calculator</Link></li>
+              <li><Link to="/calculators/tax">📊 Income Tax Calculator</Link></li>
+              <li className="dropdown-divider"></li>
+              <li className="dropdown-header">🌍 Global Calculators</li>
+              <li><Link to="/us/calculators/mortgage">🇺🇸 US Mortgage Calculator</Link></li>
+              <li><Link to="/us/calculators/loan">🇺🇸 US Loan Payment Calculator</Link></li>
+              <li><Link to="/us/calculators/credit-card">🇺🇸 US Credit Card Payoff</Link></li>
+              <li><Link to="/us/calculators/401k">🇺🇸 US 401(k) Retirement</Link></li>
+              <li><Link to="/us/calculators/savings">🇺🇸 US Savings Growth</Link></li>
+              <li><Link to="/uk/calculators/vat">🇬🇧 UK VAT Calculator</Link></li>
+              <li><Link to="/uk/calculators/mortgage">🇬🇧 UK Mortgage Affordability</Link></li>
+              <li><Link to="/uk/calculators/savings">🇬🇧 UK Savings Interest</Link></li>
             </ul>
           </li>
           

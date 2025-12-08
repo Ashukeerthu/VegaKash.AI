@@ -134,7 +134,7 @@ function SmartRecommendations({ formData }) {
       {/* Seasonal Reminders */}
       {recommendations.seasonal_reminders && recommendations.seasonal_reminders.length > 0 && (
         <div className="reminders-section">
-          <h3>📅 Seasonal Reminders</h3>
+          <h3 title="Coming Soon">📅 Seasonal Reminders <span className="coming-soon-tag">(Coming soon)</span></h3>
           <div className="reminders-grid">
             {recommendations.seasonal_reminders.map((reminder, index) => (
               <div key={index} className="reminder-card">

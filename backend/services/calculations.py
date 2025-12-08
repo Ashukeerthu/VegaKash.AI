@@ -189,11 +189,11 @@ def generate_basic_advice(
 
 def calculate_summary(financial_input: FinancialInput) -> SummaryOutput:
     """
-    Calculate comprehensive financial summary from user input
-    This is the main calculation function called by the API
+    Calculate comprehensive financial summary from user input - Enhanced V1.2
+    Supports both legacy format and V1.2 enhanced format with location, household, and separated expenses
     
     Args:
-        financial_input: Complete financial data from user
+        financial_input: Complete financial data from user (legacy or V1.2 format)
         
     Returns:
         SummaryOutput with all calculated metrics and advice
@@ -201,8 +201,40 @@ def calculate_summary(financial_input: FinancialInput) -> SummaryOutput:
     # Calculate total income
     total_income = financial_input.monthly_income_primary + financial_input.monthly_income_additional
     
-    # Calculate total expenses (includes EMI from loans)
-    total_expenses = calculate_total_expenses(financial_input.expenses, financial_input.loans)
+    # V1.2: Calculate expenses from enhanced format OR legacy format
+    if financial_input.fixed_expenses or financial_input.variable_expenses:
+        # V1.2 Enhanced: Use separated fixed and variable expenses
+        fixed_total = 0
+        if financial_input.fixed_expenses:
+            fixed_total = (
+                financial_input.fixed_expenses.housing_rent +
+                financial_input.fixed_expenses.utilities +
+                financial_input.fixed_expenses.insurance +
+                financial_input.fixed_expenses.medical +
+                financial_input.fixed_expenses.other_fixed
+            )
+        
+        variable_total = 0
+        if financial_input.variable_expenses:
+            variable_total = (
+                financial_input.variable_expenses.groceries_food +
+                financial_input.variable_expenses.transport +
+                financial_input.variable_expenses.subscriptions +
+                financial_input.variable_expenses.entertainment +
+                financial_input.variable_expenses.shopping +
+                financial_input.variable_expenses.dining_out +
+                financial_input.variable_expenses.other_variable
+            )
+        
+        # Calculate total EMI from loans
+        total_emi = sum(calculate_loan_emi(loan) for loan in financial_input.loans)
+        
+        # Total expenses = fixed + variable + EMI
+        total_expenses = fixed_total + variable_total + total_emi
+    else:
+        # Legacy: Use old expenses format
+        total_expenses = calculate_total_expenses(financial_input.expenses, financial_input.loans)
+        total_emi = sum(calculate_loan_emi(loan) for loan in financial_input.loans)
     
     # Calculate net savings
     net_savings = total_income - total_expenses
@@ -210,16 +242,13 @@ def calculate_summary(financial_input: FinancialInput) -> SummaryOutput:
     # Calculate savings rate percentage
     savings_rate_percent = (net_savings / total_income * 100) if total_income > 0 else 0
     
-    # Calculate total EMI from loans
-    total_emi_from_loans = sum(calculate_loan_emi(loan) for loan in financial_input.loans)
-    
     # Calculate debt-to-income ratio
-    debt_to_income_ratio_percent = (total_emi_from_loans / total_income * 100) if total_income > 0 else 0
+    debt_to_income_ratio_percent = (total_emi / total_income * 100) if total_income > 0 else 0
     
     # Check for deficit
     has_deficit = net_savings < 0
     
-    # Generate basic advice
+    # V1.2: Enhanced advice with location and lifestyle context
     basic_advice = generate_basic_advice(
         has_deficit=has_deficit,
         savings_rate=savings_rate_percent,
@@ -227,10 +256,36 @@ def calculate_summary(financial_input: FinancialInput) -> SummaryOutput:
         net_savings=net_savings
     )
     
-    # Calculate 50-30-20 rule recommendations based on total income
-    rule_50_needs = total_income * 0.5
-    rule_30_wants = total_income * 0.3
-    rule_20_savings = total_income * 0.2
+    # V1.2: Adjust 50-30-20 rule based on city tier and lifestyle if provided
+    needs_percent = 0.5
+    wants_percent = 0.3
+    savings_percent = 0.2
+    
+    if financial_input.city_tier:
+        # Tier 1 cities need more for living costs
+        if financial_input.city_tier == "tier_1":
+            needs_percent = 0.55
+            wants_percent = 0.25
+            savings_percent = 0.20
+        elif financial_input.city_tier == "tier_3":
+            needs_percent = 0.45
+            wants_percent = 0.30
+            savings_percent = 0.25
+    
+    if financial_input.lifestyle:
+        # Premium lifestyle allocates more to wants
+        if financial_input.lifestyle == "premium":
+            wants_percent = 0.35
+            needs_percent = 0.45
+            savings_percent = 0.20
+        elif financial_input.lifestyle == "minimal":
+            wants_percent = 0.20
+            needs_percent = 0.50
+            savings_percent = 0.30
+    
+    rule_50_needs = total_income * needs_percent
+    rule_30_wants = total_income * wants_percent
+    rule_20_savings = total_income * savings_percent
     
     return SummaryOutput(
         total_income=round(total_income, 2),

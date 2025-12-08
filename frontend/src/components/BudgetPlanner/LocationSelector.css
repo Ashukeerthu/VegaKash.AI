@@ -1,0 +1,103 @@
+/**
+ * Location Selector Styles
+ */
+.location-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.location-selector.loading {
+  padding: 2rem;
+  text-align: center;
+  color: #64748b;
+}
+
+.location-error {
+  padding: 0.75rem 1rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.location-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.location-field label {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.required {
+  color: #dc2626;
+  font-weight: bold;
+}
+
+.location-select {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1e293b;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.location-select:hover:not(:disabled) {
+  border-color: #cbd5e1;
+}
+
+.location-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.location-select:disabled {
+  background: #f8fafc;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.city-info {
+  margin-top: 0.5rem;
+  padding: 1rem;
+  background: #f0f9ff;
+  border-radius: 8px;
+  border-left: 4px solid #3b82f6;
+}
+
+.info-text {
+  margin: 0.25rem 0;
+  font-size: 0.875rem;
+  color: #475569;
+}
+
+.info-text strong {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .location-selector {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .location-select {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+}

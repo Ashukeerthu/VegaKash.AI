@@ -1,15 +1,32 @@
 /**
- * Centralized Route Configuration
+ * Enhanced Global Route Configuration
  * 
  * @module router/routes
- * @description Production-grade route management for VegaKash.AI
- * All routes organized by feature modules
+ * @description Production-grade route management with global country routing
+ * 
+ * NEW STRUCTURE:
+ * ✅ Global default: /calculators/{tool}/
+ * ✅ Country-specific: /{country}/calculators/{tool}/
+ * ✅ Automatic hreflang + canonical generation
+ * ✅ Backward compatible with legacy routes (301 redirects)
  */
 
-import { lazy } from 'react';
+import { lazy, Suspense } from 'react';
+import { Navigate } from 'react-router-dom';
+import LoadingSpinner from '../components/LoadingSpinner';
 
-// ==================== CALCULATOR ROUTES ====================
-// Financial calculators - lazy loaded for performance
+// ==================== CALCULATOR IMPORTS ====================
+// Global calculators (US, UK/EU)
+const MortgageCalculatorUS = lazy(() => import('../pages/calculators/global/MortgageCalculatorUS'));
+const LoanPaymentCalculatorUS = lazy(() => import('../pages/calculators/global/LoanPaymentCalculatorUS'));
+const CreditCardPayoffCalculatorUS = lazy(() => import('../pages/calculators/global/CreditCardPayoffCalculatorUS'));
+const Retirement401kCalculatorUS = lazy(() => import('../pages/calculators/global/Retirement401kCalculatorUS'));
+const SavingsGrowthCalculatorUS = lazy(() => import('../pages/calculators/global/SavingsGrowthCalculatorUS'));
+const VATCalculatorUK = lazy(() => import('../pages/calculators/global/VATCalculatorUK'));
+const MortgageAffordabilityCalculatorUK = lazy(() => import('../pages/calculators/global/MortgageAffordabilityCalculatorUK'));
+const SavingsInterestCalculatorUK = lazy(() => import('../pages/calculators/global/SavingsInterestCalculatorUK'));
+
+// India calculators
 const EMICalculator = lazy(() => import('../modules/calculators/emi'));
 const SIPCalculator = lazy(() => import('../modules/calculators/sip'));
 const FDCalculator = lazy(() => import('../modules/calculators/fd'));
@@ -21,183 +38,330 @@ const AutoLoanCalculator = lazy(() => import('../modules/calculators/autoloan'))
 const SavingsGoalCalculator = lazy(() => import('../pages/calculators/SavingsGoalCalculator'));
 const EmergencyFundCalculator = lazy(() => import('../pages/calculators/EmergencyFundCalculator'));
 
-// Redirect target for removed routes
+// Pages
+const Home = lazy(() => import('../pages/Home'));
 const CalculatorHub = lazy(() => import('../pages/CalculatorHub'));
+const BudgetPlannerPage = lazy(() => import('../pages/BudgetPlanner/BudgetPlannerPage'));
+const MonthlyBudget = lazy(() => import('../modules/budgets/monthly'));
+const BlogIndex = lazy(() => import('../pages/blog/BlogIndex'));
+const CreateMonthlyBudgetAI = lazy(() => import('../pages/blog/CreateMonthlyBudgetAI'));
+const About = lazy(() => import('../pages/About'));
+const VideoTutorials = lazy(() => import('../pages/VideoTutorials'));
+const PrivacyPolicy = lazy(() => import('../pages/PrivacyPolicy'));
+const TermsAndConditions = lazy(() => import('../pages/TermsAndConditions'));
+const Disclaimer = lazy(() => import('../pages/Disclaimer'));
 
+// ==================== GLOBAL CALCULATOR ROUTES ====================
 /**
- * Calculator Routes Configuration
+ * Global calculator routes (available in all countries)
+ * Structure: /calculators/{tool}/
  */
-export const calculatorRoutes = [
+export const globalCalculatorRoutes = [
+  // Mortgage
   {
-    path: '/emi-calculator',
-    element: EMICalculator,
-    title: 'EMI Calculator',
-    description: 'Calculate Equated Monthly Installment for loans',
-    category: 'Loans'
+    path: '/calculators/mortgage',
+    element: MortgageCalculatorUS,
+    title: 'Mortgage Calculator',
+    description: 'Calculate monthly mortgage payments, total interest, and amortization schedule.',
+    category: 'Loans',
+    tool: 'mortgage',
+    isGlobal: true,
+    hreflang: 'x-default',
   },
-  // Legacy alias for backward compatibility
+  // Loan Payment
+  {
+    path: '/calculators/loan',
+    element: LoanPaymentCalculatorUS,
+    title: 'Loan Calculator',
+    description: 'Calculate monthly loan payments and total interest for any loan type.',
+    category: 'Loans',
+    tool: 'loan',
+    isGlobal: true,
+    hreflang: 'x-default',
+  },
+  // EMI
   {
     path: '/calculators/emi',
     element: EMICalculator,
     title: 'EMI Calculator',
     description: 'Calculate Equated Monthly Installment for loans',
-    category: 'Loans'
+    category: 'Loans',
+    tool: 'emi',
+    isGlobal: true,
+    hreflang: 'x-default',
   },
-  {
-    path: '/sip-calculator',
-    element: SIPCalculator,
-    title: 'SIP Calculator',
-    description: 'Calculate Systematic Investment Plan returns',
-    category: 'Investments'
-  },
-  // Legacy alias for backward compatibility
+  // SIP
   {
     path: '/calculators/sip',
     element: SIPCalculator,
     title: 'SIP Calculator',
     description: 'Calculate Systematic Investment Plan returns',
-    category: 'Investments'
+    category: 'Investments',
+    tool: 'sip',
+    isGlobal: true,
+    hreflang: 'x-default',
   },
-  {
-    path: '/fd-calculator',
-    element: FDCalculator,
-    title: 'FD Calculator',
-    description: 'Calculate Fixed Deposit maturity amount',
-    category: 'Savings'
-  },
-  // Legacy alias for backward compatibility
+  // FD
   {
     path: '/calculators/fd',
     element: FDCalculator,
     title: 'FD Calculator',
-    description: 'Calculate Fixed Deposit maturity amount',
-    category: 'Savings'
+    description: 'Calculate Fixed Deposit maturity and interest',
+    category: 'Savings',
+    tool: 'fd',
+    isGlobal: true,
+    hreflang: 'x-default',
   },
-  {
-    path: '/rd-calculator',
-    element: RDCalculator,
-    title: 'RD Calculator',
-    description: 'Calculate Recurring Deposit returns',
-    category: 'Savings'
-  },
-  // Legacy alias for backward compatibility
+  // RD
   {
     path: '/calculators/rd',
     element: RDCalculator,
     title: 'RD Calculator',
     description: 'Calculate Recurring Deposit returns',
-    category: 'Savings'
+    category: 'Savings',
+    tool: 'rd',
+    isGlobal: true,
+    hreflang: 'x-default',
   },
+  // Savings
   {
-    path: '/income-tax-calculator',
+    path: '/calculators/savings',
+    element: SavingsGrowthCalculatorUS,
+    title: 'Savings Calculator',
+    description: 'Plan and track your savings growth',
+    category: 'Savings',
+    tool: 'savings',
+    isGlobal: true,
+    hreflang: 'x-default',
+  },
+  // Tax
+  {
+    path: '/calculators/tax',
     element: TaxCalculator,
     title: 'Income Tax Calculator',
-    description: 'Calculate income tax for FY 2024-25',
+    description: 'Calculate income tax and compare tax regimes',
     category: 'Tax',
-    comingSoon: true
+    tool: 'tax',
+    isGlobal: true,
+    hreflang: 'x-default',
+    comingSoon: true,
   },
-  // Legacy alias for backward compatibility
-  {
-    path: '/calculators/income-tax',
-    element: TaxCalculator,
-    title: 'Income Tax Calculator',
-    description: 'Calculate income tax for FY 2024-25',
-    category: 'Tax',
-    comingSoon: true
-  },
-  {
-    path: '/car-loan-calculator',
-    element: AutoLoanCalculator,
-    title: 'Auto Loan Calculator',
-    description: 'Calculate car loan EMI and plan vehicle purchase',
-    category: 'Loans'
-  },
-  // Legacy alias for backward compatibility
-  {
-    path: '/calculators/auto-loan',
-    element: AutoLoanCalculator,
-    title: 'Auto Loan Calculator',
-    description: 'Calculate car loan EMI and plan vehicle purchase',
-    category: 'Loans'
-  },
+  // Savings Goal
   {
     path: '/calculators/savings-goal',
     element: SavingsGoalCalculator,
     title: 'Savings Goal Calculator',
-    description: 'Plan and track your savings goals',
+    description: 'Plan monthly investments to reach financial goals',
     category: 'Planning',
-    comingSoon: true
+    tool: 'savings-goal',
+    isGlobal: true,
+    hreflang: 'x-default',
+    comingSoon: true,
   },
+  // Emergency Fund
   {
     path: '/calculators/emergency-fund',
     element: EmergencyFundCalculator,
     title: 'Emergency Fund Calculator',
-    description: 'Calculate ideal emergency fund size',
+    description: 'Calculate emergency fund requirements',
     category: 'Planning',
-    comingSoon: true
-  }
+    tool: 'emergency-fund',
+    isGlobal: true,
+    hreflang: 'x-default',
+    comingSoon: true,
+  },
 ];
 
-// ==================== REDIRECT ROUTES ====================
+// ==================== COUNTRY-SPECIFIC CALCULATOR ROUTES ====================
 /**
- * Redirect Routes for removed/non-existent calculators
- * Redirects to Calculator Hub to avoid 404s in Google Search
- * Note: CalculatorHub imported at top of file
+ * Country-specific calculator routes
+ * Structure: /{country}/calculators/{tool}/
  */
-export const redirectRoutes = [
+export const countrySpecificCalculatorRoutes = [
+  // USA (us)
   {
-    path: '/calculators/interest',
-    element: CalculatorHub,
-    title: 'Financial Calculators',
-    description: 'Explore all financial calculators',
-    redirect: true
+    path: '/us/calculators/mortgage',
+    element: MortgageCalculatorUS,
+    title: 'US Mortgage Calculator',
+    description: 'Calculate US mortgage monthly payment, total interest, and amortization.',
+    category: 'Loans',
+    tool: 'mortgage',
+    country: 'us',
+    countryName: 'United States',
+    currency: 'USD',
+    hreflang: 'en-us',
   },
   {
-    path: '/calculators/loan',
-    element: CalculatorHub,
-    title: 'Financial Calculators',
-    description: 'Explore all financial calculators',
-    redirect: true
+    path: '/us/calculators/loan',
+    element: LoanPaymentCalculatorUS,
+    title: 'US Loan Payment Calculator',
+    description: 'Calculate US loan monthly payment and total interest.',
+    category: 'Loans',
+    tool: 'loan',
+    country: 'us',
+    countryName: 'United States',
+    currency: 'USD',
+    hreflang: 'en-us',
   },
   {
-    path: '/calculators/mortgage',
-    element: CalculatorHub,
-    title: 'Financial Calculators',
-    description: 'Explore all financial calculators',
-    redirect: true
-  }
+    path: '/us/calculators/credit-card',
+    element: CreditCardPayoffCalculatorUS,
+    title: 'US Credit Card Payoff Calculator',
+    description: 'Calculate months to pay off and total interest for US credit card debt.',
+    category: 'Debt',
+    tool: 'credit-card',
+    country: 'us',
+    countryName: 'United States',
+    currency: 'USD',
+    hreflang: 'en-us',
+  },
+  {
+    path: '/us/calculators/401k',
+    element: Retirement401kCalculatorUS,
+    title: 'US 401(k) Retirement Calculator',
+    description: 'Estimate 401k retirement savings growth for US users.',
+    category: 'Retirement',
+    tool: '401k',
+    country: 'us',
+    countryName: 'United States',
+    currency: 'USD',
+    hreflang: 'en-us',
+  },
+  {
+    path: '/us/calculators/savings',
+    element: SavingsGrowthCalculatorUS,
+    title: 'US Savings Growth Calculator',
+    description: 'Estimate future value of US savings with regular deposits.',
+    category: 'Savings',
+    tool: 'savings',
+    country: 'us',
+    countryName: 'United States',
+    currency: 'USD',
+    hreflang: 'en-us',
+  },
+
+  // UK (uk)
+  {
+    path: '/uk/calculators/mortgage',
+    element: MortgageAffordabilityCalculatorUK,
+    title: 'UK Mortgage Affordability Calculator',
+    description: 'Estimate how much mortgage you can afford in the UK.',
+    category: 'Loans',
+    tool: 'mortgage',
+    country: 'uk',
+    countryName: 'United Kingdom',
+    currency: 'GBP',
+    hreflang: 'en-gb',
+  },
+  {
+    path: '/uk/calculators/vat',
+    element: VATCalculatorUK,
+    title: 'UK VAT Calculator',
+    description: 'Calculate VAT and total price for UK purchases.',
+    category: 'Tax',
+    tool: 'vat',
+    country: 'uk',
+    countryName: 'United Kingdom',
+    currency: 'GBP',
+    hreflang: 'en-gb',
+  },
+  {
+    path: '/uk/calculators/savings',
+    element: SavingsInterestCalculatorUK,
+    title: 'UK Savings Interest Calculator',
+    description: 'Estimate interest earned on UK savings accounts.',
+    category: 'Savings',
+    tool: 'savings',
+    country: 'uk',
+    countryName: 'United Kingdom',
+    currency: 'GBP',
+    hreflang: 'en-gb',
+  },
+
+  // India (in)
+  {
+    path: '/in/calculators/emi',
+    element: EMICalculator,
+    title: 'EMI Calculator',
+    description: 'Calculate Equated Monthly Installment for loans',
+    category: 'Loans',
+    tool: 'emi',
+    country: 'in',
+    countryName: 'India',
+    currency: 'INR',
+    hreflang: 'en-in',
+  },
+  {
+    path: '/in/calculators/rd',
+    element: RDCalculator,
+    title: 'RD Calculator',
+    description: 'Calculate Recurring Deposit returns',
+    category: 'Savings',
+    tool: 'rd',
+    country: 'in',
+    countryName: 'India',
+    currency: 'INR',
+    hreflang: 'en-in',
+  },
+  {
+    path: '/in/calculators/fd',
+    element: FDCalculator,
+    title: 'FD Calculator',
+    description: 'Calculate Fixed Deposit maturity and interest',
+    category: 'Savings',
+    tool: 'fd',
+    country: 'in',
+    countryName: 'India',
+    currency: 'INR',
+    hreflang: 'en-in',
+  },
+  {
+    path: '/in/calculators/sip',
+    element: SIPCalculator,
+    title: 'SIP Calculator',
+    description: 'Calculate Systematic Investment Plan returns',
+    category: 'Investments',
+    tool: 'sip',
+    country: 'in',
+    countryName: 'India',
+    currency: 'INR',
+    hreflang: 'en-in',
+  },
+  {
+    path: '/in/calculators/tax',
+    element: TaxCalculator,
+    title: 'Income Tax Calculator',
+    description: 'Calculate income tax for FY 2024-25',
+    category: 'Tax',
+    tool: 'tax',
+    country: 'in',
+    countryName: 'India',
+    currency: 'INR',
+    hreflang: 'en-in',
+    comingSoon: true,
+  },
 ];
 
 // ==================== BUDGET ROUTES ====================
-// Budget planning modules - lazy loaded
-const MonthlyBudget = lazy(() => import('../modules/budgets/monthly'));
-const WeddingBudget = lazy(() => import('../modules/budgets/wedding'));
-const TripBudget = lazy(() => import('../modules/budgets/trip'));
-const EventBudget = lazy(() => import('../modules/budgets/event'));
-const RenovationBudget = lazy(() => import('../modules/budgets/renovation'));
-
-/**
- * Budget Planning Routes Configuration
- */
 export const budgetRoutes = [
   {
     path: '/',
-    element: MonthlyBudget,
-    title: 'AI Budget Planner',
-    description: 'AI-powered monthly budget planning',
-    icon: '🤖'
+    element: Home,
+    title: 'VegaKash.AI - Smart Financial Planning Tools',
+    description: 'AI-powered budget planners, calculators, and financial tools',
+    icon: '🏠'
   },
   {
     path: '/ai-budget-planner',
     element: MonthlyBudget,
     title: 'AI Budget Planner',
-    description: 'AI-powered monthly budget planning',
+    description: 'AI-powered budget planner with smart recommendations',
     icon: '🤖'
   },
   {
     path: '/budget-planner',
     element: MonthlyBudget,
-    title: 'Budget Planner',
+    title: 'AI Budget Planner',
     description: 'AI-powered monthly budget planning',
     icon: '🤖'
   },
@@ -208,78 +372,27 @@ export const budgetRoutes = [
     description: 'AI-powered monthly budget planning',
     icon: '📊'
   },
-  {
-    path: '/budgets/wedding',
-    element: WeddingBudget,
-    title: 'Wedding Budget Planner',
-    description: 'Plan your perfect wedding budget',
-    icon: '💒',
-    comingSoon: true
-  },
-  {
-    path: '/budgets/trip',
-    element: TripBudget,
-    title: 'Trip Budget Planner',
-    description: 'Plan your vacation budget',
-    icon: '✈️',
-    comingSoon: true
-  },
-  {
-    path: '/budgets/event',
-    element: EventBudget,
-    title: 'Event Budget Planner',
-    description: 'Plan any event budget',
-    icon: '🎉',
-    comingSoon: true
-  },
-  {
-    path: '/budgets/renovation',
-    element: RenovationBudget,
-    title: 'Home Renovation Budget',
-    description: 'Plan home renovation budget',
-    icon: '🏠',
-    comingSoon: true
-  }
 ];
 
 // ==================== BLOG ROUTES ====================
-// Blog & Learning Content
-const BlogIndex = lazy(() => import('../pages/blog/BlogIndex'));
-const CreateMonthlyBudgetAI = lazy(() => import('../pages/blog/CreateMonthlyBudgetAI'));
-
-/**
- * Blog & Learning Routes Configuration
- */
 export const blogRoutes = [
   {
     path: '/learning/blog',
     element: BlogIndex,
     title: 'Financial Blog & Learning Articles',
-    description: 'Learn about personal finance, budgeting, investing, and money management with expert articles and guides.',
+    description: 'Learn about personal finance, budgeting, investing, and money management',
     category: 'Learning'
   },
   {
     path: '/learning/blog/create-monthly-budget-ai',
     element: CreateMonthlyBudgetAI,
-    title: 'How to Create a Monthly Budget Using AI in 2024',
-    description: 'Learn how to create a monthly budget using AI. Step-by-step guide with practical examples for US, UK, India, Canada, Australia & UAE.',
+    title: 'How to Create a Monthly Budget Using AI',
+    description: 'Learn how to create a monthly budget using AI. Step-by-step guide with practical examples.',
     category: 'Personal Finance',
-    keywords: ['AI budgeting', 'monthly budget', 'personal finance', 'budget planner', '50-30-20 rule']
-  }
+  },
 ];
 
 // ==================== CONTENT ROUTES ====================
-// Static pages and content
-// Note: CalculatorHub already imported at top for redirect routes
-const About = lazy(() => import('../pages/About'));
-const VideoTutorials = lazy(() => import('../pages/VideoTutorials'));
-const PrivacyPolicy = lazy(() => import('../pages/PrivacyPolicy'));
-const TermsAndConditions = lazy(() => import('../pages/TermsAndConditions'));
-const Disclaimer = lazy(() => import('../pages/Disclaimer'));
-
-/**
- * Content & Static Page Routes
- */
 export const contentRoutes = [
   {
     path: '/calculators',
@@ -319,18 +432,47 @@ export const contentRoutes = [
   }
 ];
 
+// ==================== LEGACY ROUTE REDIRECTS ====================
+/**
+ * Redirect old URLs to new global routing structure
+ * Ensures backward compatibility and prevents broken links
+ */
+export const legacyRedirectRoutes = [
+  // Old US calculators → new global routes
+  { path: '/calculators/mortgage-us', redirectTo: '/us/calculators/mortgage' },
+  { path: '/calculators/loan-payment-us', redirectTo: '/us/calculators/loan' },
+  { path: '/calculators/credit-card-payoff-us', redirectTo: '/us/calculators/credit-card' },
+  { path: '/calculators/401k-retirement-us', redirectTo: '/us/calculators/401k' },
+  { path: '/calculators/savings-growth-us', redirectTo: '/us/calculators/savings' },
+
+  // Old UK calculators → new global routes
+  { path: '/calculators/vat-uk', redirectTo: '/uk/calculators/vat' },
+  { path: '/calculators/mortgage-affordability-uk', redirectTo: '/uk/calculators/mortgage' },
+  { path: '/calculators/savings-interest-uk', redirectTo: '/uk/calculators/savings' },
+
+  // Old paths → global routes (backward compatibility)
+  { path: '/emi-calculator', redirectTo: '/calculators/emi' },
+  { path: '/sip-calculator', redirectTo: '/calculators/sip' },
+  { path: '/fd-calculator', redirectTo: '/calculators/fd' },
+  { path: '/rd-calculator', redirectTo: '/calculators/rd' },
+  { path: '/car-loan-calculator', redirectTo: '/calculators/emi' },
+  { path: '/income-tax-calculator', redirectTo: '/calculators/tax' },
+];
+
 // ==================== COMBINED ROUTES ====================
 /**
  * All application routes combined
+ * Order matters: Global → Country-specific → Budget → Blog → Content
  */
 export const allRoutes = [
   ...budgetRoutes,
-  ...calculatorRoutes,
-  ...redirectRoutes,
+  ...globalCalculatorRoutes,
+  ...countrySpecificCalculatorRoutes,
   ...blogRoutes,
-  ...contentRoutes
+  ...contentRoutes,
 ];
 
+// ==================== ROUTE UTILITIES ====================
 /**
  * Get route by path
  */
@@ -342,15 +484,31 @@ export const getRouteByPath = (path) => {
  * Get routes by category
  */
 export const getRoutesByCategory = (category) => {
-  return calculatorRoutes.filter(route => route.category === category);
+  return [
+    ...globalCalculatorRoutes.filter(route => route.category === category),
+    ...countrySpecificCalculatorRoutes.filter(route => route.category === category),
+  ];
 };
 
 /**
- * Get all calculator categories
+ * Get calculator categories
  */
 export const getCalculatorCategories = () => {
-  const categories = new Set(calculatorRoutes.map(route => route.category));
+  const categories = new Set([
+    ...globalCalculatorRoutes.map(route => route.category),
+    ...countrySpecificCalculatorRoutes.map(route => route.category),
+  ]);
   return Array.from(categories);
+};
+
+/**
+ * Get all tools for a specific country
+ */
+export const getToolsByCountry = (country) => {
+  if (!country || country === 'global') {
+    return globalCalculatorRoutes;
+  }
+  return countrySpecificCalculatorRoutes.filter(route => route.country === country);
 };
 
 export default allRoutes;

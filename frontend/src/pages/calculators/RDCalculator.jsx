@@ -1,14 +1,23 @@
 import React, { useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { formatSmartCurrency } from '../../utils/helpers';
 import CurrencySelector from '../../components/CurrencySelector';
+import { EnhancedSEO } from '../../components/EnhancedSEO';
 import '../../styles/Calculator.css';
 
 /**
- * RD Calculator Component
- * Calculates Recurring Deposit maturity amount
+ * RD Calculator Component - GLOBAL & COUNTRY-SPECIFIC
+ * Calculates Recurring Deposit maturity amount with proper SEO
+ * 
+ * Supports:
+ * - Global route: /calculators/rd/
+ * - Country routes: /{country}/calculators/rd/
+ * - Auto-generated hreflang tags for all country versions
+ * - Proper schema markup for calculators
  */
 function RDCalculator() {
-  const [currency, setCurrency] = useState('INR');
+  const { country } = useParams(); // From URL if available
+  const [currency, setCurrency] = useState(country === 'us' ? 'USD' : country === 'uk' ? 'GBP' : 'INR');
   const [monthlyDeposit, setMonthlyDeposit] = useState(5000);
   const [interestRate, setInterestRate] = useState(6.5);
   const [tenure, setTenure] = useState(12);
@@ -48,230 +57,251 @@ function RDCalculator() {
     setTenure(12);
   };
 
+  // SEO configuration for global/country-specific versions
+  const seoConfig = {
+    title: country 
+      ? `Recurring Deposit (RD) Calculator for ${country.toUpperCase()}`
+      : 'Recurring Deposit (RD) Calculator - Free Online',
+    description: country
+      ? `Calculate RD maturity amount, interest and returns for ${country.toUpperCase()}. Free online recurring deposit calculator with detailed breakdown.`
+      : 'Free RD calculator to calculate recurring deposit maturity amount, monthly interest and total earnings. Get accurate breakdown with compounding.',
+    keywords: country
+      ? `RD calculator ${country.toUpperCase()}, recurring deposit, RD formula, maturity amount`
+      : 'RD calculator, recurring deposit calculator, RD interest calculator, recurring deposit formula, RD maturity',
+    tool: 'rd',
+    country: country || undefined,
+    supportedCountries: ['in', 'us', 'uk'],
+    isGlobal: !country,
+  };
+
   return (
-    <div className="calculator-container">
-      <div className="calculator-header">
-        <h1>RD Calculator</h1>
-        <p>Calculate Recurring Deposit maturity amount with monthly deposits</p>
-      </div>
+    <>
+      {/* SEO Tags - Global & Country-Specific */}
+      <EnhancedSEO {...seoConfig} />
+      
+      <div className="calculator-container">
+        <div className="calculator-header">
+          <h1>{country ? `RD Calculator (${country.toUpperCase()})` : 'RD Calculator'}</h1>
+          <p>Calculate Recurring Deposit maturity amount with monthly deposits</p>
+        </div>
 
-      <div className="calculator-content">
-        {/* Currency Selector */}
-        <CurrencySelector 
-          selectedCurrency={currency}
-          onCurrencyChange={setCurrency}
-        />
+        <div className="calculator-content">
+          {/* Currency Selector */}
+          <CurrencySelector 
+            selectedCurrency={currency}
+            onCurrencyChange={setCurrency}
+          />
 
-        <div className="calculator-main-grid">
-          <div className="calculator-inputs">
+          <div className="calculator-main-grid">
+            <div className="calculator-inputs">
+              <div className="slider-group">
+              <div className="slider-header">
+                <label>Monthly Deposit</label>
+                <input
+                  type="text"
+                  value={`₹${monthlyDeposit.toLocaleString('en-IN')}`}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/[₹,\s]/g, '');
+                    if (val === '') {
+                      setMonthlyDeposit('');
+                      return;
+                    }
+                    const num = parseInt(val);
+                    if (!isNaN(num)) {
+                      setMonthlyDeposit(num);
+                    }
+                  }}
+                  onBlur={(e) => {
+                    const val = e.target.value.replace(/[₹,\s]/g, '');
+                    const num = parseInt(val);
+                    
+                    if (val === '' || isNaN(num)) {
+                      setMonthlyDeposit(5000);
+                    } else if (num < 500) {
+                      setMonthlyDeposit(500);
+                    } else if (num > 100000) {
+                      setMonthlyDeposit(100000);
+                    } else {
+                      setMonthlyDeposit(num);
+                    }
+                  }}
+                  className="input-display"
+                />
+              </div>
+              <input
+                type="range"
+                min="500"
+                max="100000"
+                step="500"
+                value={monthlyDeposit}
+                onChange={(e) => setMonthlyDeposit(parseInt(e.target.value))}
+                className="slider"
+              />
+              <div className="slider-labels">
+                <span>₹500</span>
+                <span>₹1L</span>
+              </div>
+            </div>
+
             <div className="slider-group">
-            <div className="slider-header">
-              <label>Monthly Deposit</label>
+              <div className="slider-header">
+                <label>Interest Rate (p.a.)</label>
+                <input
+                  type="text"
+                  value={`${interestRate}%`}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/[%\s]/g, '');
+                    if (val === '') {
+                      setInterestRate('');
+                      return;
+                    }
+                    const num = parseFloat(val);
+                    if (!isNaN(num)) {
+                      setInterestRate(num);
+                    }
+                  }}
+                  onBlur={(e) => {
+                    const val = e.target.value.replace(/[%\s]/g, '');
+                    const num = parseFloat(val);
+                    
+                    if (val === '' || isNaN(num)) {
+                      setInterestRate(6.5);
+                    } else if (num < 1) {
+                      setInterestRate(1);
+                    } else if (num > 15) {
+                      setInterestRate(15);
+                    } else {
+                      setInterestRate(num);
+                    }
+                  }}
+                  className="input-display"
+                />
+              </div>
               <input
-                type="text"
-                value={`₹${monthlyDeposit.toLocaleString('en-IN')}`}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/[₹,\s]/g, '');
-                  if (val === '') {
-                    setMonthlyDeposit('');
-                    return;
-                  }
-                  const num = parseInt(val);
-                  if (!isNaN(num)) {
-                    setMonthlyDeposit(num);
-                  }
-                }}
-                onBlur={(e) => {
-                  const val = e.target.value.replace(/[₹,\s]/g, '');
-                  const num = parseInt(val);
-                  
-                  if (val === '' || isNaN(num)) {
-                    setMonthlyDeposit(5000);
-                  } else if (num < 500) {
-                    setMonthlyDeposit(500);
-                  } else if (num > 100000) {
-                    setMonthlyDeposit(100000);
-                  } else {
-                    setMonthlyDeposit(num);
-                  }
-                }}
-                className="input-display"
+                type="range"
+                min="1"
+                max="15"
+                step="0.1"
+                value={interestRate}
+                onChange={(e) => setInterestRate(parseFloat(e.target.value))}
+                className="slider"
               />
+              <div className="slider-labels">
+                <span>1%</span>
+                <span>15%</span>
+              </div>
             </div>
-            <input
-              type="range"
-              min="500"
-              max="100000"
-              step="500"
-              value={monthlyDeposit}
-              onChange={(e) => setMonthlyDeposit(parseInt(e.target.value))}
-              className="slider"
-            />
-            <div className="slider-labels">
-              <span>₹500</span>
-              <span>₹1L</span>
+
+            <div className="slider-group">
+              <div className="slider-header">
+                <label>RD Tenure</label>
+                <input
+                  type="text"
+                  value={`${tenure} ${tenure === 1 ? 'Month' : 'Months'}`}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/[^0-9]/g, '');
+                    if (val === '') {
+                      setTenure('');
+                      return;
+                    }
+                    const num = parseInt(val);
+                    if (!isNaN(num)) {
+                      setTenure(num);
+                    }
+                  }}
+                  onBlur={(e) => {
+                    const val = e.target.value.replace(/[^0-9]/g, '');
+                    const num = parseInt(val);
+                    
+                    if (val === '' || isNaN(num)) {
+                      setTenure(12);
+                    } else if (num < 6) {
+                      setTenure(6);
+                    } else if (num > 120) {
+                      setTenure(120);
+                    } else {
+                      setTenure(num);
+                    }
+                  }}
+                  className="input-display"
+                />
+              </div>
+              <input
+                type="range"
+                min="6"
+                max="120"
+                step="1"
+                value={tenure}
+                onChange={(e) => setTenure(parseInt(e.target.value))}
+                className="slider"
+              />
+              <div className="slider-labels">
+                <span>1 Mo</span>
+                <span>120 Mos</span>
+              </div>
+            </div>
+
+            {/* Reset Button Inside Input Box */}
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
+              <button onClick={handleReset} className="btn-reset">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M14 8C14 11.3137 11.3137 14 8 14C4.68629 14 2 8C2 4.68629 4.68629 2 8 2C9.84871 2 11.5151 2.87161 12.6 4.2M12.6 4.2V1M12.6 4.2H9.4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Reset to Default
+              </button>
             </div>
           </div>
 
-          <div className="slider-group">
-            <div className="slider-header">
-              <label>Interest Rate (p.a.)</label>
-              <input
-                type="text"
-                value={`${interestRate}%`}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/[%\s]/g, '');
-                  if (val === '') {
-                    setInterestRate('');
-                    return;
-                  }
-                  const num = parseFloat(val);
-                  if (!isNaN(num)) {
-                    setInterestRate(num);
-                  }
-                }}
-                onBlur={(e) => {
-                  const val = e.target.value.replace(/[%\s]/g, '');
-                  const num = parseFloat(val);
-                  
-                  if (val === '' || isNaN(num)) {
-                    setInterestRate(6.5);
-                  } else if (num < 1) {
-                    setInterestRate(1);
-                  } else if (num > 15) {
-                    setInterestRate(15);
-                  } else {
-                    setInterestRate(num);
-                  }
-                }}
-                className="input-display"
-              />
-            </div>
-            <input
-              type="range"
-              min="1"
-              max="15"
-              step="0.1"
-              value={interestRate}
-              onChange={(e) => setInterestRate(parseFloat(e.target.value))}
-              className="slider"
-            />
-            <div className="slider-labels">
-              <span>1%</span>
-              <span>15%</span>
-            </div>
-          </div>
+          {result && (
+            <div className="calculator-results">
+              <h2>Your RD Breakdown</h2>
+              
+              <div className="result-card highlight">
+                <div className="result-label">Maturity Amount</div>
+                <div className={`result-value ${String(result.maturityAmount).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.maturityAmount, currency)}</div>
+              </div>
 
-          <div className="slider-group">
-            <div className="slider-header">
-              <label>RD Tenure</label>
-              <input
-                type="text"
-                value={`${tenure} ${tenure === 1 ? 'Month' : 'Months'}`}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/[^0-9]/g, '');
-                  if (val === '') {
-                    setTenure('');
-                    return;
-                  }
-                  const num = parseInt(val);
-                  if (!isNaN(num)) {
-                    setTenure(num);
-                  }
-                }}
-                onBlur={(e) => {
-                  const val = e.target.value.replace(/[^0-9]/g, '');
-                  const num = parseInt(val);
-                  
-                  if (val === '' || isNaN(num)) {
-                    setTenure(12);
-                  } else if (num < 6) {
-                    setTenure(6);
-                  } else if (num > 120) {
-                    setTenure(120);
-                  } else {
-                    setTenure(num);
-                  }
-                }}
-                className="input-display"
-              />
-            </div>
-            <input
-              type="range"
-              min="6"
-              max="120"
-              step="1"
-              value={tenure}
-              onChange={(e) => setTenure(parseInt(e.target.value))}
-              className="slider"
-            />
-            <div className="slider-labels">
-              <span>1 Mo</span>
-              <span>120 Mos</span>
-            </div>
-          </div>
+              <div className="result-cards">
+                <div className="result-card">
+                  <div className="result-label">Total Deposited</div>
+                  <div className={`result-value ${String(result.totalDeposited).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.totalDeposited, currency)}</div>
+                </div>
 
-          {/* Reset Button Inside Input Box */}
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
-            <button onClick={handleReset} className="btn-reset">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M14 8C14 11.3137 11.3137 14 8 14C4.68629 14 2 8C2 4.68629 4.68629 2 8 2C9.84871 2 11.5151 2.87161 12.6 4.2M12.6 4.2V1M12.6 4.2H9.4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              Reset to Default
-            </button>
+                <div className="result-card">
+                  <div className="result-label">Interest Earned</div>
+                  <div className={`result-value ${String(result.interestEarned).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.interestEarned, currency)}</div>
+                </div>
+              </div>
+
+              <div className="pie-chart-container">
+                <div 
+                  className="pie-chart" 
+                  style={{
+                    background: `conic-gradient(
+                      #667eea 0% ${(result.totalDeposited / result.maturityAmount * 100).toFixed(1)}%,
+                      #10b981 ${(result.totalDeposited / result.maturityAmount * 100).toFixed(1)}% 100%
+                    )`
+                  }}>
+                  <div className="pie-center">
+                    <span>Total</span>
+                    <strong>₹{Number(result.maturityAmount).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</strong>
+                  </div>
+                </div>
+                <div className="chart-legend">
+                  <div className="legend-item">
+                    <span className="legend-color principal"></span>
+                    <span>Deposited: ₹{Number(result.totalDeposited).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+                  </div>
+                  <div className="legend-item">
+                    <span className="legend-color interest"></span>
+                    <span>Interest: ₹{Number(result.interestEarned).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           </div>
         </div>
-
-        {result && (
-          <div className="calculator-results">
-            <h2>Your RD Breakdown</h2>
-            
-            <div className="result-card highlight">
-              <div className="result-label">Maturity Amount</div>
-              <div className={`result-value ${String(result.maturityAmount).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.maturityAmount, currency)}</div>
-            </div>
-
-            <div className="result-cards">
-              <div className="result-card">
-                <div className="result-label">Total Deposited</div>
-                <div className={`result-value ${String(result.totalDeposited).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.totalDeposited, currency)}</div>
-              </div>
-
-              <div className="result-card">
-                <div className="result-label">Interest Earned</div>
-                <div className={`result-value ${String(result.interestEarned).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.interestEarned, currency)}</div>
-              </div>
-            </div>
-
-            <div className="pie-chart-container">
-              <div 
-                className="pie-chart" 
-                style={{
-                  background: `conic-gradient(
-                    #667eea 0% ${(result.totalDeposited / result.maturityAmount * 100).toFixed(1)}%,
-                    #10b981 ${(result.totalDeposited / result.maturityAmount * 100).toFixed(1)}% 100%
-                  )`
-                }}>
-                <div className="pie-center">
-                  <span>Total</span>
-                  <strong>₹{Number(result.maturityAmount).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</strong>
-                </div>
-              </div>
-              <div className="chart-legend">
-                <div className="legend-item">
-                  <span className="legend-color principal"></span>
-                  <span>Deposited: ₹{Number(result.totalDeposited).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
-                </div>
-                <div className="legend-item">
-                  <span className="legend-color interest"></span>
-                  <span>Interest: ₹{Number(result.interestEarned).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-        </div>
-      </div>
 
       {/* SEO Content Section */}
       <div className="seo-content-section">
@@ -537,22 +567,22 @@ function RDCalculator() {
           <h2>Related Financial Calculators</h2>
           <p>Explore our other calculators to plan your finances better:</p>
           <div className="calculator-grid">
-            <a href="/fd-calculator" className="calc-card">
+            <Link to="/fd-calculator" className="calc-card">
               <h3>FD Calculator</h3>
               <p>Calculate fixed deposit maturity and returns</p>
-            </a>
-            <a href="/sip-calculator" className="calc-card">
+            </Link>
+            <Link to="/sip-calculator" className="calc-card">
               <h3>SIP Calculator</h3>
               <p>Calculate mutual fund SIP and lumpsum returns</p>
-            </a>
-            <a href="/calculators/savings-goal" className="calc-card">
+            </Link>
+            <Link to="/calculators/savings-goal" className="calc-card">
               <h3>Savings Goal Calculator</h3>
               <p>Plan monthly savings to achieve financial goals</p>
-            </a>
-            <a href="/emi-calculator" className="calc-card">
+            </Link>
+            <Link to="/emi-calculator" className="calc-card">
               <h3>EMI Calculator</h3>
               <p>Calculate loan EMI and total interest payable</p>
-            </a>
+            </Link>
           </div>
         </div>
       </div>

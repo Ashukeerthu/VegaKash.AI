@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { EnhancedSEO } from '../../components/EnhancedSEO';
 import '../../styles/Calculator.css';
 
 /**
- * SIP + Lumpsum Calculator Component
- * Calculates Systematic Investment Plan and Lumpsum returns
+ * SIP + Lumpsum Calculator Component - GLOBAL & COUNTRY-SPECIFIC
+ * Calculates Systematic Investment Plan and Lumpsum returns with proper SEO
  */
 function SIPCalculator() {
+  const { country } = useParams();
   const [investmentMode, setInvestmentMode] = useState('sip'); // 'sip' or 'lumpsum'
   const [monthlyInvestment, setMonthlyInvestment] = useState(5000);
   const [initialInvestment, setInitialInvestment] = useState(0);
@@ -85,16 +88,37 @@ function SIPCalculator() {
     setDuration(10);
   };
 
-  return (
-    <div className="calculator-container">
-      <div className="calculator-header">
-        <h1>SIP Calculator</h1>
-        <p>Calculate returns from Systematic Investment Plan and one-time investments in mutual funds</p>
-      </div>
+  // SEO configuration for global/country-specific versions
+  const seoConfig = {
+    title: country 
+      ? `SIP Calculator for ${country.toUpperCase()}`
+      : 'SIP Calculator - Free Systematic Investment Plan Calculator',
+    description: country
+      ? `Calculate SIP returns and mutual fund investments for ${country.toUpperCase()}. Free SIP calculator with detailed breakdown and charts.`
+      : 'Free SIP calculator to calculate mutual fund SIP returns, lumpsum investments, and wealth growth. Get accurate projections and analysis.',
+    keywords: country
+      ? `SIP calculator ${country.toUpperCase()}, mutual fund SIP, investment returns`
+      : 'SIP calculator, systematic investment plan, mutual fund calculator, investment returns',
+    tool: 'sip',
+    country: country || undefined,
+    supportedCountries: ['in', 'us', 'uk'],
+    isGlobal: !country,
+  };
 
-      <div className="calculator-content">
-        <div className="calculator-inputs">
-          {/* Investment Mode Tabs */}
+  return (
+    <>
+      {/* SEO Tags - Global & Country-Specific */}
+      <EnhancedSEO {...seoConfig} />
+      
+      <div className="calculator-container">
+        <div className="calculator-header">
+          <h1>{country ? `SIP Calculator (${country.toUpperCase()})` : 'SIP Calculator'}</h1>
+          <p>Calculate returns from Systematic Investment Plan and one-time investments in mutual funds</p>
+        </div>
+
+        <div className="calculator-content">
+          <div className="calculator-inputs">
+            {/* Investment Mode Tabs */}
           <div className="amortization-tabs" style={{ marginBottom: '2rem' }}>
             <button 
               className={`tab-btn ${investmentMode === 'sip' ? 'active' : ''}`}
@@ -691,26 +715,27 @@ function SIPCalculator() {
           <h2>Related Financial Calculators</h2>
           <p>Explore our other calculators to plan your finances better:</p>
           <div className="calculator-grid">
-            <a href="/fd-calculator" className="calc-card">
+            <Link to="/fd-calculator" className="calc-card">
               <h3>FD Calculator</h3>
               <p>Calculate fixed deposit maturity and interest</p>
-            </a>
-            <a href="/rd-calculator" className="calc-card">
+            </Link>
+            <Link to="/rd-calculator" className="calc-card">
               <h3>RD Calculator</h3>
               <p>Calculate recurring deposit returns</p>
-            </a>
-            <a href="/emi-calculator" className="calc-card">
+            </Link>
+            <Link to="/emi-calculator" className="calc-card">
               <h3>EMI Calculator</h3>
               <p>Calculate loan EMI and total interest</p>
-            </a>
-            <a href="/calculators/savings-goal" className="calc-card">
+            </Link>
+            <Link to="/calculators/savings-goal" className="calc-card">
               <h3>Savings Goal Calculator</h3>
               <p>Plan monthly investment for your goals</p>
-            </a>
+            </Link>
           </div>
         </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

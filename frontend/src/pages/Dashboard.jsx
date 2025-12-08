@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 import Hero from '../components/Hero';
 import FinancialForm from '../components/FinancialForm';
@@ -441,22 +442,22 @@ function Dashboard() {
             <h2>Related Financial Tools</h2>
             <p>Explore our other free calculators to plan your finances better:</p>
             <div className="calculator-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem', marginTop: '1rem' }}>
-              <a href="/emi-calculator" className="calc-card" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <Link to="/calculators/emi" className="calc-card" style={{ textDecoration: 'none', color: 'inherit' }}>
                 <h3>💰 EMI Calculator</h3>
                 <p>Calculate loan EMI for home, car, or personal loans</p>
-              </a>
-              <a href="/sip-calculator" className="calc-card" style={{ textDecoration: 'none', color: 'inherit' }}>
+              </Link>
+              <Link to="/calculators/sip" className="calc-card" style={{ textDecoration: 'none', color: 'inherit' }}>
                 <h3>📈 SIP Calculator</h3>
                 <p>Plan mutual fund investments with SIP or lumpsum</p>
-              </a>
-              <a href="/fd-calculator" className="calc-card" style={{ textDecoration: 'none', color: 'inherit' }}>
+              </Link>
+              <Link to="/calculators/fd" className="calc-card" style={{ textDecoration: 'none', color: 'inherit' }}>
                 <h3>🏦 FD Calculator</h3>
                 <p>Calculate fixed deposit maturity and interest</p>
-              </a>
-              <a href="/rd-calculator" className="calc-card" style={{ textDecoration: 'none', color: 'inherit' }}>
+              </Link>
+              <Link to="/calculators/rd" className="calc-card" style={{ textDecoration: 'none', color: 'inherit' }}>
                 <h3>📅 RD Calculator</h3>
                 <p>Plan recurring deposit savings and returns</p>
-              </a>
+              </Link>
             </div>
           </div>
         </div>

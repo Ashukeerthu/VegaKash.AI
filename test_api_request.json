@@ -1,0 +1,30 @@
+{
+  "monthly_income": 50000,
+  "currency": "INR",
+  "country": null,
+  "state": null,
+  "city": null,
+  "city_tier": "tier_1",
+  "col_multiplier": 1.0,
+  "family_size": 1,
+  "lifestyle": "moderate",
+  "fixed_expenses": {
+    "rent": 0,
+    "utilities": 0,
+    "insurance": 0,
+    "medical": 0,
+    "other": 0
+  },
+  "variable_expenses": {
+    "groceries": 0,
+    "transport": 0,
+    "subscriptions": 0,
+    "entertainment": 0,
+    "shopping": 0,
+    "dining_out": 0,
+    "other": 0
+  },
+  "loans": [],
+  "goals": [],
+  "mode": "smart_balanced"
+}

@@ -1,5 +1,5 @@
-import React, { Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { Suspense, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -10,60 +10,192 @@ import GoogleAnalytics from './components/GoogleAnalytics';
 import './styles/App.css';
 import './styles/animations.css';
 
-// ==================== PRODUCTION-GRADE MODULAR ROUTING ====================
-// Centralized route configuration from router module
-import { allRoutes } from './router';
+// ==================== PRODUCTION-GRADE GLOBAL ROUTING ====================
+// Centralized route configuration with country-specific & global routes
+import { 
+  globalCalculatorRoutes, 
+  countrySpecificCalculatorRoutes,
+  budgetRoutes,
+  blogRoutes,
+  contentRoutes,
+  legacyRedirectRoutes
+} from './router/routes';
+import { Navigate } from 'react-router-dom';
 
 /**
- * Main App Component with Routing - REFACTORED
- * Production-grade modular architecture
- * SEO-optimized with centralized route management
+ * ScrollToTop Component - Scrolls to top on route change
+ * Fixes issue where page stays scrolled when navigating
+ */
+function ScrollToTop() {
+  const location = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+  
+  return null;
+}
+
+/**
+ * AppContent - Inner component that uses location for proper route rendering
+ * Forces React to remount components when route changes
+ */
+function AppContent() {
+  const location = useLocation();
+  
+  return (
+    <div className="app">
+      {/* Global Navigation */}
+      <Navbar />
+      
+      {/* Main Content with Routes */}
+      <Routes location={location}>
+        {/* Budget Routes - MUST BE FIRST to catch / route */}
+        {budgetRoutes.map((route, index) => {
+          const Component = route.element;
+          return (
+            <Route 
+              key={`budget-${route.path}`}
+              path={route.path} 
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <Component />
+                </Suspense>
+              } 
+            />
+          );
+        })}
+        
+        {/* 
+          GLOBAL CALCULATORS (x-default hreflang)
+          Canonical version, serves all countries by default
+          Redirects to country-specific version if country detected
+        */}
+        {globalCalculatorRoutes.map((route, index) => {
+          const Component = route.element;
+          return (
+            <Route 
+              key={`global-${route.path}`}
+              path={route.path} 
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <Component />
+                </Suspense>
+              } 
+            />
+          );
+        })}
+        
+        {/* 
+          COUNTRY-SPECIFIC CALCULATORS
+          Localized content with country-specific currency, laws, etc.
+          Proper hreflang tags for international SEO
+        */}
+        {countrySpecificCalculatorRoutes.map((route, index) => {
+          const Component = route.element;
+          return (
+            <Route 
+              key={`country-${route.path}`}
+              path={route.path} 
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <Component />
+                </Suspense>
+              } 
+            />
+          );
+        })}
+        
+        {/* 
+          LEGACY REDIRECTS (301)
+          Maps old URLs to new structure
+          Example: /calculators/mortgage-us → /us/calculators/mortgage
+          Preserves SEO value from old links
+        */}
+        {legacyRedirectRoutes.map((route, index) => (
+          <Route 
+            key={`redirect-${route.path}`}
+            path={route.path} 
+            element={<Navigate to={route.redirectTo} replace />} 
+          />
+        ))}
+        
+        {/* Blog Routes - After specific routes */}
+        {blogRoutes.map((route, index) => {
+          const Component = route.element;
+          return (
+            <Route 
+              key={`blog-${route.path}`}
+              path={route.path} 
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <Component />
+                </Suspense>
+              } 
+            />
+          );
+        })}
+        
+        {/* Content Routes */}
+        {contentRoutes.map((route, index) => {
+          const Component = route.element;
+          return (
+            <Route 
+              key={`content-${route.path}`}
+              path={route.path} 
+              element={
+                <Suspense fallback={<LoadingSpinner />}>
+                  <Component />
+                </Suspense>
+              } 
+            />
+          );
+        })}
+        
+        {/* Fallback Coming Soon Routes - Only for truly non-existent routes */}
+        <Route path="/learning/guides" element={<ComingSoon title="Financial Guides" />} />
+      </Routes>
+      
+      {/* Global Footer */}
+      <Footer />
+      
+      {/* Cookie Consent Banner */}
+      <CookieConsent />
+    </div>
+  );
+}
+
+/**
+ * Main App Component with Routing - REFACTORED FOR GLOBAL SEO
+ * Production-grade global architecture with country-specific optimization
+ * SEO-optimized with best-practice global routing patterns
  * 
- * MIGRATION NOTES:
- * - All routes now managed centrally in router/routes.jsx
- * - Calculators migrated to modules/calculators/
- * - Budgets migrated to modules/budgets/
- * - Lazy loading maintained for performance
+ * ROUTING STRUCTURE:
+ * - Global routes: /calculators/{tool}/ (x-default hreflang)
+ * - Country routes: /{country}/calculators/{tool}/ (en-{country} hreflang)
+ * - Legacy redirects: Maps old URLs to new structure (301 redirects)
+ * - Other content: /blogs/, /learning/, /budgets/
+ * 
+ * FEATURES:
+ * - Automatic hreflang generation for all calculator pages
+ * - 301 redirects for legacy URLs (backward compatibility)
+ * - Country-specific content with proper metadata
+ * - SEO-optimized lazy loading
+ * - Fallback routes for error handling
+ * - Fixed: Proper route remounting when navigating from Budget Planner
  */
 function App() {
   return (
     <HelmetProvider>
       <Router>
+        {/* Scroll to top on route change */}
+        <ScrollToTop />
+        
         {/* Google Analytics - tracks page views automatically */}
         <GoogleAnalytics />
         
-        <div className="app">
-          {/* Global Navigation */}
-          <Navbar />
-          
-          {/* Main Content with Routes - MODULAR ARCHITECTURE */}
-          <Suspense fallback={<LoadingSpinner />}>
-            <Routes>
-              {/* 
-                PRODUCTION-GRADE ROUTING SYSTEM
-                All routes dynamically generated from centralized configuration
-                Supports: Calculators, Budgets, Content pages
-                Features: Lazy loading, SEO optimization, Coming Soon handling
-              */}
-              {allRoutes.map((route, index) => (
-                <Route 
-                  key={index} 
-                  path={route.path} 
-                  element={<route.element />} 
-                />
-              ))}
-              
-              {/* Fallback Coming Soon Routes - Only for truly non-existent routes */}
-              <Route path="/learning/guides" element={<ComingSoon title="Financial Guides" />} />
-            </Routes>
-          </Suspense>
-          
-          {/* Global Footer */}
-          <Footer />
-          
-          {/* Cookie Consent Banner */}
-          <CookieConsent />
-        </div>
+        {/* App content with location-based key for proper remounting */}
+        <AppContent />
       </Router>
     </HelmetProvider>
   );

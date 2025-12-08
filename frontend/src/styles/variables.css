@@ -1,0 +1,334 @@
+/**
+ * VegaKash.AI Design System - CSS Variables Reference
+ * Version: 1.0
+ * 
+ * This file documents all CSS variables used in the VegaKash.AI project
+ * For implementation, these are defined in App.css and other component files
+ */
+
+/* ============================================================
+   COLOR VARIABLES
+   ============================================================ */
+
+:root {
+  /* Primary Brand Colors */
+  --color-primary: #667eea;        /* Purple - Primary accent */
+  --color-primary-dark: #764ba2;   /* Violet - Darker accent */
+  --color-primary-light: #f093fb;  /* Pink - Light accent */
+  
+  /* Neutral Colors - Backgrounds */
+  --color-white: #ffffff;
+  --color-light-gray: #f8f9fc;
+  --color-very-light-blue: #e3f2fd;
+  --color-bg-hover: #f1f5f9;
+  
+  /* Neutral Colors - Text */
+  --color-text-dark: #1e293b;      /* Headings */
+  --color-text-body: #475569;      /* Body text */
+  --color-text-secondary: #64748b; /* Secondary text */
+  --color-text-muted: #94a3b8;     /* Muted text */
+  
+  /* Borders & Dividers */
+  --color-border: #e8ecf3;
+  --color-border-dark: #d4d4d8;
+  
+  /* Semantic Colors */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #667eea;
+}
+
+/* ============================================================
+   SPACING VARIABLES
+   ============================================================ */
+
+:root {
+  --spacing-xs: 0.25rem;    /* 4px */
+  --spacing-sm: 0.5rem;     /* 8px */
+  --spacing-md: 1rem;       /* 16px */
+  --spacing-lg: 1.5rem;     /* 24px */
+  --spacing-xl: 2rem;       /* 32px */
+  --spacing-2xl: 3rem;      /* 48px */
+  --spacing-3xl: 4rem;      /* 64px */
+}
+
+/* ============================================================
+   TYPOGRAPHY VARIABLES
+   ============================================================ */
+
+:root {
+  /* Font Family */
+  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  
+  /* Font Sizes */
+  --font-size-xs: 0.75rem;     /* 12px */
+  --font-size-sm: 0.875rem;    /* 14px */
+  --font-size-base: 1rem;      /* 16px */
+  --font-size-lg: 1.125rem;    /* 18px */
+  --font-size-xl: 1.25rem;     /* 20px */
+  --font-size-2xl: 1.5rem;     /* 24px */
+  --font-size-3xl: 1.875rem;   /* 30px */
+  --font-size-4xl: 2rem;       /* 32px */
+  --font-size-5xl: 2.5rem;     /* 40px */
+  
+  /* Font Weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  
+  /* Line Heights */
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.8;
+}
+
+/* ============================================================
+   BORDER RADIUS VARIABLES
+   ============================================================ */
+
+:root {
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-3xl: 24px;
+  --radius-full: 9999px;
+}
+
+/* ============================================================
+   SHADOW VARIABLES
+   ============================================================ */
+
+:root {
+  /* Subtle shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.15);
+  
+  /* Brand colored shadows */
+  --shadow-primary-sm: 0 4px 12px rgba(102, 126, 234, 0.2);
+  --shadow-primary-md: 0 4px 12px rgba(102, 126, 234, 0.3);
+  --shadow-primary-lg: 0 8px 24px rgba(102, 126, 234, 0.3);
+  --shadow-primary-xl: 0 12px 32px rgba(102, 126, 234, 0.4);
+}
+
+/* ============================================================
+   CONTAINER WIDTHS
+   ============================================================ */
+
+:root {
+  --max-width-sm: 640px;
+  --max-width-md: 768px;
+  --max-width-lg: 900px;
+  --max-width-xl: 1200px;
+  --max-width-2xl: 1400px;
+}
+
+/* ============================================================
+   BREAKPOINTS (Mobile-First)
+   ============================================================ */
+
+:root {
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1200px;
+  --breakpoint-2xl: 1400px;
+}
+
+/* ============================================================
+   TRANSITION & ANIMATION TIMINGS
+   ============================================================ */
+
+:root {
+  /* Animation Durations */
+  --duration-fast: 0.15s;
+  --duration-normal: 0.3s;
+  --duration-slow: 0.5s;
+  --duration-slower: 0.8s;
+  
+  /* Easing Functions */
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-linear: linear;
+  
+  /* Common Transitions */
+  --transition-fast: all 0.15s ease-out;
+  --transition-normal: all 0.3s ease-out;
+  --transition-slow: all 0.5s ease-out;
+}
+
+/* ============================================================
+   Z-INDEX SCALE
+   ============================================================ */
+
+:root {
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-notification: 1080;
+}
+
+/* ============================================================
+   GRADIENT COMBINATIONS (Predefined)
+   ============================================================ */
+
+:root {
+  /* Primary Gradient - Most used */
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  
+  /* Extended Gradient - Hero sections */
+  --gradient-extended: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  
+  /* Subtle Gradient - Light backgrounds */
+  --gradient-subtle: linear-gradient(135deg, #f8f9fc 0%, #e3f2fd 100%);
+  
+  /* Reverse Gradient */
+  --gradient-reverse: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+/* ============================================================
+   FORM ELEMENTS
+   ============================================================ */
+
+:root {
+  /* Input sizing */
+  --input-height: 44px;
+  --input-padding: 0.75rem 1rem;
+  --input-font-size: 1rem;
+  --input-border-radius: 8px;
+  --input-border-width: 2px;
+  
+  /* Button sizing */
+  --button-height: 44px;
+  --button-padding: 0.875rem 2rem;
+  --button-font-size: 1rem;
+  --button-border-radius: 8px;
+}
+
+/* ============================================================
+   USAGE EXAMPLES
+   ============================================================ */
+
+/*
+  Example 1: Using Color Variables
+  ──────────────────────────────────────
+  background: var(--color-primary);
+  color: var(--color-text-body);
+  border-color: var(--color-border);
+
+
+  Example 2: Using Spacing Variables
+  ──────────────────────────────────────
+  padding: var(--spacing-xl);
+  margin-bottom: var(--spacing-lg);
+  gap: var(--spacing-md);
+
+
+  Example 3: Using Shadows
+  ──────────────────────────────────────
+  box-shadow: var(--shadow-md);
+  
+  box-shadow: var(--shadow-primary-lg);
+
+
+  Example 4: Using Gradients
+  ──────────────────────────────────────
+  background: var(--gradient-primary);
+
+
+  Example 5: Using Typography
+  ──────────────────────────────────────
+  font-family: var(--font-family);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-relaxed);
+
+
+  Example 6: Using Transitions
+  ──────────────────────────────────────
+  transition: var(--transition-normal);
+
+
+  Example 7: Responsive Container
+  ──────────────────────────────────────
+  max-width: var(--max-width-lg);
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+
+
+  Example 8: Complete Card Component
+  ──────────────────────────────────────
+  .card {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--color-border);
+    transition: var(--transition-normal);
+  }
+  
+  .card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+  }
+*/
+
+/* ============================================================
+   ACCESSIBILITY VARIABLES
+   ============================================================ */
+
+:root {
+  /* Minimum touch target sizes */
+  --touch-target-min: 44px;
+  
+  /* Focus outline width */
+  --focus-outline-width: 2px;
+  
+  /* Focus outline offset */
+  --focus-outline-offset: 2px;
+  
+  /* Motion preferences */
+  --motion-duration-short: 0.01ms;
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: var(--motion-duration-short);
+    --duration-normal: var(--motion-duration-short);
+    --duration-slow: var(--motion-duration-short);
+    --duration-slower: var(--motion-duration-short);
+  }
+}
+
+/* ============================================================
+   DARK MODE (FUTURE - Not currently implemented)
+   ============================================================ */
+
+/*
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #1a1a2e;
+      --color-light-gray: #16213e;
+      --color-text-body: #eaeaea;
+      --color-text-dark: #ffffff;
+      --color-border: #2d3561;
+    }
+  }
+*/
+
+/* ============================================================
+   END OF DESIGN SYSTEM VARIABLES
+   ============================================================ */

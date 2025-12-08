@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { formatSmartCurrency } from '../../utils/helpers';
+import { EnhancedSEO } from '../../components/EnhancedSEO';
 import '../../styles/Calculator.css';
 
 /**
- * EMI Calculator Component
- * Calculates Equated Monthly Installment for loans
+ * EMI Calculator Component - GLOBAL & COUNTRY-SPECIFIC
+ * Calculates Equated Monthly Installment for loans with proper SEO
  */
 function EMICalculator() {
+  const { country } = useParams(); // From URL if available
   const [loanAmount, setLoanAmount] = useState(1000000);
   const [interestRate, setInterestRate] = useState(8.5);
   const [tenure, setTenure] = useState(20);
@@ -57,14 +60,35 @@ function EMICalculator() {
     return `₹${value}`;
   };
 
-  return (
-    <div className="calculator-container">
-      <div className="calculator-header">
-        <h1>EMI Calculator</h1>
-        <p>Calculate your Equated Monthly Installment for home loans, car loans, personal loans</p>
-      </div>
+  // SEO configuration for global/country-specific versions
+  const seoConfig = {
+    title: country 
+      ? `EMI Calculator for ${country.toUpperCase()}`
+      : 'EMI Calculator - Free Equated Monthly Installment Calculator',
+    description: country
+      ? `Calculate EMI for ${country.toUpperCase()} with our free EMI calculator. Get monthly payment, total interest, and amortization schedule.`
+      : 'Free EMI calculator to calculate equated monthly installment for home loans, car loans, and personal loans. Get amortization breakdown.',
+    keywords: country
+      ? `EMI calculator ${country.toUpperCase()}, loan EMI, monthly payment calculator`
+      : 'EMI calculator, equated monthly installment, loan calculator, EMI formula, monthly payment',
+    tool: 'emi',
+    country: country || undefined,
+    supportedCountries: ['in', 'us', 'uk'],
+    isGlobal: !country,
+  };
 
-      <div className="calculator-content">
+  return (
+    <>
+      {/* SEO Tags - Global & Country-Specific */}
+      <EnhancedSEO {...seoConfig} />
+      
+      <div className="calculator-container">
+        <div className="calculator-header">
+          <h1>{country ? `EMI Calculator (${country.toUpperCase()})` : 'EMI Calculator'}</h1>
+          <p>Calculate your Equated Monthly Installment for home loans, car loans, personal loans</p>
+        </div>
+
+        <div className="calculator-content">
         <div className="calculator-inputs">
           <div className="slider-group">
             <div className="slider-header">
@@ -577,26 +601,27 @@ function EMICalculator() {
           <h2>Related Financial Calculators</h2>
           <p>Explore our other calculators to plan your finances better:</p>
           <div className="calculator-grid">
-            <a href="/sip-calculator" className="calc-card">
+            <Link to="/sip-calculator" className="calc-card">
               <h3>SIP Calculator</h3>
               <p>Calculate returns on systematic investment plans</p>
-            </a>
-            <a href="/fd-calculator" className="calc-card">
+            </Link>
+            <Link to="/fd-calculator" className="calc-card">
               <h3>FD Calculator</h3>
               <p>Compute fixed deposit maturity amount</p>
-            </a>
-            <a href="/income-tax-calculator" className="calc-card">
+            </Link>
+            <Link to="/income-tax-calculator" className="calc-card">
               <h3>Income Tax Calculator</h3>
               <p>Calculate tax liability for FY 2024-25</p>
-            </a>
-            <a href="/rd-calculator" className="calc-card">
+            </Link>
+            <Link to="/rd-calculator" className="calc-card">
               <h3>RD Calculator</h3>
               <p>Calculate recurring deposit returns</p>
-            </a>
+            </Link>
           </div>
         </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
