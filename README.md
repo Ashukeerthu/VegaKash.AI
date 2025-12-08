@@ -117,6 +117,30 @@ VegaKash.AI/
 
 ### Option 1: Local Development
 
+#### Linux / macOS
+```bash
+# Clone the repository
+git clone https://github.com/Ashukeerthu/VegaKash.AI.git
+cd VegaKash.AI
+
+# Backend setup
+cd backend
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+# Edit .env and add your OPENAI_API_KEY
+
+# Start backend
+uvicorn main:app --reload --port 8000
+
+# In a new terminal - Frontend setup
+cd frontend
+npm install
+npm run dev
+```
+
+#### Windows (PowerShell)
 ```powershell
 # Clone the repository
 git clone https://github.com/Ashukeerthu/VegaKash.AI.git
@@ -127,7 +151,7 @@ cd backend
 python -m venv venv
 .\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-copy .env.example .env
+Copy-Item .env.example .env
 # Edit .env and add your OPENAI_API_KEY
 
 # Start backend
