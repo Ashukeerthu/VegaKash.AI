@@ -43,6 +43,7 @@ const Home = lazy(() => import('../pages/Home'));
 const CalculatorHub = lazy(() => import('../pages/CalculatorHub'));
 const BudgetPlannerPage = lazy(() => import('../pages/BudgetPlanner/BudgetPlannerPage'));
 const MonthlyBudget = lazy(() => import('../modules/budgets/monthly'));
+const TravelBudgetPage = lazy(() => import('../modules/planners/travel/TravelBudgetPage'));
 const BlogIndex = lazy(() => import('../pages/blog/BlogIndex'));
 const CreateMonthlyBudgetAI = lazy(() => import('../pages/blog/CreateMonthlyBudgetAI'));
 const About = lazy(() => import('../pages/About'));
@@ -371,6 +372,20 @@ export const budgetRoutes = [
     title: 'Monthly Budget Planner',
     description: 'AI-powered monthly budget planning',
     icon: '📊'
+  },
+  {
+    path: '/travel-budget',
+    element: TravelBudgetPage,
+    title: 'AI Travel Budget Planner',
+    description: 'Plan your trip expenses with AI-powered cost predictions',
+    icon: '✈️'
+  },
+  {
+    path: '/travel-planner',
+    element: TravelBudgetPage,
+    title: 'AI Travel Budget Planner',
+    description: 'Smart travel budget planning with itinerary generation',
+    icon: '✈️'
   },
 ];
 

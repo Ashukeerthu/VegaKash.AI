@@ -490,6 +490,39 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
       currency: sampleData.currency,
       monthly_income_primary: sampleData.monthly_income_primary.toString(),
       monthly_income_additional: sampleData.monthly_income_additional.toString(),
+      
+      // V1.2: Location data
+      country: 'India',
+      state: 'Maharashtra',
+      city: 'Mumbai',
+      cityTier: 'tier_1',
+      col_multiplier: 1.5,
+      
+      // V1.2: Household & Lifestyle
+      family_size: 3,
+      lifestyle: 'moderate',
+      
+      // V1.2: Fixed expenses
+      fixed_expenses: {
+        housing_rent: sampleData.expenses.housing_rent.toString(),
+        utilities: sampleData.expenses.utilities.toString(),
+        insurance: sampleData.expenses.insurance.toString(),
+        medical: '2000',
+        other_fixed: '1000',
+      },
+      
+      // V1.2: Variable expenses
+      variable_expenses: {
+        groceries_food: sampleData.expenses.groceries_food.toString(),
+        transport: sampleData.expenses.transport.toString(),
+        subscriptions: sampleData.expenses.subscriptions.toString(),
+        entertainment: sampleData.expenses.entertainment.toString(),
+        shopping: '3000',
+        dining_out: '2500',
+        other_variable: sampleData.expenses.others.toString(),
+      },
+      
+      // Legacy expenses (for compatibility)
       expenses: {
         housing_rent: sampleData.expenses.housing_rent.toString(),
         groceries_food: sampleData.expenses.groceries_food.toString(),
@@ -508,6 +541,14 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
       },
       loans: [],
     });
+    
+    // V1.2: Sample savings goals
+    setSavingsGoals([{
+      goal_type: 'Home',
+      target_amount: '2000000',
+      target_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000 * 5).toISOString().split('T')[0], // 5 years from now
+      priority: 'high'
+    }]);
     
     if (sampleData.loans && sampleData.loans.length > 0) {
       setLoans(sampleData.loans.map(loan => ({
@@ -529,6 +570,39 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
       currency: 'INR',
       monthly_income_primary: '',
       monthly_income_additional: '',
+      
+      // V1.2: Location data
+      country: '',
+      state: '',
+      city: '',
+      cityTier: 'other',
+      col_multiplier: 1.0,
+      
+      // V1.2: Household & Lifestyle
+      family_size: 1,
+      lifestyle: 'moderate',
+      
+      // V1.2: Fixed expenses
+      fixed_expenses: {
+        housing_rent: '',
+        utilities: '',
+        insurance: '',
+        medical: '',
+        other_fixed: '',
+      },
+      
+      // V1.2: Variable expenses
+      variable_expenses: {
+        groceries_food: '',
+        transport: '',
+        subscriptions: '',
+        entertainment: '',
+        shopping: '',
+        dining_out: '',
+        other_variable: '',
+      },
+      
+      // Legacy expenses (for compatibility)
       expenses: {
         housing_rent: '',
         groceries_food: '',
@@ -547,9 +621,15 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
       },
       loans: [],
     });
+    
+    // V1.2: Reset savings goals
+    setSavingsGoals([]);
+    
     setLoans([]);
     setCurrentLoan({
       name: '',
+      input_mode: 'emi',
+      monthly_emi: '',
       outstanding_principal: '',
       interest_rate_annual: '',
       remaining_months: '',
@@ -1075,7 +1155,7 @@ function FinancialForm({ onCalculate, onReset, isCalculating }) {
         
         {/* V1.2: Multiple Savings Goals */}
         <div className="form-section-inner">
-          <h3>🎯 Savings Goals (V1.2)</h3>
+          <h3>🎯 Savings Goals </h3>
           <p className="section-description">Add up to 5 specific savings goals with timelines</p>
           
           {savingsGoals.length > 0 && (

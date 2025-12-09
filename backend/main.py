@@ -31,7 +31,7 @@ if api_key_loaded and api_key:
     print(f"✅ API Key: {masked_key}")
 else:
     print("⚠️  WARNING: OPENAI_API_KEY not found in environment!")
-from schemas import (
+from legacy.schemas import (
     FinancialInput, SummaryOutput, AIPlanRequest, AIPlanOutput,
     MultiLoanInput, DebtStrategyComparison, PDFExportRequest,
     SmartRecommendationsOutput, AIPlanOutputV2
@@ -49,6 +49,7 @@ from services.pdf_generator_reportlab import generate_pdf_bytes
 
 # Import routes for Phase 2
 from routes.budget_planner import router as budget_planner_router
+from routes.travel_planner import router as travel_planner_router
 
 # Import security middleware (commented out temporarily - will add after testing)
 # from middleware.security import (
@@ -88,6 +89,10 @@ ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:3001",      # Vite alternate port
     "http://127.0.0.1:3001",
+    "http://localhost:3002",      # Vite alternate port 2
+    "http://127.0.0.1:3002",
+    "http://localhost:3003",      # Vite alternate port 3
+    "http://127.0.0.1:3003",
     "http://localhost:5173",      # Vite default port
     "http://127.0.0.1:5173",
     "https://vegaktools.com",     # Production domain
@@ -119,8 +124,10 @@ app.add_middleware(
 
 # Register Phase 2 routes
 app.include_router(budget_planner_router)
+app.include_router(travel_planner_router)
 
 logger.info("✅ Budget Planner routes registered (Phase 2)")
+logger.info("✅ Travel Planner routes registered (Phase 3)")
 
 
 @app.post("/api/v2/generate-ai-plan", response_model=AIPlanOutputV2)
@@ -187,13 +194,16 @@ async def global_exception_handler(request: Request, exc: Exception):
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     """Handle validation errors with detailed information"""
-    logger.error(f"Validation error: {exc.errors()}")
+    errors = exc.errors()
+    logger.error(f"❌ VALIDATION ERROR - Path: {request.url.path}")
+    logger.error(f"❌ Validation errors: {errors}")
+    logger.error(f"❌ Request body: {await request.body()}")
     return JSONResponse(
         status_code=422,
         content={
             "error": True,
             "message": "Request validation failed",
-            "detail": exc.errors()
+            "detail": errors
         }
     )
 

@@ -1,0 +1,297 @@
+/* ========================================
+   AI Travel Budget Planner Styles
+   ======================================== */
+
+.travel-budget-planner {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e3f2fd 100%);
+}
+
+/* ========================================
+   Hero Section - Travel Planner Specific
+   ======================================== */
+
+.hero-travel-planner {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 80px 20px !important;
+  text-align: center !important;
+  position: relative;
+  overflow: hidden;
+  margin-top: 0 !important;
+  width: 100% !important;
+}
+
+.hero-travel-planner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: heroPattern 20s linear infinite;
+}
+
+@keyframes heroPattern {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.hero-travel-planner .hero-content {
+  position: relative !important;
+  z-index: 1 !important;
+  max-width: 800px !important;
+  margin: 0 auto !important;
+  padding: 0 20px !important;
+  display: block !important;
+  text-align: center !important;
+}
+
+.hero-icon-badge {
+  font-size: 64px;
+  margin-bottom: 20px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.hero-travel-planner .hero-title {
+  font-size: 3rem !important;
+  font-weight: 800 !important;
+  margin-bottom: 16px !important;
+  line-height: 1.2 !important;
+  text-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+  text-align: center !important;
+  color: white !important;
+}
+
+.hero-travel-planner .hero-subtitle {
+  font-size: 1.5rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 16px !important;
+  opacity: 0.95 !important;
+  text-align: center !important;
+  color: white !important;
+}
+
+.hero-travel-planner .hero-description {
+  font-size: 1.1rem !important;
+  line-height: 1.6 !important;
+  margin-bottom: 32px !important;
+  opacity: 0.9 !important;
+  max-width: 600px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  text-align: center !important;
+  color: white !important;
+}
+
+.hero-cta-button {
+  background: white !important;
+  color: #667eea !important;
+  padding: 16px 40px !important;
+  font-size: 1.1rem !important;
+  font-weight: 700 !important;
+  border: none !important;
+  border-radius: 50px !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important;
+  display: inline-block !important;
+  text-decoration: none !important;
+}
+
+.hero-cta-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+  background: #f0f0f0;
+}
+
+/* ========================================
+   Main Content Area
+   ======================================== */
+
+.travel-content {
+  padding: 60px 20px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.coming-soon-message {
+  background: white;
+  border-radius: 16px;
+  padding: 60px 40px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.icon-large {
+  font-size: 80px;
+  margin-bottom: 20px;
+}
+
+.coming-soon-message h3 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.coming-soon-message p {
+  font-size: 1.2rem;
+  color: #666;
+  margin: 8px 0;
+}
+
+/* ========================================
+   Features Section
+   ======================================== */
+
+.features-section {
+  background: white;
+  padding: 80px 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.features-title {
+  text-align: center;
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 50px;
+  font-weight: 700;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.feature-card {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e3f2fd 100%);
+  border-radius: 16px;
+  padding: 40px 30px;
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(102, 126, 234, 0.2);
+  border-color: #667eea;
+}
+
+.feature-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.feature-card h4 {
+  font-size: 1.4rem;
+  color: #333;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.feature-card p {
+  font-size: 1rem;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+
+@media (max-width: 768px) {
+  .hero-travel-planner {
+    padding: 60px 20px;
+  }
+
+  .hero-travel-planner .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-travel-planner .hero-subtitle {
+    font-size: 1.2rem;
+  }
+
+  .hero-travel-planner .hero-description {
+    font-size: 1rem;
+  }
+
+  .hero-cta-button {
+    padding: 14px 32px;
+    font-size: 1rem;
+  }
+
+  .hero-icon-badge {
+    font-size: 48px;
+  }
+
+  .features-title {
+    font-size: 2rem;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .coming-soon-message {
+    padding: 40px 20px;
+  }
+
+  .icon-large {
+    font-size: 60px;
+  }
+
+  .coming-soon-message h3 {
+    font-size: 1.5rem;
+  }
+
+  .coming-soon-message p {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-travel-planner .hero-title {
+    font-size: 1.75rem;
+  }
+
+  .hero-travel-planner .hero-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .hero-cta-button {
+    padding: 12px 28px;
+    font-size: 0.95rem;
+  }
+
+  .features-title {
+    font-size: 1.75rem;
+  }
+
+  .feature-card {
+    padding: 30px 20px;
+  }
+
+  .feature-icon {
+    font-size: 40px;
+  }
+
+  .feature-card h4 {
+    font-size: 1.2rem;
+  }
+}

@@ -115,7 +115,8 @@ const CitySelector = ({
         col_multiplier: multiplier
       });
     }
-  }, [country, state, city, tier, multiplier, onChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [country, state, city, tier, multiplier]);
 
   const handleCountryChange = (e) => {
     setCountry(e.target.value);

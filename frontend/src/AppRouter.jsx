@@ -30,32 +30,39 @@ function ScrollToTop() {
   const location = useLocation();
   
   useEffect(() => {
+    // Scroll to top
     window.scrollTo(0, 0);
+    
+    // Force a small delay to ensure React finishes rendering
+    // This helps with component unmounting/mounting
+    const timer = setTimeout(() => {
+      // Ensure the page is at top after render
+      window.scrollTo(0, 0);
+    }, 0);
+    
+    return () => clearTimeout(timer);
   }, [location.pathname]);
   
   return null;
 }
 
 /**
- * AppContent - Inner component that uses location for proper route rendering
- * Forces React to remount components when route changes
+ * AppContent - Inner component with routing
  */
 function AppContent() {
-  const location = useLocation();
-  
   return (
     <div className="app">
       {/* Global Navigation */}
       <Navbar />
       
       {/* Main Content with Routes */}
-      <Routes location={location}>
-        {/* Budget Routes - MUST BE FIRST to catch / route */}
+      <Routes>
+        {/* Budget Routes */}
         {budgetRoutes.map((route, index) => {
           const Component = route.element;
           return (
             <Route 
-              key={`budget-${route.path}`}
+              key={route.path}
               path={route.path} 
               element={
                 <Suspense fallback={<LoadingSpinner />}>
@@ -75,7 +82,7 @@ function AppContent() {
           const Component = route.element;
           return (
             <Route 
-              key={`global-${route.path}`}
+              key={route.path}
               path={route.path} 
               element={
                 <Suspense fallback={<LoadingSpinner />}>
@@ -95,7 +102,7 @@ function AppContent() {
           const Component = route.element;
           return (
             <Route 
-              key={`country-${route.path}`}
+              key={route.path}
               path={route.path} 
               element={
                 <Suspense fallback={<LoadingSpinner />}>
@@ -125,7 +132,7 @@ function AppContent() {
           const Component = route.element;
           return (
             <Route 
-              key={`blog-${route.path}`}
+              key={route.path}
               path={route.path} 
               element={
                 <Suspense fallback={<LoadingSpinner />}>
@@ -141,7 +148,7 @@ function AppContent() {
           const Component = route.element;
           return (
             <Route 
-              key={`content-${route.path}`}
+              key={route.path}
               path={route.path} 
               element={
                 <Suspense fallback={<LoadingSpinner />}>

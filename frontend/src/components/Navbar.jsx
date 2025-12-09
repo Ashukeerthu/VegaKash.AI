@@ -62,15 +62,56 @@ function Navbar() {
 
         {/* Desktop Menu */}
         <ul className="navbar-menu" role="menubar">
-          {/* AI Budget Planner */}
-          <li className="navbar-item" role="none">
-            <Link 
-              to="/budget-planner" 
-              className={`navbar-link ${isActive('/budget-planner') || isActive('/ai-budget-planner') || isActive('/') ? 'active' : ''}`}
+          {/* AI Planners Dropdown */}
+          <li 
+            className="navbar-item has-dropdown" 
+            role="none"
+          >
+            <button 
+              className={`navbar-link dropdown-trigger ${activeDropdown === 'planners' ? 'active' : ''}`}
               role="menuitem"
+              aria-haspopup="true"
+              aria-expanded={activeDropdown === 'planners'}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleDropdown('planners');
+              }}
             >
-              AI Budget Planner
-            </Link>
+              🤖 AI Planners <span className="dropdown-arrow">▼</span>
+            </button>
+            
+            <ul className={`dropdown-menu ${activeDropdown === 'planners' ? 'show' : ''}`} role="menu">
+              <li role="none">
+                <Link to="/budget-planner" className="dropdown-item" role="menuitem">
+                  💰 AI Monthly Budget Planner
+                </Link>
+              </li>
+              <li role="none">
+                <Link to="/travel-budget" className="dropdown-item" role="menuitem">
+                  ✈️ AI Travel Budget Planner
+                </Link>
+              </li>
+              <li role="none">
+                <Link to="/event-planner" className="dropdown-item" role="menuitem">
+                  🎉 AI Event Planner
+                </Link>
+              </li>
+              <li role="none">
+                <Link to="/wedding-planner" className="dropdown-item" role="menuitem">
+                  💒 AI Wedding Budget Planner
+                </Link>
+              </li>
+              <li role="none">
+                <Link to="/student-budget" className="dropdown-item" role="menuitem">
+                  🎓 AI Student Budget Planner
+                </Link>
+              </li>
+              <li role="none">
+                <Link to="/savings-goal" className="dropdown-item" role="menuitem">
+                  🎯 AI Savings Goal Planner
+                </Link>
+              </li>
+            </ul>
           </li>
 
           {/* Calculators Dropdown */}
@@ -248,10 +289,24 @@ function Navbar() {
       {/* Mobile Menu */}
       <div className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}>
         <ul className="mobile-menu-list">
-          <li>
-            <Link to="/budget-planner" className={isActive('/budget-planner') || isActive('/ai-budget-planner') || isActive('/') ? 'active' : ''}>
-              🤖 AI Budget Planner
-            </Link>
+          <li className="mobile-dropdown">
+            <button 
+              className="mobile-dropdown-trigger"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleDropdown('mobile-planners');
+              }}
+            >
+              🤖 AI Planners <span className="dropdown-arrow">▼</span>
+            </button>
+            <ul className={`mobile-dropdown-menu ${activeDropdown === 'mobile-planners' ? 'show' : ''}`}>
+              <li><Link to="/budget-planner">💰 AI Monthly Budget Planner</Link></li>
+              <li><Link to="/travel-budget">✈️ AI Travel Budget Planner</Link></li>
+              <li><Link to="/event-planner">🎉 AI Event Planner</Link></li>
+              <li><Link to="/wedding-planner">💒 AI Wedding Budget Planner</Link></li>
+              <li><Link to="/student-budget">🎓 AI Student Budget Planner</Link></li>
+              <li><Link to="/savings-goal">🎯 AI Savings Goal Planner</Link></li>
+            </ul>
           </li>
           
           <li className="mobile-dropdown">
