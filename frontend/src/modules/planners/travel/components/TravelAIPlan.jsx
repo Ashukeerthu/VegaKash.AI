@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import './TravelAIPlan.css';
+import { formatCurrency } from '../travel.schema';
+import ItineraryPagination from './ItineraryPagination';
 
 /**
  * Travel AI Plan Component
@@ -8,6 +10,34 @@ import './TravelAIPlan.css';
 function TravelAIPlan({ travelData, aiPlan, onBack, onExport }) {
   const [activeTab, setActiveTab] = useState('optimization');
   const [itineraryView, setItineraryView] = useState('sections'); // 'sections' or 'hourly'
+  const [currentPage, setCurrentPage] = useState(1);
+  const [showAllDays, setShowAllDays] = useState(false);
+  const DAYS_PER_PAGE = 7;
+
+  const formatCost = (value) => formatCurrency(value || 0, travelData?.homeCurrency || 'USD');
+
+  // Helper to toggle between paged and full views while keeping page index in range
+  const handleToggleShowAll = (value, totalPages) => {
+    setShowAllDays(value);
+    if (!value) {
+      setCurrentPage((prev) => Math.min(prev, Math.max(totalPages, 1)));
+    }
+  };
+
+  // Helper function to get visible days based on pagination state
+  const getVisibleDays = (allDays) => {
+    if (!allDays || allDays.length === 0) return [];
+
+    // If trip is short (≤7 days) or showing all days, return all
+    if (allDays.length <= DAYS_PER_PAGE || showAllDays) {
+      return allDays;
+    }
+
+    // Otherwise, return only the days for the current page
+    const startIdx = (currentPage - 1) * DAYS_PER_PAGE;
+    const endIdx = startIdx + DAYS_PER_PAGE;
+    return allDays.slice(startIdx, endIdx);
+  };
 
   if (!aiPlan) {
     return (
@@ -25,6 +55,9 @@ function TravelAIPlan({ travelData, aiPlan, onBack, onExport }) {
   }
 
   const { optimization, itinerary } = aiPlan;
+  const totalDays = itinerary?.totalDays || itinerary?.itinerary?.length || 0;
+  const totalPages = Math.max(Math.ceil(totalDays / DAYS_PER_PAGE), 1);
+  const visibleDays = getVisibleDays(itinerary?.itinerary);
 
   return (
     <div className="travel-ai-plan">
@@ -59,7 +92,7 @@ function TravelAIPlan({ travelData, aiPlan, onBack, onExport }) {
               <div className="savings-content">
                 <h3>Potential Savings Identified</h3>
                 <div className="savings-amount">
-                  {travelData.homeCurrency} {optimization.savings.toLocaleString('en-US', {maximumFractionDigits: 0})}
+                    {formatCost(optimization.savings)}
                 </div>
                 <p className="savings-subtitle">
                   {optimization.savingsPercentage.toFixed(1)}% savings possible
@@ -74,15 +107,15 @@ function TravelAIPlan({ travelData, aiPlan, onBack, onExport }) {
             <div className="cost-comparison-grid">
               <div className="cost-item">
                 <span className="cost-label">Original Cost:</span>
-                <span className="cost-value">{travelData.homeCurrency} {optimization.originalCost.toLocaleString('en-US', {maximumFractionDigits: 0})}</span>
+                <span className="cost-value">{formatCost(optimization.originalCost)}</span>
               </div>
               <div className="cost-item optimized">
                 <span className="cost-label">Optimized Cost:</span>
-                <span className="cost-value">{travelData.homeCurrency} {optimization.optimizedCost.toLocaleString('en-US', {maximumFractionDigits: 0})}</span>
+                <span className="cost-value">{formatCost(optimization.optimizedCost)}</span>
               </div>
               <div className="cost-item savings">
                 <span className="cost-label">Total Savings:</span>
-                <span className="cost-value highlight">{travelData.homeCurrency} {optimization.savings.toLocaleString('en-US', {maximumFractionDigits: 0})}</span>
+                <span className="cost-value highlight">{formatCost(optimization.savings)}</span>
               </div>
             </div>
           </div>
@@ -99,7 +132,7 @@ function TravelAIPlan({ travelData, aiPlan, onBack, onExport }) {
                       <span className="suggestion-category">{suggestion.category}</span>
                       {suggestion.savings > 0 && (
                         <span className="suggestion-savings">
-                          Save {travelData.homeCurrency} {suggestion.savings.toLocaleString('en-US', {maximumFractionDigits: 0})}
+                          Save {formatCost(suggestion.savings)}
                         </span>
                       )}
                     </div>
@@ -133,7 +166,7 @@ function TravelAIPlan({ travelData, aiPlan, onBack, onExport }) {
               </div>
               <div className="stat-item">
                 <span className="stat-label">Activities Cost:</span>
-                <span className="stat-value">{travelData.homeCurrency} {itinerary.totalCost.toLocaleString('en-US', {maximumFractionDigits: 0})}</span>
+                <span className="stat-value">{formatCost(itinerary.totalCost)}</span>
               </div>
             </div>
           </div>
@@ -161,8 +194,17 @@ function TravelAIPlan({ travelData, aiPlan, onBack, onExport }) {
                 </div>
               </div>
 
-              {itinerary.itinerary.map((day, index) => (
-                <div key={index} className="day-card">
+              <ItineraryPagination
+                totalDays={totalDays}
+                currentPage={currentPage}
+                onPageChange={setCurrentPage}
+                daysPerPage={DAYS_PER_PAGE}
+                showAllDays={showAllDays}
+                onToggleShowAll={(value) => handleToggleShowAll(value, totalPages)}
+              />
+
+              {visibleDays.map((day, index) => (
+                <div key={`${day.day}-${index}`} className="day-card">
                   <div className="day-header">
                     <div className="day-info">
                       <div className="day-number">Day {day.day}</div>
@@ -171,7 +213,7 @@ function TravelAIPlan({ travelData, aiPlan, onBack, onExport }) {
                     </div>
                     {(day.estimated_cost || day.estimatedCost) && (
                       <div className="day-cost">
-                        💰 {travelData.homeCurrency} {(day.estimated_cost || day.estimatedCost).toLocaleString('en-US', {maximumFractionDigits: 0})}
+                        💰 {formatCost(day.estimated_cost || day.estimatedCost)}
                       </div>
                     )}
                   </div>
@@ -202,7 +244,7 @@ function TravelAIPlan({ travelData, aiPlan, onBack, onExport }) {
                               {section.title && <span className="section-subtitle">{section.title}</span>}
                               {section.cost && (
                                 <span className="section-cost">
-                                  💰 {travelData.homeCurrency} {section.cost.toLocaleString('en-US', {maximumFractionDigits: 0})}
+                                  💰 {formatCost(section.cost)}
                                 </span>
                               )}
                             </div>
@@ -231,7 +273,7 @@ function TravelAIPlan({ travelData, aiPlan, onBack, onExport }) {
                                         )}
                                         {activity.cost && (
                                           <span className="activity-detail">
-                                            💰 {travelData.homeCurrency} {activity.cost.toLocaleString('en-US', {maximumFractionDigits: 0})}
+                                            💰 {formatCost(activity.cost)}
                                           </span>
                                         )}
                                       </div>
@@ -299,7 +341,7 @@ function TravelAIPlan({ travelData, aiPlan, onBack, onExport }) {
                             <div className="activity-meta-inline">
                               {activity.duration && <span>⏱️ {activity.duration}</span>}
                               {activity.cost && (
-                                <span>💰 {travelData.homeCurrency} {activity.cost.toLocaleString('en-US', {maximumFractionDigits: 0})}</span>
+                                <span>💰 {formatCost(activity.cost)}</span>
                               )}
                               {activity.venue && <span>📍 {activity.venue}</span>}
                             </div>
@@ -310,7 +352,7 @@ function TravelAIPlan({ travelData, aiPlan, onBack, onExport }) {
                   ) : null}
 
                   {/* Day Tips */}
-                  {(day.tips || day.local_insights) && (day.tips?.length > 0 || day.local_insights?.length > 0) && (
+                  {(day.tips && day.tips.length > 0) || day.local_insights && (
                     <div className="day-tips">
                       {day.tips && day.tips.length > 0 && (
                         <div>
@@ -322,14 +364,10 @@ function TravelAIPlan({ travelData, aiPlan, onBack, onExport }) {
                           </ul>
                         </div>
                       )}
-                      {day.local_insights && day.local_insights.length > 0 && (
+                      {day.local_insights && (
                         <div>
                           <strong>🌍 Local Insights:</strong>
-                          <ul>
-                            {day.local_insights.map((insight, insightIndex) => (
-                              <li key={insightIndex}>{insight}</li>
-                            ))}
-                          </ul>
+                          <p>{day.local_insights}</p>
                         </div>
                       )}
                     </div>
@@ -341,14 +379,10 @@ function TravelAIPlan({ travelData, aiPlan, onBack, onExport }) {
                     </div>
                   )}
 
-                  {day.must_try && day.must_try.length > 0 && (
+                  {day.must_try && (
                     <div className="day-must-try">
                       <strong>🍽️ Must Try:</strong>
-                      <ul>
-                        {day.must_try.map((item, mIndex) => (
-                          <li key={mIndex}>{item}</li>
-                        ))}
-                      </ul>
+                      <p>{day.must_try}</p>
                     </div>
                   )}
                 </div>
@@ -357,9 +391,9 @@ function TravelAIPlan({ travelData, aiPlan, onBack, onExport }) {
           )}
 
           {/* Travel Tips */}
-          {itinerary.travel_tips && itinerary.travel_tips.length > 0 && (
+          {itinerary.travel_tips && Array.isArray(itinerary.travel_tips) && itinerary.travel_tips.length > 0 && (
             <div className="travel-tips-section">
-              <h3>💡 Essential Travel Tips</h3>
+              <h3>💡 Travel Tips</h3>
               <div className="tips-grid">
                 {itinerary.travel_tips.map((tip, index) => (
                   <div key={index} className="tip-card">

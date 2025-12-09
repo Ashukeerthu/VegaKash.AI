@@ -3,6 +3,47 @@
  * Defines validation rules and default values for travel budget planning
  */
 
+/**
+ * Trip Duration Tier Configuration
+ * Defines UX behavior based on trip length for optimal content management
+ */
+export const TRIP_DURATION_TIERS = {
+  GREEN: {
+    name: 'SHORT_TRIP',
+    maxDays: 7,
+    warningMessage: null,
+    paginationEnabled: false,
+    description: 'Ideal trip length for full itinerary overview'
+  },
+  YELLOW: {
+    name: 'MEDIUM_TRIP',
+    maxDays: 14,
+    warningMessage: 'Your trip is getting long. Consider reviewing by week or looking for highlights.',
+    paginationEnabled: false,
+    description: 'Long trip - itinerary may require scrolling'
+  },
+  RED: {
+    name: 'LONG_TRIP',
+    maxDays: Infinity,
+    warningMessage: 'Your trip is extended. Itinerary will be split into weekly views for easier navigation.',
+    paginationEnabled: true,
+    description: 'Extended trip - pagination recommended'
+  }
+};
+
+/**
+ * Get trip duration tier based on number of days
+ */
+export const getTripDurationTier = (tripDays) => {
+  if (tripDays <= TRIP_DURATION_TIERS.GREEN.maxDays) {
+    return { tier: 'GREEN', ...TRIP_DURATION_TIERS.GREEN };
+  } else if (tripDays <= TRIP_DURATION_TIERS.YELLOW.maxDays) {
+    return { tier: 'YELLOW', ...TRIP_DURATION_TIERS.YELLOW };
+  } else {
+    return { tier: 'RED', ...TRIP_DURATION_TIERS.RED };
+  }
+};
+
 export const travelSchema = {
   // Trip Information
   tripInfo: {
@@ -241,6 +282,9 @@ export const validateTravelForm = (formData) => {
   if (!formData.endDate) {
     errors.endDate = 'End date is required';
   }
+  
+    let tripDurationTier = null;
+  
   if (formData.startDate && formData.endDate) {
     const start = new Date(formData.startDate);
     const end = new Date(formData.endDate);
@@ -250,6 +294,9 @@ export const validateTravelForm = (formData) => {
     const tripDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
     if (tripDays > 365) {
       errors.endDate = 'Trip duration cannot exceed 365 days';
+      } else {
+        // Calculate trip duration tier for UI guidance
+        tripDurationTier = getTripDurationTier(tripDays);
     }
   }
 
@@ -276,9 +323,11 @@ export const validateTravelForm = (formData) => {
     errors.itineraryDetailLevel = 'Itinerary detail level is required';
   }
 
+  const isValid = Object.keys(errors).length === 0;
   return {
-    isValid: Object.keys(errors).length === 0,
-    errors
+    isValid,
+    errors,
+    tripDurationTier
   };
 };
 
@@ -330,8 +379,20 @@ export const getTotalTravelers = (adults, children, infants) => {
 export const formatCurrency = (amount, currency) => {
   const symbols = {
     USD: '$', EUR: '€', GBP: '£', INR: '₹', AUD: 'A$',
-    CAD: 'C$', JPY: '¥', CNY: '¥', AED: 'د.إ'
+    CAD: 'C$', JPY: '¥', CNY: '¥', AED: 'د.إ', SGD: 'S$',
+    THB: '฿', IDR: 'Rp', MYR: 'RM', EUR_USD: '€',
   };
-  const symbol = symbols[currency] || '$';
-  return `${symbol}${amount.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+
+  const locales = {
+    USD: 'en-US', EUR: 'de-DE', GBP: 'en-GB', INR: 'en-IN',
+    AUD: 'en-AU', CAD: 'en-CA', JPY: 'ja-JP', CNY: 'zh-CN',
+    AED: 'ar-AE', SGD: 'en-SG', THB: 'th-TH', IDR: 'id-ID',
+    MYR: 'ms-MY'
+  };
+
+  const safeAmount = Number.isFinite(Number(amount)) ? Number(amount) : 0;
+  const symbol = symbols[currency] || `${currency} `;
+  const locale = locales[currency] || 'en-US';
+
+  return `${symbol}${safeAmount.toLocaleString(locale, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
 };

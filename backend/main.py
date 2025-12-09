@@ -31,7 +31,7 @@ if api_key_loaded and api_key:
     print(f"✅ API Key: {masked_key}")
 else:
     print("⚠️  WARNING: OPENAI_API_KEY not found in environment!")
-from legacy.schemas import (
+from schemas import (
     FinancialInput, SummaryOutput, AIPlanRequest, AIPlanOutput,
     MultiLoanInput, DebtStrategyComparison, PDFExportRequest,
     SmartRecommendationsOutput, AIPlanOutputV2

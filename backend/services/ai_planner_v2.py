@@ -436,6 +436,7 @@ def generate_ai_plan_v2(financial_input: FinancialInput, summary: SummaryOutput)
             alerts: List[AlertV2] = []
             if "alerts" in ai_data and isinstance(ai_data["alerts"], list):
                 for alert_item in ai_data["alerts"]:
+                    alert_item: Any = alert_item  # Explicit type annotation
                     if isinstance(alert_item, dict):
                         alert_dict: Dict[str, Any] = alert_item
                         alerts.append(AlertV2(

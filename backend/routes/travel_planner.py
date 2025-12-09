@@ -139,6 +139,8 @@ class TravelBudgetResponse(BaseModel):
     perDayCost: float
     tripDays: int
     currency: str
+    visaType: Optional[str] = None
+    visaGuidance: Optional[str] = None
     message: str = "Budget calculated successfully"
 
 
@@ -240,7 +242,7 @@ class DayItinerary(BaseModel):
     overview: str  # Day overview description
     
     # Hour-by-hour view
-    hourly_activities: List[Dict[str, Union[str, float, int]]] = []
+    hourly_activities: List[Dict[str, Any]] = []
     
     # Section-based view (Morning/Afternoon/Evening)
     sections: List[ItinerarySection] = []
@@ -391,42 +393,102 @@ async def calculate_travel_budget(request: TravelBudgetRequest):
         nights = trip_days - 1
         total_travelers = request.adults + request.children + request.infants
         
+        # Determine trip type for better AI context
+        if trip_days <= 7:
+            trip_type = "SHORT-TERM (up to 1 week)"
+            visa_context = "Tourist visa or visa-free"
+        elif trip_days <= 30:
+            trip_type = "MEDIUM-TERM (2-4 weeks)"
+            visa_context = "Tourist visa, ETA, or visa-free"
+        elif trip_days <= 90:
+            trip_type = "EXTENDED (1-3 months)"
+            visa_context = "Tourist/Visitor visa (often 30-90 days)"
+        elif trip_days <= 180:
+            trip_type = "LONG-TERM (3-6 months)"
+            visa_context = "Business/Resident visa or multiple tourist visas"
+        else:
+            trip_type = "VERY LONG-TERM (6+ months)"
+            visa_context = "Long-term resident/work visa or retirement visa"
+        
         # Build AI prompt for realistic pricing
-        ai_prompt = f"""You are a travel budget expert with knowledge of current 2025 travel prices in India and worldwide.
+        ai_prompt = f"""You are a travel budget expert with knowledge of current 2025 travel prices and ACCURATE visa requirements for all trip durations.
 
 Calculate a REALISTIC travel budget for the following trip:
 
 FROM: {request.originCity}, {request.originCountry}
 TO: {request.destinationCity}, {request.destinationCountry}
-DURATION: {trip_days} days ({nights} nights)
+DURATION: {trip_days} days ({nights} nights) - {trip_type}
 TRAVELERS: {request.adults} adults, {request.children} children, {request.infants} infants (Total: {total_travelers})
 TRAVEL STYLE: {request.travelStyle}
 TRANSPORT PREFERENCE: {request.localTransport}
 TRIP THEME: {', '.join(request.tripTheme) if request.tripTheme else 'General sightseeing'}
 DATES: {request.startDate} to {request.endDate}
 
-IMPORTANT: Provide REALISTIC 2025 market prices. Use actual booking platform data as reference.
+=== CRITICAL - VISA INFORMATION FOR {trip_days}-DAY STAY ===
+For Indian passport holders visiting {request.destinationCity}, {request.destinationCountry}:
+
+1. TRIP DURATION CONTEXT: This is a {trip_type} stay requiring {visa_context}
+2. CHECK ACTUAL VISA RULES:
+   - For stays > 30 days: Tourist visa often expires; need to consider visa runs, extensions, or multiple entries
+   - For stays > 90 days: Many countries require business/resident/work visa instead
+    - For stays > 180 days: Most countries require long-term visa (work, retirement, student, etc.)
+    - If requested duration exceeds legal tourist stay, DO NOT mark it as tourist visa; set a realistic long-stay/resident option and highlight visa runs if applicable.
+
+3. VISA FEE GUIDELINES FOR LONG STAYS:
+   - India to Thailand: 
+     * Up to 30 days: 0 (visa-free)
+     * 30-90 days: Tourist visa required (USD 40-50 or ₹3,300-4,100)
+     * 90+ days: Multiple tourist visas (3-4) + visa runs = ₹10,000-15,000 OR Thai ED/Non-Immigrant visa
+     * 365 days: Long-term visa (ED/Non-Immigrant) = ₹25,000-50,000
+   
+   - India to Sri Lanka:
+     * Up to 30 days: 0 (visa-free)
+     * 30-90 days: ETA or tourist visa extension ₹3,000-5,000
+     * 90+ days: Resident permit required ₹15,000-30,000
+     * 365 days: Long-term resident visa ₹40,000-80,000
+   
+   - India to Indonesia:
+     * Up to 30 days: 0 (visa-free)
+     * 30-60 days: Social/Tourist visa ₹4,000-6,000
+         * 60-180 days: B211A with extensions (~₹12,000-20,000)
+         * 180-365 days: Tourist visas do NOT cover a continuous year. Use multiple B211A + visa runs (estimate ₹25,000-45,000) OR long-stay permit (KITAS/other) with higher fees. Explain clearly.
+
+4. ACCOMMODATION COST ADJUSTMENTS FOR LONG STAYS:
+   - 1-30 days: Normal hotel/Airbnb rates
+   - 30-90 days: Negotiate monthly rates (often 20-30% cheaper)
+   - 90+ days: Monthly rental or long-term apartment (30-50% cheaper than daily rates)
+   - 365 days: Apartment lease or condo (50-70% cheaper than hotel rates)
+
+5. INSURANCE FOR {trip_days} DAYS:
+   - Short trips (1-30 days): USD 10-20/day
+   - Medium trips (30-90 days): USD 5-10/day
+   - Long trips (90-180 days): USD 3-5/day
+   - Very long trips (180+ days): ₹200-400/day or annual policy ₹20,000-50,000
+
+IMPORTANT: Provide REALISTIC 2025 market prices. Consider trip length when calculating per-day costs.
 
 Return a JSON object with this EXACT structure (all prices in {request.homeCurrency}):
 {{
-  "flight_cost_per_person": <number for round-trip economy>,
-  "hotel_cost_per_night": <number for {request.travelStyle} hotel>,
-  "food_cost_per_person_per_day": <number>,
-  "transport_cost_per_person_per_day": <number for {request.localTransport} transport>,
-  "activities_cost_per_person_per_day": <number>,
-  "shopping_budget_total": <number for {total_travelers} people>,
-  "visa_cost_per_person": <number, 0 if domestic>,
-  "insurance_cost_per_person": <number for {trip_days} days>,
-  "miscellaneous_percentage": <number between 5-10 as percentage>,
-  "reasoning": "<brief 1-sentence explanation of pricing>"
+  "flight_cost_per_person": <round-trip economy for {trip_days}-day stay>,
+  "hotel_cost_per_night": <{request.travelStyle} accommodation, adjusted for long-term stay duration>,
+  "food_cost_per_person_per_day": <realistic daily food cost for {trip_days}-day stay>,
+  "transport_cost_per_person_per_day": <{request.localTransport} transport costs>,
+  "activities_cost_per_person_per_day": <varies by trip length; less for long stays>,
+  "shopping_budget_total": <shopping budget for {trip_days} days and {total_travelers} people>,
+    "visa_cost_per_person": <EXACT visa cost for {trip_days}-day stay from {request.originCountry} to {request.destinationCountry}; if tourist visa not valid for full stay, model the realistic long-stay option or required visa runs>,
+    "visa_type": "<name of the applicable visa/permit (e.g., Long-stay D visa, KITAS, Multiple B211A with runs, Not permitted via tourist visa>",
+    "visa_guidance": "<one to two sentences: allowed stay, needed visa type, whether visa runs/extensions are required>",
+  "insurance_cost_per_person": <total insurance for {trip_days} days; adjust rate based on duration>,
+  "miscellaneous_percentage": <5-10% depending on trip type>,
+  "reasoning": "<brief explanation showing visa type, accommodation adjustment, and key cost factors>"
 }}
 
-PRICING GUIDELINES:
-- Mumbai to Bangalore flight: ₹5,000-9,000 per person
-- Budget hotel: ₹1,500-2,500/night, Standard: ₹3,000-5,000/night, Luxury: ₹8,000+/night
-- Food budget: ₹400-600/day, standard: ₹800-1,200/day, luxury: ₹2,000+/day
-- Domestic travel insurance: ₹100-200/day, International: ₹300-500/day
-- Be realistic and conservative with estimates
+PRICING EXAMPLES:
+- Mumbai to Bangkok 7 days: Flight ₹18,000, Hotel ₹3,500/night, Food ₹800/day, Visa ₹0, Total ~₹80,000
+- Mumbai to Bangkok 30 days: Flight ₹18,000, Hotel ₹2,800/night (negotiated), Food ₹700/day, Visa ₹3,500, Total ~₹110,000
+- Mumbai to Bangkok 90 days: Flight ₹18,000, Hotel ₹2,000/night (monthly apartment), Food ₹600/day, Visa ₹12,000, Total ~₹220,000
+- Mumbai to Bangkok 365 days: Flight ₹18,000, Hotel ₹1,200/night (yearly lease), Food ₹500/day, Visa ₹40,000 (long-stay permit, not tourist), Total ~₹500,000
+- Delhi to Bali 365 days: Tourist/B211A covers up to ~180 days only; need multiple B211A + visa runs (~₹30,000-45,000) OR long-stay permit (KITAS/other) with higher fees. Show this in visa_guidance.
 
 Return ONLY the JSON object, no other text."""
 
@@ -453,6 +515,15 @@ Return ONLY the JSON object, no other text."""
             # Parse JSON response
             import json
             ai_prices = json.loads(ai_response)
+            
+            # Check if this is a domestic trip (same country)
+            is_domestic = request.originCountry.lower().strip() == request.destinationCountry.lower().strip()
+            if is_domestic:
+                # Override visa costs and guidance for domestic trips
+                ai_prices["visa_cost_per_person"] = 0
+                ai_prices["visa_type"] = "No visa required (Domestic)"
+                ai_prices["visa_guidance"] = f"As a domestic traveler within {request.destinationCountry}, no visa is required. A valid national ID or passport is sufficient for travel."
+                logger.info(f"Domestic trip detected: {request.originCity} → {request.destinationCity} (same country)")
             
         except Exception as e:
             logger.error(f"OpenAI API Error: {str(e)}")
@@ -525,7 +596,9 @@ Return ONLY the JSON object, no other text."""
         per_day_cost = grand_total / trip_days
         
         # Note: AI already provides prices in target currency, no conversion needed
-        
+        visa_type = ai_prices.get("visa_type") or ai_prices.get("visaType")
+        visa_guidance = ai_prices.get("visa_guidance") or ai_prices.get("visaGuidance") or ai_prices.get("reasoning")
+
         response = TravelBudgetResponse(
             expenses=expenses,
             subtotal=round(subtotal, 2),
@@ -534,7 +607,9 @@ Return ONLY the JSON object, no other text."""
             perPersonCost=round(per_person_cost, 2),
             perDayCost=round(per_day_cost, 2),
             tripDays=trip_days,
-            currency=request.homeCurrency
+            currency=request.homeCurrency,
+            visaType=visa_type,
+            visaGuidance=visa_guidance
         )
         
         logger.info(f"Budget calculated successfully: {grand_total:.2f} {request.homeCurrency}")
@@ -669,37 +744,30 @@ async def generate_itinerary(request: ItineraryRequest):
         
         trip_days = calculate_trip_days(request.travelData.startDate, request.travelData.endDate)
         
-        # Use template-based itinerary for fast, reliable results
-        # This provides specific landmarks, cuisines, and activities by default
-        ai_itinerary_data = create_template_itinerary(request.travelData.destinationCity, trip_days)
+        # Always try to generate AI-powered itinerary for better quality
+        # Falls back to template only if AI fails
+        ai_itinerary_data = {}
+        ai_used = False
         
-        # Optional: Try to enhance with AI based on detail level
-        # - brief: Skip AI, use template only
-        # - standard: Try AI if trip <= 7 days (limited tokens)
-        # - detailed: Always try AI for comprehensive details
-        should_use_ai = (
-            (detail_level == "standard" and trip_days <= 7) or
-            detail_level == "detailed"
-        )
-        
-        if should_use_ai:
-            try:
-                ai_enhanced = await generate_ai_itinerary_details(
-                    destination_city=request.travelData.destinationCity,
-                    destination_country=request.travelData.destinationCountry,
-                    trip_days=trip_days,
-                    trip_theme=request.travelData.tripTheme,
-                    budget=request.budgetData,
-                    travel_style=request.travelData.travelStyle,
-                    detail_level=detail_level
-                )
-                if ai_enhanced:
-                    ai_itinerary_data = ai_enhanced
-                    logger.info(f"AI-enhanced {detail_level} itinerary generated successfully")
-            except Exception as e:
-                logger.info(f"AI enhancement skipped for {detail_level} (using template): {str(e)}")
-        else:
-            logger.info(f"Skipping AI for {detail_level} detail level to save tokens")
+        try:
+            ai_itinerary_data = await generate_ai_itinerary_details(
+                destination_city=request.travelData.destinationCity,
+                destination_country=request.travelData.destinationCountry,
+                trip_days=trip_days,
+                trip_theme=request.travelData.tripTheme,
+                budget=request.budgetData,
+                travel_style=request.travelData.travelStyle,
+                detail_level=detail_level
+            )
+            if ai_itinerary_data:
+                ai_used = True
+                logger.info(f"✅ AI-powered {detail_level} itinerary generated successfully")
+            else:
+                logger.warning(f"AI returned empty response, using template")
+                ai_itinerary_data = create_template_itinerary(request.travelData.destinationCity, trip_days)
+        except Exception as e:
+            logger.warning(f"⚠️ AI itinerary generation failed: {str(e)}. Using enhanced template as fallback")
+            ai_itinerary_data = create_template_itinerary(request.travelData.destinationCity, trip_days)
         
         # Generate itinerary from data
         itinerary: List[DayItinerary] = []
@@ -849,8 +917,8 @@ async def generate_itinerary(request: ItineraryRequest):
                     tips=day_data.get("evening_tips", ["Make reservations", "Dress code may apply"])
                 ))
             
-            # For hourly view, combine all activities
-            hourly_activities = [a.model_dump() for section in sections for a in section.activities]
+            # For hourly view, combine all activities (exclude None values)
+            hourly_activities = [a.model_dump(exclude_none=True) for section in sections for a in section.activities]
             
             day_cost = sum(float(section.cost) for section in sections) if sections else 0
             
@@ -910,130 +978,102 @@ async def generate_ai_itinerary_details(
     """
     Generate detailed AI-powered itinerary with specific landmarks, cuisines, and activities
     
-    Args:
-        detail_level: 'brief' (minimal), 'standard' (balanced), 'detailed' (comprehensive)
+    Uses gpt-4o-mini for speed and cost efficiency while maintaining quality
     """
     try:
-        theme_str = ", ".join(trip_theme) if trip_theme else "general sightseeing"
+        theme_str = ", ".join(trip_theme) if trip_theme else "sightseeing"
         
-        # Customize prompt based on detail level
-        if detail_level == "brief":
-            detail_instruction = """
-BRIEF ITINERARY - Focus on TOP must-do items only:
-- 1-2 main activities per day
-- Minimal descriptions (1 sentence each)
-- No extensive tips or deep insights
-- Focus on efficiency
-"""
-        elif detail_level == "detailed":
-            detail_instruction = """
-DETAILED ITINERARY - Comprehensive planning guide:
-- 3-4 activities per day with multiple options
-- Detailed descriptions with practical information
-- Multiple tips and alternatives for each activity
-- Include transportation tips between locations
-- Add cost breakdown for each activity
-- Provide booking links and contact info where relevant
-"""
-        else:  # standard
-            detail_instruction = """
-STANDARD ITINERARY - Balanced approach:
-- 2-3 activities per day
-- Brief but informative descriptions
-- 1-2 practical tips per activity
-- Include approximate times and costs
-- Include local insights
-"""
-        
-        prompt = f"""
-You are an expert travel guide. Create a {detail_level} {trip_days}-day itinerary for {destination_city}, {destination_country}.
+        prompt = f"""Create a {trip_days}-day PRACTICAL itinerary for {destination_city}, {destination_country}.
 
-Travel Style: {travel_style}
-Trip Theme: {theme_str}
-Daily Activity Budget: ${budget.activities / trip_days:.0f}
-Daily Food Budget: ${budget.food / trip_days:.0f}
+Travel Style: {travel_style} | Theme: {theme_str}
+Budget per day: Activity ₹{budget.activities / trip_days:.0f}, Food ₹{budget.food / trip_days:.0f}
 
-{detail_instruction}
-
-For EACH day (day_1, day_2, etc.), provide a JSON with this structure:
+For EACH day, return JSON like this (actual landmark names, restaurant names):
 {{
   "day_1": {{
-    "title": "Day 1 - [Specific Activity/Area Name]",
+    "title": "Day 1 - [Area/Theme Name]",
+    "overview": "One-line summary",
     "morning_activity": {{
-      "name": "[Specific landmark or activity name]",
-      "description": "[Why it's must-visit and what to expect]",
-      "tips": ["[Specific tip 1]", "[Specific tip 2]"]
+      "name": "[ACTUAL landmark name]",
+      "description": "Why visit, what's special (2-3 sentences)",
+      "tips": ["Specific action tip", "Practical tip"]
     }},
     "lunch": {{
-      "dish_name": "[Specific local dish name]",
-      "description": "[Why this dish is special and where to find it]",
-      "must_try_items": "[Comma-separated list of specific dishes/items]",
-      "restaurant_type": "[E.g., Street food vendor, 5-star restaurant, local eatery]"
+      "dish_name": "[Specific dish at specific place]",
+      "description": "Why special (1 sentence)",
+      "must_try_items": "3-4 specific dishes",
+      "restaurant_type": "Restaurant name/type, location"
     }},
     "afternoon_activity": {{
-      "name": "[Specific activity - adventure/cultural/shopping]",
-      "description": "[Detailed description of the activity and why it's worth doing]",
-      "tips": ["[How to book]", "[Best time to visit]"]
+      "name": "[ACTUAL place/activity]",
+      "description": "What to do, why it's worth it (2 sentences)",
+      "tips": ["How to get there or book", "Best time to avoid crowds"]
     }},
     "dinner": {{
-      "description": "[Dinner recommendation and evening activity]",
-      "evening_activity": "[Specific activity like live music, sunset view, beach walk]",
-      "tips": ["[Restaurant recommendation]", "[Local specialty to try]"]
+      "description": "Dinner place and cuisine",
+      "evening_activity": "Specific activity (e.g., sunset view at X, live music at Y)",
+      "tips": ["Tip 1", "Tip 2"]
     }},
-    "tips": [
-      "[Day-specific tip 1]",
-      "[Day-specific tip 2]",
-      "[Day-specific tip 3]"
-    ]
+    "tips": ["Practical tip 1", "Practical tip 2", "Local insider tip"]
   }},
-  "day_2": {{ ... }},
-  ...
+  "day_2": {{ ... }}
 }}
 
-IMPORTANT:
-1. Be SPECIFIC - use actual landmark names, dish names, activity types
-2. Provide actionable information - not generic descriptions
-3. Include specific costs/timing where relevant
-4. Tailor to {travel_style} travel style
-5. Match the theme: {theme_str}
-6. Each day should flow logically with appropriate travel time between activities
-7. Include local insights and insider tips
-8. Detail level: {detail_level} - adjust comprehensiveness accordingly
+MUST DO:
+1. Use REAL landmark/restaurant names from {destination_city}
+2. Be specific - not generic descriptions
+3. Match {travel_style} style and {theme_str} theme
+4. Include actionable details (times, costs, how to book)
+5. Mix famous spots with local gems
+6. Consider travel time between activities
 
-Return ONLY valid JSON, no other text.
-"""
+Return ONLY JSON, no markdown or extra text."""
+        
+        logger.info(f"🤖 Calling AI to generate {detail_level} itinerary for {destination_city}...")
         
         response = await openai_client.chat.completions.create(
-            model="gpt-4-turbo",
+            model="gpt-4o-mini",  # Fast and cost-effective
             messages=[
                 {
                     "role": "system",
-                    "content": "You are an expert travel guide. Always respond with valid JSON only."
+                    "content": "You are an expert travel guide. Always return ONLY valid JSON, no other text or markdown."
                 },
                 {
                     "role": "user",
                     "content": prompt
                 }
             ],
-            temperature=0.7,
-            max_tokens=4000,
-            timeout=30
+            temperature=0.8,
+            max_tokens=2000,
+            timeout=59
         )
         
-        response_text = response.choices[0].message.content.strip()
+        response_text = response.choices[0].message.content
+        if response_text is None:
+            logger.error("AI response was None")
+            return None
+            
+        response_text = response_text.strip()
+        logger.info(f"📝 AI Response preview: {response_text[:200]}...")
         
-        # Extract JSON from response
+        # Extract JSON from response (handle markdown code blocks)
         if "```json" in response_text:
             response_text = response_text.split("```json")[1].split("```")[0].strip()
         elif "```" in response_text:
             response_text = response_text.split("```")[1].split("```")[0].strip()
         
         itinerary_data = json.loads(response_text)
-        logger.info(f"AI itinerary generated successfully for {destination_city}")
+        logger.info(f"✅ AI itinerary generated successfully for {destination_city} with {len(itinerary_data)} days")
         return itinerary_data
         
+    except json.JSONDecodeError as e:
+        logger.error(f"❌ Failed to parse AI response as JSON: {str(e)}")
+        return None
+    except asyncio.TimeoutError:
+        logger.error(f"❌ AI request timeout for {destination_city}")
+        return None
     except Exception as e:
-        logger.error(f"Error generating AI itinerary: {str(e)}")
+        logger.error(f"❌ Error generating AI itinerary: {str(e)}")
         return None
 
 

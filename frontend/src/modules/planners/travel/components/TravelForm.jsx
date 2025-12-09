@@ -6,6 +6,7 @@ import {
   calculateTripDays,
   getTotalTravelers
 } from '../travel.schema';
+import { getTripDurationTier } from '../travel.schema';
 import CityAutocomplete from './CityAutocomplete';
 import './TravelForm.css';
 
@@ -71,6 +72,28 @@ function TravelForm({ onSubmit, isLoading }) {
     onSubmit(formData);
   };
 
+  // Get trip duration tier for UI feedback
+  const tripDurationTier = tripDays > 0 ? getTripDurationTier(tripDays) : null;
+
+  const getTierBadgeClass = () => {
+    if (!tripDurationTier) return '';
+    return `trip-duration-badge trip-duration-${tripDurationTier.tier.toLowerCase()}`;
+  };
+
+  const getTierIcon = () => {
+    if (!tripDurationTier) return '';
+    switch (tripDurationTier.tier) {
+      case 'GREEN':
+        return '✅';
+      case 'YELLOW':
+        return '⚠️';
+      case 'RED':
+        return '📋';
+      default:
+        return '';
+    }
+  };
+
   return (
     <form className="travel-form" onSubmit={handleSubmit}>
       <div className="form-header">
@@ -81,7 +104,6 @@ function TravelForm({ onSubmit, isLoading }) {
       {/* Section 1: Trip Details */}
       <section className="form-section">
         <h3 className="section-title">📍 Trip Details</h3>
-        
         <div className="form-subsection">
           <h4 className="subsection-title">🏠 Traveling From</h4>
           <div className="form-group">
@@ -205,7 +227,15 @@ function TravelForm({ onSubmit, isLoading }) {
 
         {tripDays > 0 && (
           <div className="trip-info-badge">
-            📅 Trip Duration: <strong>{tripDays} days</strong>
+              <div className="trip-info-header">
+                📅 Trip Duration: <strong>{tripDays} days</strong>
+                <span className={getTierBadgeClass()}>{getTierIcon()}</span>
+              </div>
+              {tripDurationTier?.warningMessage && (
+                <div className={`trip-warning trip-warning-${tripDurationTier.tier.toLowerCase()}`}>
+                  {tripDurationTier.warningMessage}
+                </div>
+              )}
           </div>
         )}
       </section>

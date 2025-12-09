@@ -1,0 +1,379 @@
+/* ========================================
+   Itinerary Pagination Styles
+   ======================================== */
+
+.itinerary-pagination {
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+  margin: 32px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   Main Navigation Controls
+   ======================================== */
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.pagination-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.pagination-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.pagination-btn .btn-icon {
+  font-size: 1.2rem;
+}
+
+.pagination-btn .btn-text {
+  white-space: nowrap;
+}
+
+/* ========================================
+   Pagination Info Display
+   ======================================== */
+
+.pagination-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 150px;
+  text-align: center;
+}
+
+.week-counter {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #667eea;
+}
+
+.day-range {
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* ========================================
+   Quick Jump Controls
+   ======================================== */
+
+.pagination-quick-jump {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 16px;
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.quick-jump-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #475569;
+  white-space: nowrap;
+}
+
+.week-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.week-btn {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 2px solid #e2e8f0;
+  background: white;
+  border-radius: 8px;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+}
+
+.week-btn:hover {
+  border-color: #667eea;
+  color: #667eea;
+  transform: translateY(-2px);
+}
+
+.week-btn.active {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border-color: #667eea;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* ========================================
+   Dropdown Navigation
+   ======================================== */
+
+.pagination-dropdown {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px;
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.dropdown-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #475569;
+  white-space: nowrap;
+}
+
+.week-dropdown {
+  padding: 10px 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #475569;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 250px;
+}
+
+.week-dropdown:hover {
+  border-color: #667eea;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+}
+
+.week-dropdown:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* ========================================
+   View All Days Toggle
+   ======================================== */
+
+.pagination-view-all {
+  display: flex;
+  justify-content: center;
+}
+
+.view-all-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.view-all-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+}
+
+.view-all-btn.active {
+  background: linear-gradient(135deg, #ec4899, #db2777);
+  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+}
+
+.view-all-btn .btn-icon {
+  font-size: 1.2rem;
+}
+
+/* ========================================
+   Progress Bar
+   ======================================== */
+
+.pagination-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  transition: width 0.4s ease;
+  box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+}
+
+.progress-text {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+
+@media (max-width: 768px) {
+  .itinerary-pagination {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .pagination-controls {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .pagination-btn {
+    width: 100%;
+    padding: 14px 16px;
+  }
+
+  .pagination-btn .btn-text {
+    font-size: 0.95rem;
+  }
+
+  .pagination-info {
+    padding: 12px 0;
+    border-top: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+    width: 100%;
+    order: -1;
+  }
+
+  .week-buttons {
+    gap: 6px;
+  }
+
+  .week-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 0.9rem;
+  }
+
+  .week-dropdown {
+    min-width: 100%;
+  }
+
+  .pagination-quick-jump {
+    flex-direction: column;
+    padding: 12px;
+  }
+
+  .quick-jump-label {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .itinerary-pagination {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .pagination-btn .btn-text {
+    display: none;
+  }
+
+  .pagination-btn {
+    flex: 1;
+    min-width: 50px;
+  }
+
+  .week-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 0.85rem;
+  }
+
+  .week-counter {
+    font-size: 1rem;
+  }
+
+  .day-range {
+    font-size: 0.85rem;
+  }
+
+  .pagination-dropdown {
+    flex-direction: column;
+  }
+
+  .week-dropdown {
+    min-width: 100%;
+    font-size: 0.95rem;
+  }
+
+  .view-all-btn .btn-text {
+    display: none;
+  }
+}

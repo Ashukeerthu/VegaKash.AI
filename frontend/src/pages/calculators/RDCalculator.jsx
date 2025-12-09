@@ -587,6 +587,7 @@ function RDCalculator() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

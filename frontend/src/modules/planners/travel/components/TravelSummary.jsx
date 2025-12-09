@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { formatCurrency, calculateTripDays, getTotalTravelers } from '../travel.schema';
+import VisaGuidelineModal from './VisaGuidelineModal';
 import './TravelSummary.css';
 
 /**
@@ -7,6 +8,7 @@ import './TravelSummary.css';
  * Displays detailed budget breakdown with expense categories
  */
 function TravelSummary({ travelData, budgetData, onEdit, onGenerateAI, isGenerating = false }) {
+  const [isVisaModalOpen, setIsVisaModalOpen] = useState(false);
   const tripDays = calculateTripDays(travelData.startDate, travelData.endDate);
   const totalTravelers = getTotalTravelers(travelData.adults, travelData.children, travelData.infants);
   
@@ -28,6 +30,8 @@ function TravelSummary({ travelData, budgetData, onEdit, onGenerateAI, isGenerat
   const grandTotal = budgetData?.grandTotal || 0;
   const perPersonCost = budgetData?.perPersonCost || 0;
   const perDayCost = budgetData?.perDayCost || 0;
+  const visaType = budgetData?.visaType;
+  const visaGuidance = budgetData?.visaGuidance;
 
   return (
     <div className="travel-summary">
@@ -157,8 +161,17 @@ function TravelSummary({ travelData, budgetData, onEdit, onGenerateAI, isGenerat
               <div className="expense-left">
                 <span className="expense-icon">📋</span>
                 <div className="expense-details">
-                  <span className="expense-name">Visa Fees</span>
+                  <span className="expense-name">Visa Fees {visaType ? `(${visaType})` : ''}</span>
                   <span className="expense-description">For {totalTravelers} travelers</span>
+                  {visaGuidance && (
+                    <button 
+                      className="visa-info-button"
+                      onClick={() => setIsVisaModalOpen(true)}
+                      title="View visa guidelines"
+                    >
+                      ℹ️ View Visa Details
+                    </button>
+                  )}
                 </div>
               </div>
               <span className="expense-amount">{formatCurrency(expenses.visa, travelData.homeCurrency)}</span>
@@ -250,6 +263,17 @@ function TravelSummary({ travelData, budgetData, onEdit, onGenerateAI, isGenerat
           )}
         </button>
       </div>
+
+      {/* Visa Guideline Modal */}
+      <VisaGuidelineModal
+        isOpen={isVisaModalOpen}
+        onClose={() => setIsVisaModalOpen(false)}
+        visaType={visaType}
+        visaGuidance={visaGuidance}
+        originCountry={travelData.originCountry}
+        destinationCountry={travelData.destinationCountry}
+        tripDays={tripDays}
+      />
     </div>
   );
 }

@@ -121,7 +121,8 @@
 .dropdown-menu {
   position: absolute;
   top: 100%;
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(-10px);
   margin-top: 0.5rem;
   background: white;
   border-radius: 12px;
@@ -131,7 +132,6 @@
   list-style: none;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(-10px);
   transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   z-index: 1001;
 }
@@ -139,7 +139,7 @@
 .dropdown-menu.show {
   opacity: 1;
   visibility: visible;
-  transform: translateY(0);
+  transform: translateX(-50%) translateY(0);
 }
 
 .dropdown-item {

@@ -142,6 +142,32 @@
   color: #718096;
 }
 
+.visa-info-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  margin-top: 8px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.visa-info-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.visa-info-button:active {
+  transform: translateY(0);
+}
+
 .expense-amount {
   font-size: 1.3rem;
   color: #667eea;
@@ -204,7 +230,12 @@
 }
 
 .total-row.highlight .total-amount {
-  color: #f59e0b;
+  color: #b45309;
+}
+
+.total-row.highlight .total-label {
+  color: #92400e;
+  font-weight: 700;
 }
 
 .total-row.grand .total-amount {

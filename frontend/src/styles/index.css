@@ -47,6 +47,9 @@
   --transition-fast: 150ms ease;
   --transition-base: 200ms ease;
   --transition-slow: 300ms ease;
+
+  /* Layout */
+  --navbar-height: 72px;
 }
 
 /* Reset & Base Styles */

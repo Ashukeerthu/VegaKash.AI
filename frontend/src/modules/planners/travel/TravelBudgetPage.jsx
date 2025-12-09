@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SEO from '../../../components/SEO';
 import TravelForm from './components/TravelForm';
 import TravelSummary from './components/TravelSummary';
 import TravelAIPlan from './components/TravelAIPlan';
+import TravelLoadingScreen from './components/TravelLoadingScreen';
 import './TravelBudget.css';
 
 /**
@@ -14,6 +15,14 @@ function TravelBudgetPage() {
   const [travelData, setTravelData] = useState(null);
   const [aiPlan, setAiPlan] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const target = document.querySelector('.travel-content') || document.getElementById('travel-form-section') || document.body;
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [activeStep]);
 
   const scrollToForm = () => {
     const formElement = document.getElementById('travel-form-section');
@@ -121,7 +130,7 @@ function TravelBudgetPage() {
               budgetData: budgetDataPayload
             }),
           },
-          12000
+          59000
         );
 
         if (optimizationResponse.ok) {
@@ -147,7 +156,7 @@ function TravelBudgetPage() {
               itineraryDetailLevel: travelData.itineraryDetailLevel || 'standard'
             }),
           },
-          12000
+          59000
         );
 
         if (itineraryResponse.ok) {
@@ -228,6 +237,12 @@ function TravelBudgetPage() {
 
         {/* Main Content Area */}
         <main className="travel-content">
+          {/* Loading Screen Overlay */}
+          <TravelLoadingScreen 
+            isLoading={isLoading && activeStep === 'ai-plan'} 
+            title="Planning Your Journey"
+          />
+
           <div id="travel-form-section" className="container">
             {activeStep === 'form' && (
               <TravelForm onSubmit={handleFormSubmit} isLoading={isLoading} />

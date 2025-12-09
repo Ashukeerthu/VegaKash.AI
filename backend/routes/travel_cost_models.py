@@ -3,7 +3,7 @@ Internal Fallback Cost Models for Travel Budget Planner
 These models provide instant estimates without any external API calls
 """
 
-from typing import Dict, Any
+from typing import Dict
 
 # Flight cost ranges by region (in USD)
 FLIGHT_COSTS = {
