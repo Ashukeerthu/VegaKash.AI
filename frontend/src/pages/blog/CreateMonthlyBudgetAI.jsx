@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import SEO from '../../components/SEO';
+import Breadcrumb from '../../components/Breadcrumb';
 import '../../styles/Blog.css';
 
 /**
@@ -8,6 +9,11 @@ import '../../styles/Blog.css';
  * Global budgeting guide for 2025
  */
 function CreateMonthlyBudgetAI() {
+  const breadcrumbItems = [
+    { label: 'Home', path: '/', icon: true },
+    { label: 'Blog', path: '/learning/blog' },
+    { label: 'Create Monthly Budget Using AI', path: null }
+  ];
   const articleStructuredData = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -53,12 +59,15 @@ function CreateMonthlyBudgetAI() {
         structuredData={{"@graph": [articleStructuredData, breadcrumbs]}}
       />
       
-      <article className="blog-post">
+      <div className="blog-article">
+        <article className="blog-post">
+          <Breadcrumb items={breadcrumbItems} />
+        
         <header className="blog-header">
           <div className="blog-meta">
-            <span className="blog-category">Personal Finance</span>
-            <span className="blog-date">December 2025</span>
-            <span className="blog-read-time">5 min read</span>
+            <span className="blog-category">💰 Personal Finance</span>
+            <span className="blog-date">January 05, 2025</span>
+            <span className="blog-read-time">⏱ 8 min read</span>
           </div>
           <h1>How to Create a Monthly Budget Using AI (Global 2025 Guide)</h1>
           <p className="blog-lead">
@@ -480,7 +489,8 @@ function CreateMonthlyBudgetAI() {
             </div>
           </div>
         </footer>
-      </article>
+        </article>
+      </div>
     </>
   );
 }

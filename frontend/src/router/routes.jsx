@@ -15,6 +15,9 @@ import { lazy, Suspense } from 'react';
 import { Navigate } from 'react-router-dom';
 import LoadingSpinner from '../components/LoadingSpinner';
 
+// Feedback Page
+const FeedbackPage = lazy(() => import('../components/Feedback/FeedbackPage'));
+
 // ==================== CALCULATOR IMPORTS ====================
 // Global calculators (US, UK/EU)
 const MortgageCalculatorUS = lazy(() => import('../pages/calculators/global/MortgageCalculatorUS'));
@@ -31,12 +34,7 @@ const EMICalculator = lazy(() => import('../modules/calculators/emi'));
 const SIPCalculator = lazy(() => import('../modules/calculators/sip'));
 const FDCalculator = lazy(() => import('../modules/calculators/fd'));
 const RDCalculator = lazy(() => import('../modules/calculators/rd'));
-const TaxCalculator = lazy(() => import('../modules/calculators/tax'));
 const AutoLoanCalculator = lazy(() => import('../modules/calculators/autoloan'));
-
-// Coming Soon Calculators
-const SavingsGoalCalculator = lazy(() => import('../pages/calculators/SavingsGoalCalculator'));
-const EmergencyFundCalculator = lazy(() => import('../pages/calculators/EmergencyFundCalculator'));
 
 // Pages
 const Home = lazy(() => import('../pages/Home'));
@@ -46,6 +44,7 @@ const MonthlyBudget = lazy(() => import('../modules/budgets/monthly'));
 const TravelBudgetPage = lazy(() => import('../modules/planners/travel/TravelBudgetPage'));
 const BlogIndex = lazy(() => import('../pages/blog/BlogIndex'));
 const CreateMonthlyBudgetAI = lazy(() => import('../pages/blog/CreateMonthlyBudgetAI'));
+const FutureOfTravel2026 = lazy(() => import('../pages/blog/FutureOfTravel2026'));
 const About = lazy(() => import('../pages/About'));
 const VideoTutorials = lazy(() => import('../pages/VideoTutorials'));
 const PrivacyPolicy = lazy(() => import('../pages/PrivacyPolicy'));
@@ -62,30 +61,32 @@ export const globalCalculatorRoutes = [
   {
     path: '/calculators/mortgage',
     element: MortgageCalculatorUS,
-    title: 'Mortgage Calculator',
-    description: 'Calculate monthly mortgage payments, total interest, and amortization schedule.',
+    title: 'Mortgage Calculator – Monthly Payment, Amortization & Affordability',
+    description: 'Calculate monthly mortgage payments, total interest, amortization schedule, and affordability assessment.',
     category: 'Loans',
     tool: 'mortgage',
     isGlobal: true,
+    country: 'global',
     hreflang: 'x-default',
   },
   // Loan Payment
   {
     path: '/calculators/loan',
     element: LoanPaymentCalculatorUS,
-    title: 'Loan Calculator',
-    description: 'Calculate monthly loan payments and total interest for any loan type.',
+    title: 'Loan Payment Calculator – Monthly EMI & Amortization Schedule',
+    description: 'Calculate monthly loan payments, total interest payable, and complete amortization schedule for any loan type.',
     category: 'Loans',
     tool: 'loan',
     isGlobal: true,
+    country: 'global',
     hreflang: 'x-default',
   },
   // EMI
   {
     path: '/calculators/emi',
     element: EMICalculator,
-    title: 'EMI Calculator',
-    description: 'Calculate Equated Monthly Installment for loans',
+    title: 'EMI Calculator – Equated Monthly Installment Calculator',
+    description: 'Calculate Equated Monthly Installment (EMI), compare loan options, and plan your loan repayment strategy effectively.',
     category: 'Loans',
     tool: 'emi',
     isGlobal: true,
@@ -95,8 +96,8 @@ export const globalCalculatorRoutes = [
   {
     path: '/calculators/sip',
     element: SIPCalculator,
-    title: 'SIP Calculator',
-    description: 'Calculate Systematic Investment Plan returns',
+    title: 'SIP Calculator – Systematic Investment Plan Calculator',
+    description: 'Calculate Systematic Investment Plan (SIP) returns, projected wealth, and investment growth with flexible options.',
     category: 'Investments',
     tool: 'sip',
     isGlobal: true,
@@ -106,8 +107,8 @@ export const globalCalculatorRoutes = [
   {
     path: '/calculators/fd',
     element: FDCalculator,
-    title: 'FD Calculator',
-    description: 'Calculate Fixed Deposit maturity and interest',
+    title: 'FD Calculator – Fixed Deposit Maturity & Interest Calculator',
+    description: 'Calculate Fixed Deposit (FD) maturity amount, interest earned, and compare investment returns across tenures.',
     category: 'Savings',
     tool: 'fd',
     isGlobal: true,
@@ -117,8 +118,8 @@ export const globalCalculatorRoutes = [
   {
     path: '/calculators/rd',
     element: RDCalculator,
-    title: 'RD Calculator',
-    description: 'Calculate Recurring Deposit returns',
+    title: 'RD Calculator – Recurring Deposit Returns Calculator',
+    description: 'Calculate Recurring Deposit (RD) returns, maturity amount, and compare different investment terms and interest rates.',
     category: 'Savings',
     tool: 'rd',
     isGlobal: true,
@@ -128,48 +129,12 @@ export const globalCalculatorRoutes = [
   {
     path: '/calculators/savings',
     element: SavingsGrowthCalculatorUS,
-    title: 'Savings Calculator',
-    description: 'Plan and track your savings growth',
+    title: 'Savings Calculator – Savings Growth & Future Value Calculator',
+    description: 'Plan and track your savings growth with compound interest, compare savings goals, and project your financial future.',
     category: 'Savings',
     tool: 'savings',
     isGlobal: true,
     hreflang: 'x-default',
-  },
-  // Tax
-  {
-    path: '/calculators/tax',
-    element: TaxCalculator,
-    title: 'Income Tax Calculator',
-    description: 'Calculate income tax and compare tax regimes',
-    category: 'Tax',
-    tool: 'tax',
-    isGlobal: true,
-    hreflang: 'x-default',
-    comingSoon: true,
-  },
-  // Savings Goal
-  {
-    path: '/calculators/savings-goal',
-    element: SavingsGoalCalculator,
-    title: 'Savings Goal Calculator',
-    description: 'Plan monthly investments to reach financial goals',
-    category: 'Planning',
-    tool: 'savings-goal',
-    isGlobal: true,
-    hreflang: 'x-default',
-    comingSoon: true,
-  },
-  // Emergency Fund
-  {
-    path: '/calculators/emergency-fund',
-    element: EmergencyFundCalculator,
-    title: 'Emergency Fund Calculator',
-    description: 'Calculate emergency fund requirements',
-    category: 'Planning',
-    tool: 'emergency-fund',
-    isGlobal: true,
-    hreflang: 'x-default',
-    comingSoon: true,
   },
 ];
 
@@ -183,8 +148,8 @@ export const countrySpecificCalculatorRoutes = [
   {
     path: '/us/calculators/mortgage',
     element: MortgageCalculatorUS,
-    title: 'US Mortgage Calculator',
-    description: 'Calculate US mortgage monthly payment, total interest, and amortization.',
+    title: 'Mortgage Calculator – US Monthly Payment & Amortization Schedule',
+    description: 'Calculate US mortgage monthly payment, total interest, and complete amortization schedule with down payment analysis.',
     category: 'Loans',
     tool: 'mortgage',
     country: 'us',
@@ -195,8 +160,8 @@ export const countrySpecificCalculatorRoutes = [
   {
     path: '/us/calculators/loan',
     element: LoanPaymentCalculatorUS,
-    title: 'US Loan Payment Calculator',
-    description: 'Calculate US loan monthly payment and total interest.',
+    title: 'Loan Payment Calculator – US Personal EMI & Interest Calculator',
+    description: 'Calculate personal loan monthly payment, total interest payable, and amortization schedule for US loans.',
     category: 'Loans',
     tool: 'loan',
     country: 'us',
@@ -207,8 +172,8 @@ export const countrySpecificCalculatorRoutes = [
   {
     path: '/us/calculators/credit-card',
     element: CreditCardPayoffCalculatorUS,
-    title: 'US Credit Card Payoff Calculator',
-    description: 'Calculate months to pay off and total interest for US credit card debt.',
+    title: 'Credit Card Payoff Calculator – Debt Payoff Timeline & Interest Savings',
+    description: 'Calculate credit card payoff timeline, total interest charges, and discover how to save money with different payment strategies.',
     category: 'Debt',
     tool: 'credit-card',
     country: 'us',
@@ -219,8 +184,8 @@ export const countrySpecificCalculatorRoutes = [
   {
     path: '/us/calculators/401k',
     element: Retirement401kCalculatorUS,
-    title: 'US 401(k) Retirement Calculator',
-    description: 'Estimate 401k retirement savings growth for US users.',
+    title: '401(k) Retirement Calculator – Growth Projections & Withdrawal Planning',
+    description: 'Estimate your 401k retirement savings growth with employer matching, calculate required withdrawals, and plan your retirement income.',
     category: 'Retirement',
     tool: '401k',
     country: 'us',
@@ -231,8 +196,8 @@ export const countrySpecificCalculatorRoutes = [
   {
     path: '/us/calculators/savings',
     element: SavingsGrowthCalculatorUS,
-    title: 'US Savings Growth Calculator',
-    description: 'Estimate future value of US savings with regular deposits.',
+    title: 'Savings Growth Calculator – Future Value & Interest Projection',
+    description: 'Calculate future value of your savings with regular monthly deposits, compare interest rates, and visualize wealth growth.',
     category: 'Savings',
     tool: 'savings',
     country: 'us',
@@ -245,8 +210,8 @@ export const countrySpecificCalculatorRoutes = [
   {
     path: '/uk/calculators/mortgage',
     element: MortgageAffordabilityCalculatorUK,
-    title: 'UK Mortgage Affordability Calculator',
-    description: 'Estimate how much mortgage you can afford in the UK.',
+    title: 'Mortgage Affordability Calculator – Maximum Loan & Payment Estimator',
+    description: 'Determine how much mortgage you can afford in the UK based on income, assess monthly payments, and plan your property purchase.',
     category: 'Loans',
     tool: 'mortgage',
     country: 'uk',
@@ -257,8 +222,8 @@ export const countrySpecificCalculatorRoutes = [
   {
     path: '/uk/calculators/vat',
     element: VATCalculatorUK,
-    title: 'UK VAT Calculator',
-    description: 'Calculate VAT and total price for UK purchases.',
+    title: 'VAT Calculator – Sales Tax & Total Price Breakdown',
+    description: 'Calculate UK VAT (Value Added Tax), net price, and total amount payable for any transaction.',
     category: 'Tax',
     tool: 'vat',
     country: 'uk',
@@ -269,8 +234,8 @@ export const countrySpecificCalculatorRoutes = [
   {
     path: '/uk/calculators/savings',
     element: SavingsInterestCalculatorUK,
-    title: 'UK Savings Interest Calculator',
-    description: 'Estimate interest earned on UK savings accounts.',
+    title: 'Savings Interest Calculator – Interest Earning Forecast',
+    description: 'Calculate interest earned on UK savings accounts, compare different interest rates, and project your savings growth over time.',
     category: 'Savings',
     tool: 'savings',
     country: 'uk',
@@ -283,8 +248,8 @@ export const countrySpecificCalculatorRoutes = [
   {
     path: '/in/calculators/emi',
     element: EMICalculator,
-    title: 'EMI Calculator',
-    description: 'Calculate Equated Monthly Installment for loans',
+    title: 'EMI Calculator India – Monthly Installment & Loan Payment Calculator',
+    description: 'Calculate Equated Monthly Installment (EMI) for your loan, compare interest charges, and plan your loan repayment effectively.',
     category: 'Loans',
     tool: 'emi',
     country: 'in',
@@ -295,8 +260,8 @@ export const countrySpecificCalculatorRoutes = [
   {
     path: '/in/calculators/rd',
     element: RDCalculator,
-    title: 'RD Calculator',
-    description: 'Calculate Recurring Deposit returns',
+    title: 'Recurring Deposit Calculator – RD Returns & Maturity Amount',
+    description: 'Calculate your Recurring Deposit (RD) returns, maturity amount, and total interest earned with varying interest rates.',
     category: 'Savings',
     tool: 'rd',
     country: 'in',
@@ -307,8 +272,8 @@ export const countrySpecificCalculatorRoutes = [
   {
     path: '/in/calculators/fd',
     element: FDCalculator,
-    title: 'FD Calculator',
-    description: 'Calculate Fixed Deposit maturity and interest',
+    title: 'Fixed Deposit Calculator – FD Maturity & Interest Calculator',
+    description: 'Calculate Fixed Deposit (FD) maturity amount, interest earned, and compare different investment tenures and rates.',
     category: 'Savings',
     tool: 'fd',
     country: 'in',
@@ -319,27 +284,14 @@ export const countrySpecificCalculatorRoutes = [
   {
     path: '/in/calculators/sip',
     element: SIPCalculator,
-    title: 'SIP Calculator',
-    description: 'Calculate Systematic Investment Plan returns',
+    title: 'SIP Calculator – Systematic Investment Plan Returns & Growth',
+    description: 'Calculate Systematic Investment Plan (SIP) returns, projected wealth, and investment growth with different time horizons.',
     category: 'Investments',
     tool: 'sip',
     country: 'in',
     countryName: 'India',
     currency: 'INR',
     hreflang: 'en-in',
-  },
-  {
-    path: '/in/calculators/tax',
-    element: TaxCalculator,
-    title: 'Income Tax Calculator',
-    description: 'Calculate income tax for FY 2024-25',
-    category: 'Tax',
-    tool: 'tax',
-    country: 'in',
-    countryName: 'India',
-    currency: 'INR',
-    hreflang: 'en-in',
-    comingSoon: true,
   },
 ];
 
@@ -405,6 +357,13 @@ export const blogRoutes = [
     description: 'Learn how to create a monthly budget using AI. Step-by-step guide with practical examples.',
     category: 'Personal Finance',
   },
+  {
+    path: '/learning/blog/future-of-travel-2026-ai-trip-planning',
+    element: FutureOfTravel2026,
+    title: 'Future of Travel 2026: How AI Will Redefine Trip Planning Forever',
+    description: 'Discover how AI is transforming travel with smart planning, predictive budgeting, real-time updates, and personalized itineraries.',
+    category: 'Travel & AI',
+  },
 ];
 
 // ==================== CONTENT ROUTES ====================
@@ -444,6 +403,12 @@ export const contentRoutes = [
     element: Disclaimer,
     title: 'Disclaimer',
     description: 'Legal disclaimer'
+  },
+  {
+    path: '/feedback',
+    element: FeedbackPage,
+    title: 'Share Your Feedback',
+    description: 'Help us improve VegakTools by sharing your thoughts and suggestions'
   }
 ];
 

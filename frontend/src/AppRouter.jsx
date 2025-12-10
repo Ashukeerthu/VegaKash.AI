@@ -7,6 +7,7 @@ import CookieConsent from './components/CookieConsent';
 import LoadingSpinner from './components/LoadingSpinner';
 import SEO from './components/SEO';
 import GoogleAnalytics from './components/GoogleAnalytics';
+import { FloatingFeedbackButton } from './components/Feedback';
 import './styles/App.css';
 import './styles/animations.css';
 
@@ -21,6 +22,7 @@ import {
   legacyRedirectRoutes
 } from './router/routes';
 import { Navigate } from 'react-router-dom';
+import NotFound from './pages/NotFound';
 
 /**
  * ScrollToTop Component - Scrolls to top on route change
@@ -161,10 +163,16 @@ function AppContent() {
         
         {/* Fallback Coming Soon Routes - Only for truly non-existent routes */}
         <Route path="/learning/guides" element={<ComingSoon title="Financial Guides" />} />
+        
+        {/* Catch-all route for 404 - Must be last */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
       
       {/* Global Footer */}
       <Footer />
+      
+      {/* Floating Feedback Button - Available on all pages */}
+      <FloatingFeedbackButton />
       
       {/* Cookie Consent Banner */}
       <CookieConsent />
