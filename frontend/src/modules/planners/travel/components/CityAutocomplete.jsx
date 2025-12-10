@@ -138,7 +138,7 @@ function CityAutocomplete({
         <ul className="suggestions-list">
           {suggestions.map((city, index) => (
             <li
-              key={`${city.city}-${city.code}`}
+              key={`suggestion-${index}-${city.city}-${city.code}`}
               className={`suggestion-item ${index === highlightedIndex ? 'highlighted' : ''}`}
               onClick={() => handleSelectCity(city)}
               onMouseEnter={() => setHighlightedIndex(index)}
