@@ -189,18 +189,295 @@ function TravelBudgetPage() {
     }
   };
 
-  const handleExportPlan = () => {
-    // TODO: Implement PDF/Excel export
-    alert('Export functionality coming soon!');
+  const handleExportPDF = async () => {
+    if (!aiPlan) {
+      alert('No plan to export. Please generate a plan first.');
+      return;
+    }
+
+    try {
+      // Dynamically import jspdf
+      const { jsPDF } = await import('jspdf');
+      const doc = new jsPDF('p', 'mm', 'a4');
+      
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const margin = 20;
+      let yPosition = margin;
+
+      // Helper to add new page if needed
+      const checkAddPage = (requiredSpace = 20) => {
+        if (yPosition + requiredSpace > pageHeight - margin) {
+          doc.addPage();
+          yPosition = margin;
+          return true;
+        }
+        return false;
+      };
+
+      // Helper to format currency
+      const formatCurrencyPDF = (value, currency) => {
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: currency || 'USD'
+        }).format(value || 0);
+      };
+
+      // Header with blue gradient background
+      doc.setFillColor(102, 126, 234);
+      doc.rect(0, 0, pageWidth, 50, 'F');
+      
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(26);
+      doc.setFont('helvetica', 'bold');
+      doc.text('AI Travel Plan', pageWidth / 2, 22, { align: 'center' });
+      
+      // Destination with white text
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`${travelData.destinationCity}, ${travelData.destinationCountry}`, pageWidth / 2, 38, { align: 'center' });
+      
+      yPosition = 65;
+
+      // Trip Details Section with styled box
+      doc.setTextColor(0, 0, 0);
+      doc.setFillColor(245, 247, 250);
+      doc.roundedRect(margin, yPosition - 5, pageWidth - 2 * margin, 40, 3, 3, 'F');
+      
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(102, 126, 234);
+      doc.text('Trip Details', margin + 5, yPosition + 3);
+      
+      yPosition += 12;
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(50, 50, 50);
+      doc.text(`Dates: ${travelData.startDate} to ${travelData.endDate}`, margin + 5, yPosition);
+      yPosition += 7;
+      doc.text(`Travelers: ${travelData.adults} adult(s)${travelData.children ? `, ${travelData.children} child(ren)` : ''}`, margin + 5, yPosition);
+      yPosition += 7;
+      doc.text(`Style: ${travelData.travelStyle}`, margin + 5, yPosition);
+      yPosition += 7;
+      doc.text(`Currency: ${travelData.homeCurrency}`, margin + 5, yPosition);
+      yPosition += 15;
+
+      // Budget Optimization Section with styled box
+      if (aiPlan.optimization) {
+        checkAddPage(50);
+        
+        // Section header
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(102, 126, 234);
+        doc.text('Budget Optimization', margin, yPosition);
+        yPosition += 10;
+        
+        // Budget box with light green background
+        doc.setFillColor(236, 253, 245);
+        doc.roundedRect(margin, yPosition - 5, pageWidth - 2 * margin, 40, 3, 3, 'F');
+        
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(50, 50, 50);
+        doc.text('Original Cost:', margin + 5, yPosition + 2);
+        doc.setFont('helvetica', 'normal');
+        doc.text(formatCurrencyPDF(aiPlan.optimization.originalCost, travelData.homeCurrency), margin + 45, yPosition + 2);
+        
+        yPosition += 8;
+        doc.setFont('helvetica', 'bold');
+        doc.text('Optimized Cost:', margin + 5, yPosition);
+        doc.setFont('helvetica', 'normal');
+        doc.text(formatCurrencyPDF(aiPlan.optimization.optimizedCost, travelData.homeCurrency), margin + 45, yPosition);
+        
+        yPosition += 10;
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(22, 163, 74);
+        doc.text('Savings:', margin + 5, yPosition);
+        doc.setFontSize(12);
+        doc.text(`${formatCurrencyPDF(aiPlan.optimization.savings, travelData.homeCurrency)} (${aiPlan.optimization.savingsPercentage.toFixed(2)}%)`, margin + 45, yPosition);
+        
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(11);
+        yPosition += 18;
+      }
+
+      // Itinerary Section
+      if (aiPlan.itinerary?.itinerary) {
+        checkAddPage(15);
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(102, 126, 234);
+        doc.text('Daily Itinerary', margin, yPosition);
+        yPosition += 10;
+
+        const days = aiPlan.itinerary.itinerary.slice(0, 7); // First 7 days for PDF
+        days.forEach((day, index) => {
+          checkAddPage(30);
+          
+          // Day header with colored background
+          doc.setFillColor(237, 242, 247);
+          doc.roundedRect(margin, yPosition - 4, pageWidth - 2 * margin, 10, 2, 2, 'F');
+          
+          doc.setFontSize(12);
+          doc.setFont('helvetica', 'bold');
+          doc.setTextColor(30, 64, 175);
+          doc.text(`Day ${day.day}: ${day.theme || day.title || 'Explore Riyadh'}`, margin + 3, yPosition + 2);
+          yPosition += 12;
+          
+          // Activities
+          doc.setFontSize(10);
+          doc.setFont('helvetica', 'normal');
+          doc.setTextColor(60, 60, 60);
+          
+          if (day.sections && day.sections.length > 0) {
+            day.sections.forEach(section => {
+              checkAddPage(8);
+              const bullet = section.time ? `⏰ ${section.time}` : '•';
+              const activityText = `${bullet} ${section.title || section.description || ''}`;
+              const lines = doc.splitTextToSize(activityText, pageWidth - 2 * margin - 8);
+              lines.forEach(line => {
+                checkAddPage(5);
+                doc.text(line, margin + 5, yPosition);
+                yPosition += 5;
+              });
+            });
+          } else if (day.activities && day.activities.length > 0) {
+            day.activities.forEach(activity => {
+              checkAddPage(8);
+              const activityText = `• ${activity}`;
+              const lines = doc.splitTextToSize(activityText, pageWidth - 2 * margin - 8);
+              lines.forEach(line => {
+                checkAddPage(5);
+                doc.text(line, margin + 5, yPosition);
+                yPosition += 5;
+              });
+            });
+          }
+          
+          // Cost
+          yPosition += 2;
+          doc.setFont('helvetica', 'bold');
+          doc.setTextColor(22, 163, 74);
+          doc.text(`Est. Cost: ${formatCurrencyPDF(day.estimated_cost || day.estimatedCost || 3250, travelData.homeCurrency)}`, margin + 5, yPosition);
+          
+          doc.setTextColor(0, 0, 0);
+          doc.setFont('helvetica', 'normal');
+          yPosition += 10;
+        });
+
+        if (aiPlan.itinerary.itinerary.length > 7) {
+          doc.setFontSize(10);
+          doc.setTextColor(120, 120, 120);
+          doc.setFont('helvetica', 'italic');
+          doc.text(`...and ${aiPlan.itinerary.itinerary.length - 7} more days in your complete itinerary`, margin, yPosition);
+          yPosition += 8;
+        }
+      }
+
+      // Footer on each page
+      const totalPages = doc.internal.pages.length - 1;
+      for (let i = 1; i <= totalPages; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(150, 150, 150);
+        doc.text(`Generated by VegaKash.AI on ${new Date().toLocaleDateString()}`, margin, pageHeight - 10);
+        doc.text(`Page ${i} of ${totalPages}`, pageWidth - margin - 20, pageHeight - 10);
+      }
+
+      const fileName = `Travel-Plan-${travelData.destinationCity.replace(/[^a-zA-Z0-9]/g, '-')}-${new Date().toISOString().split('T')[0]}.pdf`;
+      doc.save(fileName);
+      
+    } catch (error) {
+      console.error('PDF Export error:', error);
+      alert('Failed to export PDF. Please try again or use JSON export.');
+    }
   };
+
+  const handleExportJSON = () => {
+    try {
+      const exportData = {
+        tripDetails: {
+          destination: `${travelData.destinationCity}, ${travelData.destinationCountry}`,
+          travelDates: `${travelData.startDate} to ${travelData.endDate}`,
+          travelers: `${travelData.adults} adult(s)${travelData.children ? `, ${travelData.children} child(ren)` : ''}`,
+          currency: travelData.homeCurrency,
+        },
+        budget: aiPlan.optimization ? {
+          originalCost: aiPlan.optimization.originalCost,
+          optimizedCost: aiPlan.optimization.optimizedCost,
+          savings: aiPlan.optimization.savings,
+          savingsPercentage: aiPlan.optimization.savingsPercentage,
+        } : null,
+        itinerary: aiPlan.itinerary?.itinerary || [],
+        suggestions: aiPlan.optimization?.suggestions || [],
+        generatedAt: new Date().toISOString(),
+      };
+
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `travel-plan-${travelData.destinationCity?.replace(/[^a-zA-Z0-9]/g, '-') || 'trip'}-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('JSON Export error:', error);
+      alert('Failed to export plan. Please try again.');
+    }
+  };
+
+  const handleExportPlan = handleExportPDF;
+
+  const destination = travelData?.destinationCity || 'Your Dream Destination';
+  const tripDates = travelData?.startDate && travelData?.endDate 
+    ? `${new Date(travelData.startDate).toLocaleDateString()} - ${new Date(travelData.endDate).toLocaleDateString()}`
+    : '';
+
+  // Dynamic meta tags for social sharing
+  const pageTitle = travelData 
+    ? `AI Travel Plan: ${destination} - ${tripDates} | VegaKash.AI` 
+    : "AI Travel Budget Planner - Plan Your Trip Expenses | VegaKash.AI";
+  
+  const pageDescription = travelData 
+    ? `Explore my AI-powered travel plan to ${destination}. Includes budget optimization, daily itinerary with activities, and smart recommendations for the perfect trip.`
+    : "Smart travel budget planning with AI-powered cost predictions, itinerary generation, and trip optimization. Plan flights, hotels, activities, and more.";
+  
+  const twitterTitleMeta = travelData 
+    ? `My AI Travel Plan to ${destination} - ${tripDates}` 
+    : "AI Travel Budget Planner | VegaKash.AI";
+  
+  const twitterDescriptionMeta = travelData 
+    ? `Check out my AI-generated travel plan to ${destination}! Complete with budget optimization, daily itinerary, and smart recommendations. Created with VegaKash.AI`
+    : "Plan your dream trip with AI-powered cost predictions and smart itinerary generation. Get personalized travel recommendations.";
+  
+  const ogImageUrl = travelData 
+    ? "https://vegaktools.com/images/ai-travel-2026-banner.jpg" 
+    : "https://vegaktools.com/images/ai-travel-2026-banner.jpg";
+  
+  const ogImageAltText = travelData 
+    ? `AI-generated travel plan for ${destination} showing itinerary and budget optimization`
+    : "AI-powered travel planning interface with budget calculator and itinerary generator";
 
   return (
     <>
       <SEO 
-        title="AI Travel Budget Planner - Plan Your Trip Expenses | VegaKash.AI"
-        description="Smart travel budget planning with AI-powered cost predictions, itinerary generation, and trip optimization. Plan flights, hotels, activities, and more."
-        keywords="travel budget planner, trip cost calculator, vacation budget, travel expense planner, ai travel planner, trip cost estimator"
+        title={pageTitle}
+        description={pageDescription}
+        keywords="travel budget planner, trip cost calculator, vacation budget, travel expense planner, ai travel planner, trip cost estimator, ai itinerary generator"
         canonical="/travel-budget"
+        ogType={travelData ? "article" : "website"}
+        ogImage={ogImageUrl}
+        ogImageAlt={ogImageAltText}
+        twitterCard="summary_large_image"
+        twitterTitle={twitterTitleMeta}
+        twitterDescription={twitterDescriptionMeta}
+        twitterImage={ogImageUrl}
+        twitterImageAlt={ogImageAltText}
+        twitterSite="@vegaktools"
         structuredData={{
           "@context": "https://schema.org",
           "@type": "WebApplication",

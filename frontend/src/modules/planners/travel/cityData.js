@@ -1,193 +1,174 @@
 /**
  * Popular cities database with country mapping
- * Used for autocomplete in travel form
+ * Now uses comprehensive world cities database
  */
+import { getAllCities, searchCities as searchWorldCities, getTotalCityCount } from '../../../data/worldCities';
 
-export const popularCities = [
-  // UAE
-  { city: "Dubai", country: "United Arab Emirates", code: "AE", region: "Middle East" },
-  { city: "Abu Dhabi", country: "United Arab Emirates", code: "AE", region: "Middle East" },
-  { city: "Sharjah", country: "United Arab Emirates", code: "AE", region: "Middle East" },
-  
-  // USA
-  { city: "New York", country: "United States", code: "US", region: "North America" },
-  { city: "Los Angeles", country: "United States", code: "US", region: "North America" },
-  { city: "Chicago", country: "United States", code: "US", region: "North America" },
-  { city: "Miami", country: "United States", code: "US", region: "North America" },
-  { city: "Las Vegas", country: "United States", code: "US", region: "North America" },
-  { city: "San Francisco", country: "United States", code: "US", region: "North America" },
-  
-  // UK
-  { city: "London", country: "United Kingdom", code: "GB", region: "Europe" },
-  { city: "Manchester", country: "United Kingdom", code: "GB", region: "Europe" },
-  { city: "Edinburgh", country: "United Kingdom", code: "GB", region: "Europe" },
-  
-  // France
-  { city: "Paris", country: "France", code: "FR", region: "Europe" },
-  { city: "Nice", country: "France", code: "FR", region: "Europe" },
-  { city: "Lyon", country: "France", code: "FR", region: "Europe" },
-  
-  // Spain
-  { city: "Barcelona", country: "Spain", code: "ES", region: "Europe" },
-  { city: "Madrid", country: "Spain", code: "ES", region: "Europe" },
-  { city: "Seville", country: "Spain", code: "ES", region: "Europe" },
-  
-  // Italy
-  { city: "Rome", country: "Italy", code: "IT", region: "Europe" },
-  { city: "Venice", country: "Italy", code: "IT", region: "Europe" },
-  { city: "Milan", country: "Italy", code: "IT", region: "Europe" },
-  { city: "Florence", country: "Italy", code: "IT", region: "Europe" },
-  
-  // Germany
-  { city: "Berlin", country: "Germany", code: "DE", region: "Europe" },
-  { city: "Munich", country: "Germany", code: "DE", region: "Europe" },
-  { city: "Frankfurt", country: "Germany", code: "DE", region: "Europe" },
-  
-  // India
-  { city: "Mumbai", country: "India", code: "IN", region: "Asia" },
-  { city: "Delhi", country: "India", code: "IN", region: "Asia" },
-  { city: "Bangalore", country: "India", code: "IN", region: "Asia" },
-  { city: "Goa", country: "India", code: "IN", region: "Asia" },
-  { city: "Jaipur", country: "India", code: "IN", region: "Asia" },
-  { city: "Agra", country: "India", code: "IN", region: "Asia" },
-  
-  // Japan
-  { city: "Tokyo", country: "Japan", code: "JP", region: "Asia" },
-  { city: "Kyoto", country: "Japan", code: "JP", region: "Asia" },
-  { city: "Osaka", country: "Japan", code: "JP", region: "Asia" },
-  
-  // Thailand
-  { city: "Bangkok", country: "Thailand", code: "TH", region: "Asia" },
-  { city: "Phuket", country: "Thailand", code: "TH", region: "Asia" },
-  { city: "Chiang Mai", country: "Thailand", code: "TH", region: "Asia" },
-  
-  // Singapore
-  { city: "Singapore", country: "Singapore", code: "SG", region: "Asia" },
-  
-  // Australia
-  { city: "Sydney", country: "Australia", code: "AU", region: "Oceania" },
-  { city: "Melbourne", country: "Australia", code: "AU", region: "Oceania" },
-  { city: "Brisbane", country: "Australia", code: "AU", region: "Oceania" },
-  
-  // Canada
-  { city: "Toronto", country: "Canada", code: "CA", region: "North America" },
-  { city: "Vancouver", country: "Canada", code: "CA", region: "North America" },
-  { city: "Montreal", country: "Canada", code: "CA", region: "North America" },
-  
-  // Switzerland
-  { city: "Zurich", country: "Switzerland", code: "CH", region: "Europe" },
-  { city: "Geneva", country: "Switzerland", code: "CH", region: "Europe" },
-  
-  // Netherlands
-  { city: "Amsterdam", country: "Netherlands", code: "NL", region: "Europe" },
-  
-  // Austria
-  { city: "Vienna", country: "Austria", code: "AT", region: "Europe" },
-  
-  // Greece
-  { city: "Athens", country: "Greece", code: "GR", region: "Europe" },
-  { city: "Santorini", country: "Greece", code: "GR", region: "Europe" },
-  
-  // Turkey
-  { city: "Istanbul", country: "Turkey", code: "TR", region: "Europe/Asia" },
-  
-  // Egypt
-  { city: "Cairo", country: "Egypt", code: "EG", region: "Africa" },
-  
-  // South Africa
-  { city: "Cape Town", country: "South Africa", code: "ZA", region: "Africa" },
-  
-  // Brazil
-  { city: "Rio de Janeiro", country: "Brazil", code: "BR", region: "South America" },
-  { city: "São Paulo", country: "Brazil", code: "BR", region: "South America" },
-  
-  // Mexico
-  { city: "Cancun", country: "Mexico", code: "MX", region: "North America" },
-  { city: "Mexico City", country: "Mexico", code: "MX", region: "North America" },
-  
-  // South Korea
-  { city: "Seoul", country: "South Korea", code: "KR", region: "Asia" },
-  
-  // Malaysia
-  { city: "Kuala Lumpur", country: "Malaysia", code: "MY", region: "Asia" },
-  
-  // Indonesia
-  { city: "Bali", country: "Indonesia", code: "ID", region: "Asia" },
-  { city: "Jakarta", country: "Indonesia", code: "ID", region: "Asia" },
-  
-  // Vietnam
-  { city: "Ho Chi Minh City", country: "Vietnam", code: "VN", region: "Asia" },
-  { city: "Hanoi", country: "Vietnam", code: "VN", region: "Asia" },
-  
-  // Philippines
-  { city: "Manila", country: "Philippines", code: "PH", region: "Asia" },
-  
-  // China
-  { city: "Beijing", country: "China", code: "CN", region: "Asia" },
-  { city: "Shanghai", country: "China", code: "CN", region: "Asia" },
-  { city: "Hong Kong", country: "Hong Kong", code: "HK", region: "Asia" },
-  
-  // Portugal
-  { city: "Lisbon", country: "Portugal", code: "PT", region: "Europe" },
-  { city: "Porto", country: "Portugal", code: "PT", region: "Europe" },
-  
-  // Czech Republic
-  { city: "Prague", country: "Czech Republic", code: "CZ", region: "Europe" },
-  
-  // Poland
-  { city: "Warsaw", country: "Poland", code: "PL", region: "Europe" },
-  { city: "Krakow", country: "Poland", code: "PL", region: "Europe" },
-  
-  // Russia
-  { city: "Moscow", country: "Russia", code: "RU", region: "Europe/Asia" },
-  { city: "St. Petersburg", country: "Russia", code: "RU", region: "Europe" },
-  
-  // Saudi Arabia
-  { city: "Riyadh", country: "Saudi Arabia", code: "SA", region: "Middle East" },
-  { city: "Jeddah", country: "Saudi Arabia", code: "SA", region: "Middle East" },
-  
-  // Qatar
-  { city: "Doha", country: "Qatar", code: "QA", region: "Middle East" },
-  
-  // Maldives
-  { city: "Malé", country: "Maldives", code: "MV", region: "Asia" },
-  
-  // Sri Lanka
-  { city: "Colombo", country: "Sri Lanka", code: "LK", region: "Asia" },
-  
-  // Morocco
-  { city: "Marrakech", country: "Morocco", code: "MA", region: "Africa" },
-  
-  // Iceland
-  { city: "Reykjavik", country: "Iceland", code: "IS", region: "Europe" },
-  
-  // Norway
-  { city: "Oslo", country: "Norway", code: "NO", region: "Europe" },
-  
-  // Sweden
-  { city: "Stockholm", country: "Sweden", code: "SE", region: "Europe" },
-  
-  // Denmark
-  { city: "Copenhagen", country: "Denmark", code: "DK", region: "Europe" },
-  
-  // Finland
-  { city: "Helsinki", country: "Finland", code: "FI", region: "Europe" },
-  
-  // New Zealand
-  { city: "Auckland", country: "New Zealand", code: "NZ", region: "Oceania" },
-];
+// Re-export all cities for backwards compatibility
+export const popularCities = getAllCities().map(c => ({
+  city: c.city,
+  country: c.country,
+  code: getCountryCode(c.country),
+  region: c.region || getRegionFromCountry(c.country),
+  state: c.state,
+  province: c.province,
+  isCapital: c.isCapital
+}));
+
+// Country code mapping
+function getCountryCode(country) {
+  const codes = {
+    "India": "IN",
+    "United States": "US",
+    "United Kingdom": "GB",
+    "Canada": "CA",
+    "Australia": "AU",
+    "Japan": "JP",
+    "China": "CN",
+    "Singapore": "SG",
+    "Thailand": "TH",
+    "France": "FR",
+    "Germany": "DE",
+    "Italy": "IT",
+    "Spain": "ES",
+    "UAE": "AE",
+    "United Arab Emirates": "AE",
+    "Brazil": "BR",
+    "Mexico": "MX",
+    "South Africa": "ZA",
+    "Egypt": "EG",
+    "Turkey": "TR",
+    "Russia": "RU",
+    "South Korea": "KR",
+    "Indonesia": "ID",
+    "Malaysia": "MY",
+    "Vietnam": "VN",
+    "Philippines": "PH",
+    "New Zealand": "NZ",
+    "Switzerland": "CH",
+    "Netherlands": "NL",
+    "Belgium": "BE",
+    "Austria": "AT",
+    "Portugal": "PT",
+    "Greece": "GR",
+    "Poland": "PL",
+    "Czech Republic": "CZ",
+    "Hungary": "HU",
+    "Ireland": "IE",
+    "Denmark": "DK",
+    "Sweden": "SE",
+    "Norway": "NO",
+    "Finland": "FI",
+    "Argentina": "AR",
+    "Chile": "CL",
+    "Peru": "PE",
+    "Colombia": "CO",
+    "Morocco": "MA",
+    "Kenya": "KE",
+    "Qatar": "QA",
+    "Saudi Arabia": "SA",
+    "Israel": "IL",
+    "Jordan": "JO",
+    "Oman": "OM",
+    "Bahrain": "BH",
+    "Sri Lanka": "LK",
+    "Nepal": "NP",
+    "Bangladesh": "BD",
+    "Maldives": "MV",
+    "Taiwan": "TW",
+    "Hong Kong": "HK",
+  };
+  return codes[country] || "";
+}
+
+function getRegionFromCountry(country) {
+  const regions = {
+    "India": "Asia",
+    "China": "Asia",
+    "Japan": "Asia",
+    "South Korea": "Asia",
+    "Thailand": "Asia",
+    "Vietnam": "Asia",
+    "Singapore": "Asia",
+    "Malaysia": "Asia",
+    "Indonesia": "Asia",
+    "Philippines": "Asia",
+    "Taiwan": "Asia",
+    "Nepal": "Asia",
+    "Sri Lanka": "Asia",
+    "Bangladesh": "Asia",
+    "Maldives": "Asia",
+    "United States": "North America",
+    "Canada": "North America",
+    "Mexico": "North America",
+    "Brazil": "South America",
+    "Argentina": "South America",
+    "Chile": "South America",
+    "Peru": "South America",
+    "Colombia": "South America",
+    "United Kingdom": "Europe",
+    "France": "Europe",
+    "Germany": "Europe",
+    "Italy": "Europe",
+    "Spain": "Europe",
+    "Netherlands": "Europe",
+    "Belgium": "Europe",
+    "Switzerland": "Europe",
+    "Austria": "Europe",
+    "Portugal": "Europe",
+    "Greece": "Europe",
+    "Poland": "Europe",
+    "Czech Republic": "Europe",
+    "Hungary": "Europe",
+    "Ireland": "Europe",
+    "Denmark": "Europe",
+    "Sweden": "Europe",
+    "Norway": "Europe",
+    "Finland": "Europe",
+    "Russia": "Europe",
+    "UAE": "Middle East",
+    "Saudi Arabia": "Middle East",
+    "Qatar": "Middle East",
+    "Israel": "Middle East",
+    "Jordan": "Middle East",
+    "Turkey": "Middle East",
+    "Oman": "Middle East",
+    "Bahrain": "Middle East",
+    "Australia": "Oceania",
+    "New Zealand": "Oceania",
+    "Egypt": "Africa",
+    "South Africa": "Africa",
+    "Morocco": "Africa",
+    "Kenya": "Africa",
+  };
+  return regions[country] || "Other";
+}
 
 /**
- * Search cities by query
+ * Search cities by query - Enhanced with state/province search
  */
-export const searchCities = (query, limit = 10) => {
+export const searchCities = (query, limit = 15) => {
   if (!query || query.length < 2) return [];
   
   const lowerQuery = query.toLowerCase();
-  const results = popularCities.filter(city => 
-    city.city.toLowerCase().includes(lowerQuery) ||
-    city.country.toLowerCase().includes(lowerQuery)
+  
+  // First, try exact city match
+  const exactMatches = popularCities.filter(city => 
+    city.city.toLowerCase().startsWith(lowerQuery)
   );
+  
+  // Then, broader search including country and state
+  const broaderMatches = popularCities.filter(city => 
+    !city.city.toLowerCase().startsWith(lowerQuery) && (
+      city.city.toLowerCase().includes(lowerQuery) ||
+      city.country.toLowerCase().includes(lowerQuery) ||
+      (city.state && city.state.toLowerCase().includes(lowerQuery)) ||
+      (city.province && city.province.toLowerCase().includes(lowerQuery))
+    )
+  );
+  
+  // Combine results, exact matches first
+  const results = [...exactMatches, ...broaderMatches];
   
   return results.slice(0, limit);
 };
@@ -200,3 +181,13 @@ export const getCityByName = (cityName) => {
     city.city.toLowerCase() === cityName.toLowerCase()
   );
 };
+
+/**
+ * Get total city count
+ */
+export const getCityCount = () => getTotalCityCount();
+
+/**
+ * Log city count for debugging
+ */
+console.log(`🌍 World Cities Database loaded: ${getTotalCityCount()} cities available`);

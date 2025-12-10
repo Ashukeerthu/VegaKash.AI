@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { EnhancedSEO } from '../../../components/EnhancedSEO';
+import { AEOContentSection } from '../../../components/AEOContentSection';
 import SEO from '../../../components/SEO';
+import Breadcrumb from '../../../components/Breadcrumb';
 import '../../../styles/Calculator.css';
 import '../../../styles/SEOContent.css';
+import '../../../styles/AEOContent.css';
 
 /**
  * US Credit Card Payoff Calculator - GLOBAL & COUNTRY-SPECIFIC
@@ -12,6 +15,13 @@ import '../../../styles/SEOContent.css';
  */
 function CreditCardPayoffCalculatorUS() {
   const { country } = useParams();
+  
+  const breadcrumbItems = [
+    { label: 'Home', path: '/', icon: true },
+    { label: 'Calculators', path: '/calculators' },
+    { label: 'Credit Card Payoff Calculator', path: null }
+  ];
+  
   const [balance, setBalance] = useState(5000);
   const [interestRate, setInterestRate] = useState(18.0);
   const [monthlyPayment, setMonthlyPayment] = useState(200);
@@ -57,6 +67,7 @@ function CreditCardPayoffCalculatorUS() {
       />
 
       <div className="calculator-container">
+        <Breadcrumb items={breadcrumbItems} />
         <div className="calculator-header">
           <h1>US Credit Card Payoff Calculator</h1>
           <p>Calculate how long it will take to pay off your credit card debt and total interest charges</p>
@@ -314,6 +325,8 @@ function CreditCardPayoffCalculatorUS() {
             <li><strong>Debt Consolidation:</strong> Combine multiple cards into one lower-rate loan</li>
           </ul>
         </section>
+
+        <AEOContentSection tool="creditcard" country={country} />
 
         {/* Structured Data */}
         <script type="application/ld+json">{JSON.stringify({

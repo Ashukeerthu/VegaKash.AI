@@ -50,6 +50,7 @@ from services.pdf_generator_reportlab import generate_pdf_bytes
 # Import routes for Phase 2
 from routes.budget_planner import router as budget_planner_router
 from routes.travel_planner import router as travel_planner_router
+from routes.feedback import router as feedback_router
 
 # Import security middleware (commented out temporarily - will add after testing)
 # from middleware.security import (
@@ -93,6 +94,14 @@ ALLOWED_ORIGINS = [
     "http://127.0.0.1:3002",
     "http://localhost:3003",      # Vite alternate port 3
     "http://127.0.0.1:3003",
+    "http://localhost:3004",      # Vite alternate port 4
+    "http://127.0.0.1:3004",
+    "http://localhost:3005",      # Vite alternate port 5
+    "http://127.0.0.1:3005",
+    "http://localhost:3006",      # Vite alternate port 6
+    "http://127.0.0.1:3006",
+    "http://localhost:3007",      # Vite alternate port 7
+    "http://127.0.0.1:3007",
     "http://localhost:5173",      # Vite default port
     "http://127.0.0.1:5173",
     "https://vegaktools.com",     # Production domain
@@ -125,9 +134,11 @@ app.add_middleware(
 # Register Phase 2 routes
 app.include_router(budget_planner_router)
 app.include_router(travel_planner_router)
+app.include_router(feedback_router)
 
 logger.info("✅ Budget Planner routes registered (Phase 2)")
 logger.info("✅ Travel Planner routes registered (Phase 3)")
+logger.info("✅ Feedback routes registered")
 
 
 @app.post("/api/v2/generate-ai-plan", response_model=AIPlanOutputV2)

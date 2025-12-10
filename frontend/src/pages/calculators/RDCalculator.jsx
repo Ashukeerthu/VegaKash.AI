@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { formatSmartCurrency } from '../../utils/helpers';
 import CurrencySelector from '../../components/CurrencySelector';
 import { EnhancedSEO } from '../../components/EnhancedSEO';
+import Breadcrumb from '../../components/Breadcrumb';
 import '../../styles/Calculator.css';
 
 /**
@@ -17,6 +18,11 @@ import '../../styles/Calculator.css';
  */
 function RDCalculator() {
   const { country } = useParams(); // From URL if available
+  const breadcrumbItems = [
+    { label: 'Home', path: '/', icon: true },
+    { label: 'Calculators', path: '/calculators' },
+    { label: 'RD Calculator', path: null }
+  ];
   const [currency, setCurrency] = useState(country === 'us' ? 'USD' : country === 'uk' ? 'GBP' : 'INR');
   const [monthlyDeposit, setMonthlyDeposit] = useState(5000);
   const [interestRate, setInterestRate] = useState(6.5);
@@ -80,6 +86,8 @@ function RDCalculator() {
       <EnhancedSEO {...seoConfig} />
       
       <div className="calculator-container">
+        <Breadcrumb items={breadcrumbItems} />
+        
         <div className="calculator-header">
           <h1>{country ? `RD Calculator (${country.toUpperCase()})` : 'RD Calculator'}</h1>
           <p>Calculate Recurring Deposit maturity amount with monthly deposits</p>

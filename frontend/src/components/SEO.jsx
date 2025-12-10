@@ -12,12 +12,30 @@ function SEO({
   author = 'VegaKash.AI',
   ogType = 'website',
   ogImage = '/og-image.jpg',
+  ogImageAlt,
+  twitterCard = 'summary_large_image',
+  twitterTitle,
+  twitterDescription,
+  twitterImage,
+  twitterImageAlt,
+  twitterSite = '@vegaktools',
   canonical,
   structuredData,
   noindex = false
 }) {
   const siteUrl = 'https://vegaktools.com';
   const fullUrl = canonical ? `${siteUrl}${canonical}` : siteUrl;
+  
+  // Use Twitter-specific values or fall back to main values
+  const twitterMetaTitle = twitterTitle || title;
+  const twitterMetaDescription = twitterDescription || description;
+  const twitterMetaImage = twitterImage || ogImage;
+  const finalTwitterImageAlt = twitterImageAlt || ogImageAlt || title;
+  const finalOgImageAlt = ogImageAlt || title;
+  
+  // Ensure full URLs for images
+  const fullOgImage = ogImage.startsWith('http') ? ogImage : `${siteUrl}${ogImage}`;
+  const fullTwitterImage = twitterMetaImage.startsWith('http') ? twitterMetaImage : `${siteUrl}${twitterMetaImage}`;
 
   return (
     <Helmet>
@@ -34,20 +52,23 @@ function SEO({
       {/* Canonical URL */}
       <link rel="canonical" href={fullUrl} />
       
-      {/* Open Graph / Facebook */}
+      {/* Open Graph / Facebook / WhatsApp / LinkedIn */}
       <meta property="og:type" content={ogType} />
       <meta property="og:url" content={fullUrl} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
-      <meta property="og:image" content={`${siteUrl}${ogImage}`} />
-      <meta property="og:site_name" content="VegaKash.AI" />
+      <meta property="og:image" content={fullOgImage} />
+      <meta property="og:image:alt" content={finalOgImageAlt} />
+      <meta property="og:site_name" content="VegakTools" />
       
-      {/* Twitter */}
-      <meta name="twitter:card" content="summary_large_image" />
+      {/* Twitter Card */}
+      <meta name="twitter:card" content={twitterCard} />
+      <meta name="twitter:site" content={twitterSite} />
       <meta name="twitter:url" content={fullUrl} />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={`${siteUrl}${ogImage}`} />
+      <meta name="twitter:title" content={twitterMetaTitle} />
+      <meta name="twitter:description" content={twitterMetaDescription} />
+      <meta name="twitter:image" content={fullTwitterImage} />
+      <meta name="twitter:image:alt" content={finalTwitterImageAlt} />
       
       {/* Additional Meta Tags */}
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />

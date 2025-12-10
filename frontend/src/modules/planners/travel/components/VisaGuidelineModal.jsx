@@ -38,12 +38,10 @@ function VisaGuidelineModal({
     'Myanmar': 'https://www.mofa.gov.mm', // Myanmar Ministry of Foreign Affairs
     'Cambodia': 'https://mfaic.gov.kh', // Cambodia Ministry of Foreign Affairs
     'Laos': 'https://mofa.gov.la', // Laos Ministry of Foreign Affairs
-    'Thailand': 'https://www.thaievisa.go.th/en', // Thailand Visa
     'Hong Kong': 'https://www.immd.gov.hk/english/services/visas.html', // Hong Kong Immigration
     'Taiwan': 'https://www.boca.gov.tw', // Taiwan Visa
     'China': 'https://www.visaforchina.org', // China Visa Service
     'South Korea': 'https://www.immigration.go.kr/imi/1364', // South Korea Immigration
-    'Thailand': 'https://www.thaievisa.go.th/en'
   };
 
   // Determine if domestic travel

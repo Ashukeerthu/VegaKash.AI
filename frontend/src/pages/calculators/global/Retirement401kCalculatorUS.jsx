@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { EnhancedSEO } from '../../../components/EnhancedSEO';
+import { AEOContentSection } from '../../../components/AEOContentSection';
 import SEO from '../../../components/SEO';
+import Breadcrumb from '../../../components/Breadcrumb';
 import '../../../styles/Calculator.css';
 import '../../../styles/SEOContent.css';
+import '../../../styles/AEOContent.css';
 
 /**
  * US 401(k) Retirement Calculator - GLOBAL & COUNTRY-SPECIFIC
@@ -12,6 +15,13 @@ import '../../../styles/SEOContent.css';
  */
 function Retirement401kCalculatorUS() {
   const { country } = useParams();
+  
+  const breadcrumbItems = [
+    { label: 'Home', path: '/', icon: true },
+    { label: 'Calculators', path: '/calculators' },
+    { label: '401(k) Retirement Calculator', path: null }
+  ];
+  
   const [currentBalance, setCurrentBalance] = useState(20000);
   const [annualContribution, setAnnualContribution] = useState(6000);
   const [years, setYears] = useState(30);
@@ -56,6 +66,7 @@ function Retirement401kCalculatorUS() {
       <SEO title="US 401(k) Retirement Calculator | VegaKash" description="Estimate your 401k retirement savings growth. Free, fast, accurate 401k calculator for the USA." />
 
       <div className="calculator-container">
+        <Breadcrumb items={breadcrumbItems} />
         <div className="calculator-header">
           <h1>US 401(k) Retirement Calculator</h1>
           <p>Estimate your 401k retirement savings growth with annual contributions and returns</p>
@@ -302,6 +313,8 @@ function Retirement401kCalculatorUS() {
             <li>Consider target-date funds for automatic adjustments as you near retirement</li>
           </ul>
         </section>
+
+        <AEOContentSection tool="retirement401k" country={country} />
 
         {/* Structured Data */}
         <script type="application/ld+json">{JSON.stringify({

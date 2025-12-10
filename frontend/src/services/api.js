@@ -14,6 +14,9 @@ const apiClient = axios.create({
   timeout: APP_CONFIG.defaultTimeout,
 });
 
+// Simple in-memory cache for place detail lookups to avoid repeat calls
+const placeDetailsCache = new Map();
+
 // Response interceptor for better error handling
 apiClient.interceptors.response.use(
   (response) => response,
@@ -93,6 +96,32 @@ export const generateAIPlanV2 = async (financialInput, summary) => {
       error.response?.data?.detail || 
       'Failed to generate V2 AI budget plan. Please try again later.'
     );
+  }
+};
+
+/**
+ * Fetch place details (image + map URLs) with caching
+ * @param {string} placeName - human friendly place query
+ * @returns {Promise<Object|null>} Place details or null on failure
+ */
+export const getPlaceDetails = async (placeName) => {
+  const query = (placeName || '').trim();
+  if (!query) return null;
+
+  const cacheKey = query.toLowerCase();
+  if (placeDetailsCache.has(cacheKey)) {
+    return placeDetailsCache.get(cacheKey);
+  }
+
+  try {
+    const response = await apiClient.get(API_ENDPOINTS.placeDetails, {
+      params: { query },
+    });
+    placeDetailsCache.set(cacheKey, response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching place details:', error);
+    return null;
   }
 };
 

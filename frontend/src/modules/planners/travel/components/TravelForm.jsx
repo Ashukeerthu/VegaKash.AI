@@ -446,27 +446,44 @@ function TravelForm({ onSubmit, isLoading }) {
       </section>
 
       {/* Section 5: Itinerary Detail Level */}
-      <section className="form-section">
-        <h3 className="section-title">📖 Itinerary Detail Level</h3>
-        <p className="section-subtitle">Choose how detailed your day-by-day plan should be. This helps optimize our AI token usage.</p>
+      <section className="form-section itinerary-detail-section">
+        <div className="section-header-enhanced">
+          <h3 className="section-title">📖 Itinerary Detail Level</h3>
+          <span className="section-badge">AI Powered</span>
+        </div>
+        <p className="section-subtitle-enhanced">
+          Choose how detailed your day-by-day plan should be. 
+          <span className="token-hint">💡 Higher detail = richer itinerary</span>
+        </p>
         
-        <div className="detail-level-options">
+        <div className="detail-level-grid">
           {travelSchema.itineraryDetailLevel.options.map((option) => (
-            <label key={option.value} className="detail-level-card">
+            <label 
+              key={option.value} 
+              className={`detail-level-option ${formData.itineraryDetailLevel === option.value ? 'selected' : ''}`}
+            >
               <input
                 type="radio"
                 name="itineraryDetailLevel"
                 value={option.value}
                 checked={formData.itineraryDetailLevel === option.value}
                 onChange={(e) => handleChange('itineraryDetailLevel', e.target.value)}
-                className="radio-input"
+                className="radio-hidden"
               />
-              <div className="detail-level-content">
-                <div className="detail-level-header">
-                  <span className="detail-icon">{option.icon}</span>
-                  <span className="detail-label">{option.label}</span>
+              <div className="option-card">
+                <div className="option-icon-wrapper">
+                  <span className="option-icon">{option.icon}</span>
+                  {option.value === 'standard' && <span className="recommended-badge">Recommended</span>}
                 </div>
-                <p className="detail-description">{option.description}</p>
+                <div className="option-content">
+                  <h4 className="option-title">{option.label}</h4>
+                  <p className="option-description">{option.description}</p>
+                </div>
+                <div className="option-checkmark">
+                  {formData.itineraryDetailLevel === option.value && (
+                    <span className="checkmark">✓</span>
+                  )}
+                </div>
               </div>
             </label>
           ))}

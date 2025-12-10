@@ -1,11 +1,18 @@
 ﻿import React from 'react';
 import SEO from '../../components/SEO';
+import Breadcrumb from '../../components/Breadcrumb';
 import '../../styles/Calculator.css';
 
 /**
  * Income Tax Calculator - Coming Soon
  */
 function IncomeTaxCalculator() {
+  const breadcrumbItems = [
+    { label: 'Home', path: '/', icon: true },
+    { label: 'Calculators', path: '/calculators' },
+    { label: 'Income Tax Calculator', path: null }
+  ];
+  
   return (
     <>
       <SEO 
@@ -16,6 +23,8 @@ function IncomeTaxCalculator() {
       />
       
       <div className="page-container">
+        <Breadcrumb items={breadcrumbItems} />
+        
         <div className="page-header">
           <h1> Income Tax Calculator</h1>
           <p>Compare old vs new tax regime (FY 2024-25)</p>

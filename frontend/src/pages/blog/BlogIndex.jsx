@@ -1,14 +1,29 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import SEO from '../../components/SEO';
+import Breadcrumb from '../../components/Breadcrumb';
 import '../../styles/Blog.css';
 
 /**
  * Blog Index Page - Lists all blog articles
  */
 function BlogIndex() {
+  const breadcrumbItems = [
+    { label: 'Home', path: '/', icon: true },
+    { label: 'Blog', path: null }
+  ];
   // Blog posts data - will expand as we add more articles
   const blogPosts = [
+    {
+      slug: '/learning/blog/future-of-travel-2026-ai-trip-planning',
+      title: 'Future of Travel 2026: How AI Will Redefine Trip Planning Forever',
+      excerpt: 'Discover how AI is transforming travel with smart planning, predictive budgeting, real-time updates, and personalized itineraries. Experience the future of travel in 2026.',
+      category: 'Travel & AI',
+      date: 'December 2025',
+      readTime: '8 min read',
+      tags: ['AI Travel', 'Trip Planning', 'Travel Tech', '2026 Trends', 'Budget Planning'],
+      featured: false
+    },
     {
       slug: '/learning/blog/create-monthly-budget-ai',
       title: 'How to Create a Monthly Budget Using AI (Global 2025 Guide)',
@@ -51,6 +66,8 @@ function BlogIndex() {
       />
       
       <div className="blog-index">
+        <Breadcrumb items={breadcrumbItems} />
+        
         <div className="blog-index-header">
           <h1>Financial Learning Blog</h1>
           <p className="blog-index-subtitle">

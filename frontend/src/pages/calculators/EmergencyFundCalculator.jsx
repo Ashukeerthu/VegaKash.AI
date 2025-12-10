@@ -1,5 +1,6 @@
 ﻿import React from 'react';
 import SEO from '../../components/SEO';
+import Breadcrumb from '../../components/Breadcrumb';
 import '../../styles/Calculator.css';
 import '../../styles/Pages.css';
 
@@ -7,6 +8,12 @@ import '../../styles/Pages.css';
  * Emergency Fund Calculator - Coming Soon
  */
 function EmergencyFundCalculator() {
+  const breadcrumbItems = [
+    { label: 'Home', path: '/', icon: true },
+    { label: 'Calculators', path: '/calculators' },
+    { label: 'Emergency Fund Calculator', path: null }
+  ];
+  
   return (
     <>
       <SEO 
@@ -18,6 +25,8 @@ function EmergencyFundCalculator() {
       />
       
       <div className="page-container">
+        <Breadcrumb items={breadcrumbItems} />
+        
         <div className="page-header">
           <h1>🛡️ Emergency Fund Calculator</h1>
           <p>Calculate emergency fund requirements</p>

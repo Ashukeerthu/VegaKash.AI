@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { EnhancedSEO } from '../../../components/EnhancedSEO';
+import { AEOContentSection } from '../../../components/AEOContentSection';
 import SEO from '../../../components/SEO';
+import Breadcrumb from '../../../components/Breadcrumb';
 import '../../../styles/Calculator.css';
 import '../../../styles/SEOContent.css';
 
@@ -12,6 +14,13 @@ import '../../../styles/SEOContent.css';
  */
 function MortgageCalculatorUS() {
   const { country } = useParams();
+  
+  const breadcrumbItems = [
+    { label: 'Home', path: '/', icon: true },
+    { label: 'Calculators', path: '/calculators' },
+    { label: 'Mortgage Calculator', path: null }
+  ];
+  
   const [principal, setPrincipal] = useState(300000);
   const [interestRate, setInterestRate] = useState(6.5);
   const [years, setYears] = useState(30);
@@ -75,6 +84,7 @@ function MortgageCalculatorUS() {
       />
       
       <div className="calculator-container">
+        <Breadcrumb items={breadcrumbItems} />
         <div className="calculator-header">
           <h1>US Mortgage Calculator</h1>
           <p>Calculate your monthly mortgage payment, total interest, and amortization schedule</p>
@@ -332,6 +342,9 @@ function MortgageCalculatorUS() {
             <li><strong>Insurance:</strong> Homeowners insurance and PMI (if applicable)</li>
           </ul>
         </section>
+
+        {/* AEO Content Section - Optimized for Answer Engines */}
+        <AEOContentSection tool="mortgage" country={country} />
 
         {/* Structured Data */}
         <script type="application/ld+json">{JSON.stringify({

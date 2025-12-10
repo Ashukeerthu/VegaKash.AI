@@ -1,5 +1,6 @@
 import React from 'react';
 import SEO from '../components/SEO';
+import Breadcrumb from '../components/Breadcrumb';
 import { getBreadcrumbSchema } from '../utils/structuredData';
 
 /**
@@ -7,6 +8,11 @@ import { getBreadcrumbSchema } from '../utils/structuredData';
  * Required for AdSense approval
  */
 function TermsAndConditions() {
+  const breadcrumbItems = [
+    { label: 'Home', path: '/', icon: true },
+    { label: 'Terms and Conditions', path: null }
+  ];
+  
   const breadcrumbData = getBreadcrumbSchema([
     { name: 'Home', url: '/' },
     { name: 'Terms and Conditions', url: '/terms-and-conditions' }
@@ -23,6 +29,7 @@ function TermsAndConditions() {
       />
 
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+        <Breadcrumb items={breadcrumbItems} />
         
         <div className="max-w-4xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-8">Terms and Conditions</h1>

@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { EnhancedSEO } from '../../../components/EnhancedSEO';
+import { AEOContentSection } from '../../../components/AEOContentSection';
 import SEO from '../../../components/SEO';
+import Breadcrumb from '../../../components/Breadcrumb';
 import '../../../styles/Calculator.css';
 import '../../../styles/SEOContent.css';
+import '../../../styles/AEOContent.css';
 
 /**
  * US Loan Payment Calculator - GLOBAL & COUNTRY-SPECIFIC
@@ -12,6 +15,13 @@ import '../../../styles/SEOContent.css';
  */
 function LoanPaymentCalculatorUS() {
   const { country } = useParams();
+  
+  const breadcrumbItems = [
+    { label: 'Home', path: '/', icon: true },
+    { label: 'Calculators', path: '/calculators' },
+    { label: 'Loan Payment Calculator', path: null }
+  ];
+  
   const [principal, setPrincipal] = useState(10000);
   const [interestRate, setInterestRate] = useState(7.5);
   const [years, setYears] = useState(5);
@@ -57,6 +67,7 @@ function LoanPaymentCalculatorUS() {
       />
 
       <div className="calculator-container">
+        <Breadcrumb items={breadcrumbItems} />
         <div className="calculator-header">
           <h1>US Loan Payment Calculator</h1>
           <p>Calculate your monthly loan payment, total interest, and repayment schedule</p>
@@ -314,6 +325,9 @@ function LoanPaymentCalculatorUS() {
             <li><strong>Home Equity Loans:</strong> Secured against your home with competitive rates</li>
           </ul>
         </section>
+
+        {/* AEO Content Section - Optimized for Answer Engines */}
+        <AEOContentSection tool="loan" country={country} />
 
         {/* Structured Data */}
         <script type="application/ld+json">{JSON.stringify({

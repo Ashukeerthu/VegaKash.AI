@@ -4,6 +4,9 @@ import AppRouter from './AppRouter.jsx'
 import './styles/index.css'
 import './styles/SEOContent.css'
 
+// Pre-load module styles to prevent FOUC (Flash of Unstyled Content) on refresh
+import './modules/planners/travel/travel-styles.css'
+
 // Performance monitoring and optimization
 import { reportWebVitals, logPerformanceMetrics, addResourceHints } from './utils/performance'
 

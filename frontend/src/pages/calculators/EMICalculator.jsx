@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { formatSmartCurrency } from '../../utils/helpers';
 import { EnhancedSEO } from '../../components/EnhancedSEO';
+import Breadcrumb from '../../components/Breadcrumb';
 import '../../styles/Calculator.css';
 
 /**
@@ -10,6 +11,11 @@ import '../../styles/Calculator.css';
  */
 function EMICalculator() {
   const { country } = useParams(); // From URL if available
+  const breadcrumbItems = [
+    { label: 'Home', path: '/', icon: true },
+    { label: 'Calculators', path: '/calculators' },
+    { label: 'EMI Calculator', path: null }
+  ];
   const [loanAmount, setLoanAmount] = useState(1000000);
   const [interestRate, setInterestRate] = useState(8.5);
   const [tenure, setTenure] = useState(20);
@@ -83,6 +89,8 @@ function EMICalculator() {
       <EnhancedSEO {...seoConfig} />
       
       <div className="calculator-container">
+        <Breadcrumb items={breadcrumbItems} />
+        
         <div className="calculator-header">
           <h1>{country ? `EMI Calculator (${country.toUpperCase()})` : 'EMI Calculator'}</h1>
           <p>Calculate your Equated Monthly Installment for home loans, car loans, personal loans</p>

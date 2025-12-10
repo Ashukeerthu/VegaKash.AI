@@ -1,12 +1,22 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { EnhancedSEO } from '../../../components/EnhancedSEO';
+import { AEOContentSection } from '../../../components/AEOContentSection';
 import SEO from '../../../components/SEO';
+import Breadcrumb from '../../../components/Breadcrumb';
 import '../../../styles/Calculator.css';
 import '../../../styles/SEOContent.css';
+import '../../../styles/AEOContent.css';
 
 function SavingsGrowthCalculatorUS() {
   const { country } = useParams();
+  
+  const breadcrumbItems = [
+    { label: 'Home', path: '/', icon: true },
+    { label: 'Calculators', path: '/calculators' },
+    { label: 'Savings Growth Calculator', path: null }
+  ];
+  
   const [initial, setInitial] = useState(1000);
   const [monthly, setMonthly] = useState(200);
   const [years, setYears] = useState(10);
@@ -51,6 +61,7 @@ function SavingsGrowthCalculatorUS() {
       <SEO title="US Savings Growth Calculator | VegaKash" description="Estimate your US savings growth with regular deposits. Free savings calculator for the USA." />
 
       <div className="calculator-container">
+        <Breadcrumb items={breadcrumbItems} />
         <div className="calculator-header">
           <h1>US Savings Growth Calculator</h1>
           <p>Estimate your savings growth with regular monthly deposits and interest</p>
@@ -158,6 +169,8 @@ function SavingsGrowthCalculatorUS() {
             <li><strong>How often does interest compound?</strong> Daily, monthly, quarterly - more frequent compounding means better returns.</li>
           </ul>
         </section>
+
+        <AEOContentSection tool="savingsgrowth" country={country} />
 
         <script type="application/ld+json">{JSON.stringify({ "@context": "https://schema.org", "@type": "FinancialProduct", "name": "US Savings Growth Calculator", "description": "Estimate your US savings growth with regular deposits.", "provider": {"@type": "Organization", "name": "VegaKash.AI"}, "applicationCategory": "Calculator", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"} })}</script>
       </div>

@@ -1,8 +1,14 @@
 import React from 'react';
 import SEO from '../components/SEO';
+import Breadcrumb from '../components/Breadcrumb';
 import '../styles/Pages.css';
 
 function About() {
+  const breadcrumbItems = [
+    { label: 'Home', path: '/', icon: true },
+    { label: 'About', path: null }
+  ];
+  
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -40,6 +46,8 @@ function About() {
       />
       
       <div className="page-container">
+        <Breadcrumb items={breadcrumbItems} />
+        
         <div className="page-header">
           <h1>About VegaKash.AI</h1>
           <p>Your AI-powered financial companion</p>

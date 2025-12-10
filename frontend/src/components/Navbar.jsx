@@ -33,6 +33,12 @@ function Navbar() {
     setActiveDropdown(activeDropdown === menu ? null : menu);
   };
 
+  // Close mobile menu and dropdowns when a link is clicked
+  const handleLinkClick = () => {
+    setIsMobileMenuOpen(false);
+    setActiveDropdown(null);
+  };
+
   // Close dropdown when clicking outside (but not on links)
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -91,26 +97,6 @@ function Navbar() {
                   ✈️ AI Travel Budget Planner
                 </Link>
               </li>
-              <li role="none">
-                <Link to="/event-planner" className="dropdown-item" role="menuitem">
-                  🎉 AI Event Planner
-                </Link>
-              </li>
-              <li role="none">
-                <Link to="/wedding-planner" className="dropdown-item" role="menuitem">
-                  💒 AI Wedding Budget Planner
-                </Link>
-              </li>
-              <li role="none">
-                <Link to="/student-budget" className="dropdown-item" role="menuitem">
-                  🎓 AI Student Budget Planner
-                </Link>
-              </li>
-              <li role="none">
-                <Link to="/savings-goal" className="dropdown-item" role="menuitem">
-                  🎯 AI Savings Goal Planner
-                </Link>
-              </li>
             </ul>
           </li>
 
@@ -135,18 +121,49 @@ function Navbar() {
             <ul className={`dropdown-menu ${activeDropdown === 'calculators' ? 'show' : ''}`} role="menu">
               <li role="none">
                 <Link to="/calculators" className="dropdown-item featured" role="menuitem">
-                  🧮 All Calculators
+                  🧮 All Calculators Hub
                 </Link>
               </li>
               <li className="dropdown-divider"></li>
+
+              {/* Loan & Mortgage Category */}
+              <li className="dropdown-header">💳 Loans & Mortgages</li>
+              <li role="none">
+                <Link to="/calculators/mortgage" className="dropdown-item" role="menuitem">
+                  💰 Mortgage Calculator (US)
+                </Link>
+              </li>
+              <li role="none">
+                <Link to="/calculators/loan" className="dropdown-item" role="menuitem">
+                  📊 Loan Payment Calculator
+                </Link>
+              </li>
               <li role="none">
                 <Link to="/calculators/emi" className="dropdown-item" role="menuitem">
                   🏠 EMI Calculator
                 </Link>
               </li>
               <li role="none">
+                <Link to="/us/calculators/credit-card" className="dropdown-item" role="menuitem">
+                  💳 Credit Card Payoff (US)
+                </Link>
+              </li>
+              <li role="none">
+                <Link to="/uk/calculators/mortgage" className="dropdown-item" role="menuitem">
+                  🏡 Mortgage Affordability (UK)
+                </Link>
+              </li>
+
+              {/* Investments & Savings Category */}
+              <li className="dropdown-header">📈 Investments & Savings</li>
+              <li role="none">
+                <Link to="/calculators/savings" className="dropdown-item" role="menuitem">
+                  💰 Savings Growth Calculator
+                </Link>
+              </li>
+              <li role="none">
                 <Link to="/calculators/sip" className="dropdown-item" role="menuitem">
-                  📈 SIP Calculator
+                  📊 SIP Calculator
                 </Link>
               </li>
               <li role="none">
@@ -160,65 +177,26 @@ function Navbar() {
                 </Link>
               </li>
               <li role="none">
-                <Link to="/calculators/emi" className="dropdown-item" role="menuitem">
-                  🚗 Auto Loan Calculator
-                </Link>
-              </li>
-              <li role="none">
-                <Link to="/calculators/tax" className="dropdown-item" role="menuitem">
-                  📊 Income Tax Calculator
-                </Link>
-              </li>
-              <li role="none">
-                <Link to="/calculators/savings-goal" className="dropdown-item" role="menuitem">
-                  🎯 Savings Goal Calculator
-                </Link>
-              </li>
-              <li role="none">
-                <Link to="/calculators/emergency-fund" className="dropdown-item" role="menuitem">
-                  🆘 Emergency Fund Calculator
-                </Link>
-              </li>
-              <li className="dropdown-divider"></li>
-              <li className="dropdown-header">🌍 Global Calculators</li>
-              <li role="none">
-                <Link to="/us/calculators/mortgage" className="dropdown-item" role="menuitem">
-                  🇺🇸 US Mortgage Calculator
-                </Link>
-              </li>
-              <li role="none">
-                <Link to="/us/calculators/loan" className="dropdown-item" role="menuitem">
-                  🇺🇸 US Loan Payment Calculator
-                </Link>
-              </li>
-              <li role="none">
-                <Link to="/us/calculators/credit-card" className="dropdown-item" role="menuitem">
-                  🇺🇸 US Credit Card Payoff
-                </Link>
-              </li>
-              <li role="none">
                 <Link to="/us/calculators/401k" className="dropdown-item" role="menuitem">
-                  🇺🇸 US 401(k) Retirement
-                </Link>
-              </li>
-              <li role="none">
-                <Link to="/us/calculators/savings" className="dropdown-item" role="menuitem">
-                  🇺🇸 US Savings Growth
-                </Link>
-              </li>
-              <li role="none">
-                <Link to="/uk/calculators/vat" className="dropdown-item" role="menuitem">
-                  🇬🇧 UK VAT Calculator
-                </Link>
-              </li>
-              <li role="none">
-                <Link to="/uk/calculators/mortgage" className="dropdown-item" role="menuitem">
-                  🇬🇧 UK Mortgage Affordability
+                  📈 401(k) Retirement (US)
                 </Link>
               </li>
               <li role="none">
                 <Link to="/uk/calculators/savings" className="dropdown-item" role="menuitem">
-                  🇬🇧 UK Savings Interest
+                  💷 Savings Interest (UK)
+                </Link>
+              </li>
+
+              {/* Specialty Tools Category */}
+              <li className="dropdown-header">🛠️ Specialty Tools</li>
+              <li role="none">
+                <Link to="/calculators/autoloan" className="dropdown-item" role="menuitem">
+                  🚗 Auto Loan Calculator
+                </Link>
+              </li>
+              <li role="none">
+                <Link to="/uk/calculators/vat" className="dropdown-item" role="menuitem">
+                  🧾 VAT Calculator (UK)
                 </Link>
               </li>
             </ul>
@@ -243,16 +221,6 @@ function Navbar() {
             </button>
             
             <ul className={`dropdown-menu ${activeDropdown === 'learning' ? 'show' : ''}`} role="menu">
-              <li role="none">
-                <Link to="/learning/videos" className="dropdown-item" role="menuitem">
-                  🎥 Video Tutorials
-                </Link>
-              </li>
-              <li role="none">
-                <Link to="/learning/guides" className="dropdown-item" role="menuitem">
-                  📚 Financial Guides
-                </Link>
-              </li>
               <li role="none">
                 <Link to="/learning/blog" className="dropdown-item" role="menuitem">
                   ✍️ Blog Articles
@@ -300,12 +268,8 @@ function Navbar() {
               🤖 AI Planners <span className="dropdown-arrow">▼</span>
             </button>
             <ul className={`mobile-dropdown-menu ${activeDropdown === 'mobile-planners' ? 'show' : ''}`}>
-              <li><Link to="/budget-planner">💰 AI Monthly Budget Planner</Link></li>
-              <li><Link to="/travel-budget">✈️ AI Travel Budget Planner</Link></li>
-              <li><Link to="/event-planner">🎉 AI Event Planner</Link></li>
-              <li><Link to="/wedding-planner">💒 AI Wedding Budget Planner</Link></li>
-              <li><Link to="/student-budget">🎓 AI Student Budget Planner</Link></li>
-              <li><Link to="/savings-goal">🎯 AI Savings Goal Planner</Link></li>
+              <li><Link to="/budget-planner" onClick={handleLinkClick}>💰 AI Monthly Budget Planner</Link></li>
+              <li><Link to="/travel-budget" onClick={handleLinkClick}>✈️ AI Travel Budget Planner</Link></li>
             </ul>
           </li>
           
@@ -320,23 +284,28 @@ function Navbar() {
               Calculators <span className="dropdown-arrow">▼</span>
             </button>
             <ul className={`mobile-dropdown-menu ${activeDropdown === 'mobile-calculators' ? 'show' : ''}`}>
-              <li><Link to="/calculators">🧮 All Calculators</Link></li>
-              <li><Link to="/calculators/emi">💰 EMI Calculator</Link></li>
-              <li><Link to="/calculators/sip">📈 SIP Calculator</Link></li>
-              <li><Link to="/calculators/fd">🏦 FD Calculator</Link></li>
-              <li><Link to="/calculators/rd">💵 RD Calculator</Link></li>
-              <li><Link to="/calculators/emi">🚗 Auto Loan Calculator</Link></li>
-              <li><Link to="/calculators/tax">📊 Income Tax Calculator</Link></li>
+              <li><Link to="/calculators" onClick={handleLinkClick}>🧮 All Calculators Hub</Link></li>
               <li className="dropdown-divider"></li>
-              <li className="dropdown-header">🌍 Global Calculators</li>
-              <li><Link to="/us/calculators/mortgage">🇺🇸 US Mortgage Calculator</Link></li>
-              <li><Link to="/us/calculators/loan">🇺🇸 US Loan Payment Calculator</Link></li>
-              <li><Link to="/us/calculators/credit-card">🇺🇸 US Credit Card Payoff</Link></li>
-              <li><Link to="/us/calculators/401k">🇺🇸 US 401(k) Retirement</Link></li>
-              <li><Link to="/us/calculators/savings">🇺🇸 US Savings Growth</Link></li>
-              <li><Link to="/uk/calculators/vat">🇬🇧 UK VAT Calculator</Link></li>
-              <li><Link to="/uk/calculators/mortgage">🇬🇧 UK Mortgage Affordability</Link></li>
-              <li><Link to="/uk/calculators/savings">🇬🇧 UK Savings Interest</Link></li>
+              
+              <li className="dropdown-header">💳 Loans & Mortgages</li>
+              <li><Link to="/calculators/mortgage" onClick={handleLinkClick}>💰 Mortgage Calculator</Link></li>
+              <li><Link to="/calculators/loan" onClick={handleLinkClick}>📊 Loan Payment Calculator</Link></li>
+              <li><Link to="/calculators/emi" onClick={handleLinkClick}>🏠 EMI Calculator</Link></li>
+              <li><Link to="/us/calculators/credit-card" onClick={handleLinkClick}>💳 Credit Card Payoff (US)</Link></li>
+              <li><Link to="/uk/calculators/mortgage" onClick={handleLinkClick}>🏡 Mortgage Affordability (UK)</Link></li>
+              
+              <li className="dropdown-divider" style={{marginTop: '0.5rem'}}></li>
+              <li className="dropdown-header">📈 Investments & Savings</li>
+              <li><Link to="/calculators/savings" onClick={handleLinkClick}>💰 Savings Growth Calculator</Link></li>
+              <li><Link to="/calculators/sip" onClick={handleLinkClick}>📊 SIP Calculator</Link></li>
+              <li><Link to="/calculators/fd" onClick={handleLinkClick}>🏦 FD Calculator</Link></li>
+              <li><Link to="/calculators/rd" onClick={handleLinkClick}>📅 RD Calculator</Link></li>
+              <li><Link to="/us/calculators/401k" onClick={handleLinkClick}>📈 401(k) Retirement (US)</Link></li>
+              <li><Link to="/uk/calculators/savings" onClick={handleLinkClick}>💷 Savings Interest (UK)</Link></li>
+              
+              <li className="dropdown-divider" style={{marginTop: '0.5rem'}}></li>
+              <li className="dropdown-header">🛠️ Specialty Tools</li>
+              <li><Link to="/uk/calculators/vat" onClick={handleLinkClick}>🧾 VAT Calculator (UK)</Link></li>
             </ul>
           </li>
           
@@ -351,14 +320,12 @@ function Navbar() {
               Learning <span className="dropdown-arrow">▼</span>
             </button>
             <ul className={`mobile-dropdown-menu ${activeDropdown === 'mobile-learning' ? 'show' : ''}`}>
-              <li><Link to="/learning/videos">🎥 Video Tutorials</Link></li>
-              <li><Link to="/learning/guides">📚 Financial Guides</Link></li>
-              <li><Link to="/learning/blog">✍️ Blog Articles</Link></li>
+              <li><Link to="/learning/blog" onClick={handleLinkClick}>✍️ Blog Articles</Link></li>
             </ul>
           </li>
           
           <li>
-            <Link to="/about" className={isActive('/about') ? 'active' : ''}>
+            <Link to="/about" onClick={handleLinkClick} className={isActive('/about') ? 'active' : ''}>
               About
             </Link>
           </li>

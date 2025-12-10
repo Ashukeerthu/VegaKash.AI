@@ -1,8 +1,14 @@
 import React from 'react';
 import SEO from '../components/SEO';
+import Breadcrumb from '../components/Breadcrumb';
 import '../styles/Pages.css';
 
 function VideoTutorials() {
+  const breadcrumbItems = [
+    { label: 'Home', path: '/', icon: true },
+    { label: 'Video Tutorials', path: null }
+  ];
+  
   return (
     <>
       <SEO 
@@ -31,6 +37,8 @@ function VideoTutorials() {
       />
       
       <div className="page-container">
+        <Breadcrumb items={breadcrumbItems} />
+        
         <div className="page-header">
           <h1>🎥 Video Tutorials</h1>
           <p>Learn financial planning through expert video content</p>

@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { EnhancedSEO } from '../../../components/EnhancedSEO';
+import { AEOContentSection } from '../../../components/AEOContentSection';
 import SEO from '../../../components/SEO';
+import Breadcrumb from '../../../components/Breadcrumb';
 import '../../../styles/Calculator.css';
 import '../../../styles/SEOContent.css';
+import '../../../styles/AEOContent.css';
 
 /**
  * UK Savings Account Interest Calculator - GLOBAL & COUNTRY-SPECIFIC
@@ -11,6 +14,13 @@ import '../../../styles/SEOContent.css';
  */
 function SavingsInterestCalculatorUK() {
   const { country } = useParams();
+  
+  const breadcrumbItems = [
+    { label: 'Home', path: '/', icon: true },
+    { label: 'Calculators', path: '/calculators' },
+    { label: 'Savings Interest Calculator UK', path: null }
+  ];
+  
   const [principal, setPrincipal] = useState(5000);
   const [interestRate, setInterestRate] = useState(3.0);
   const [years, setYears] = useState(2);
@@ -33,6 +43,7 @@ function SavingsInterestCalculatorUK() {
 
   return (
     <div className="calculator-container">
+      <Breadcrumb items={breadcrumbItems} />
       <SEO title="UK Savings Account Interest Calculator | VegaKash" description="Estimate interest earned on UK savings accounts. Free, fast, accurate savings interest calculator for the UK." />
       <h1>UK Savings Account Interest Calculator</h1>
       <form>
@@ -56,6 +67,8 @@ function SavingsInterestCalculatorUK() {
           <li><strong>What is the typical UK savings rate?</strong> Rates vary, but 2–4% is common in 2025.</li>
         </ul>
       </section>
+      <AEOContentSection tool="savingsinterest" country={country} />
+
       <script type="application/ld+json">{JSON.stringify({
         "@context": "https://schema.org",
         "@type": "FinancialProduct",

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { EnhancedSEO } from '../../components/EnhancedSEO';
+import Breadcrumb from '../../components/Breadcrumb';
 import '../../styles/Calculator.css';
 
 /**
@@ -9,6 +10,11 @@ import '../../styles/Calculator.css';
  */
 function SIPCalculator() {
   const { country } = useParams();
+  const breadcrumbItems = [
+    { label: 'Home', path: '/', icon: true },
+    { label: 'Calculators', path: '/calculators' },
+    { label: 'SIP Calculator', path: null }
+  ];
   const [investmentMode, setInvestmentMode] = useState('sip'); // 'sip' or 'lumpsum'
   const [monthlyInvestment, setMonthlyInvestment] = useState(5000);
   const [initialInvestment, setInitialInvestment] = useState(0);
@@ -111,6 +117,8 @@ function SIPCalculator() {
       <EnhancedSEO {...seoConfig} />
       
       <div className="calculator-container">
+        <Breadcrumb items={breadcrumbItems} />
+        
         <div className="calculator-header">
           <h1>{country ? `SIP Calculator (${country.toUpperCase()})` : 'SIP Calculator'}</h1>
           <p>Calculate returns from Systematic Investment Plan and one-time investments in mutual funds</p>

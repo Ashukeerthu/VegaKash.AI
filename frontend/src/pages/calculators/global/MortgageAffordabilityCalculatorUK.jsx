@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { EnhancedSEO } from '../../../components/EnhancedSEO';
+import { AEOContentSection } from '../../../components/AEOContentSection';
 import SEO from '../../../components/SEO';
+import Breadcrumb from '../../../components/Breadcrumb';
 import '../../../styles/Calculator.css';
 import '../../../styles/SEOContent.css';
+import '../../../styles/AEOContent.css';
 
 /**
  * UK Mortgage Affordability Calculator - GLOBAL & COUNTRY-SPECIFIC
@@ -11,6 +14,13 @@ import '../../../styles/SEOContent.css';
  */
 function MortgageAffordabilityCalculatorUK() {
   const { country } = useParams();
+  
+  const breadcrumbItems = [
+    { label: 'Home', path: '/', icon: true },
+    { label: 'Calculators', path: '/calculators' },
+    { label: 'Mortgage Affordability Calculator UK', path: null }
+  ];
+  
   const [income, setIncome] = useState(40000);
   const [monthlyDebt, setMonthlyDebt] = useState(500);
   const [interestRate, setInterestRate] = useState(5.0);
@@ -36,6 +46,7 @@ function MortgageAffordabilityCalculatorUK() {
 
   return (
     <div className="calculator-container">
+      <Breadcrumb items={breadcrumbItems} />
       <SEO title="UK Mortgage Affordability Calculator | VegaKash" description="Estimate how much mortgage you can afford in the UK. Free, fast, accurate mortgage affordability calculator for the UK." />
       <h1>UK Mortgage Affordability Calculator</h1>
       <form>
@@ -60,6 +71,8 @@ function MortgageAffordabilityCalculatorUK() {
           <li><strong>What affects affordability?</strong> Income, debts, interest rate, and term.</li>
         </ul>
       </section>
+      <AEOContentSection tool="mortgageaffordability" country={country} />
+
       <script type="application/ld+json">{JSON.stringify({
         "@context": "https://schema.org",
         "@type": "FinancialProduct",

@@ -20,6 +20,7 @@ export const API_ENDPOINTS = {
   health: `${API_BASE_URL}/api/v1/health`,
   calculateSummary: `${API_BASE_URL}/api/v1/calculate-summary`,
   generateAIPlan: `${API_BASE_URL}/api/v1/generate-ai-plan`,
+  placeDetails: `${API_BASE_URL}/api/v1/ai/travel/place-details`,
 };
 
 // App Configuration

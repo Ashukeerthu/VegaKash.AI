@@ -3,7 +3,7 @@ Travel Budget Planner V1.0 - API Routes
 FastAPI endpoints for travel budget planning operations
 """
 
-from fastapi import APIRouter, HTTPException, status, Header
+from fastapi import APIRouter, HTTPException, status, Header, Query
 from typing import Dict, Any, List, Optional, Union
 from pydantic import BaseModel, Field, field_validator, ValidationInfo
 from datetime import date
@@ -13,6 +13,8 @@ import json
 import asyncio
 import time
 import uuid
+import httpx
+from urllib.parse import quote_plus
 from openai import AsyncOpenAI
 
 # Import fallback models and AI enhancement
@@ -176,6 +178,17 @@ class HybridBudgetResponse(BaseModel):
     ai_latency_ms: Optional[float] = None
     ai_calls_remaining: int = 3
     calculation_time_ms: float
+
+
+class PlaceDetailsResponse(BaseModel):
+    """Response schema for place details lookup"""
+
+    place_name: str
+    image_url: str
+    map_static_url: str
+    map_embed_url: str
+    latitude: float
+    longitude: float
 
 
 class TravelOptimizationRequest(BaseModel):
@@ -1694,6 +1707,97 @@ async def calculate_budget_hybrid(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Budget calculation failed: {str(e)}"
+        )
+
+
+# Place details endpoint
+@router.get("/place-details", response_model=PlaceDetailsResponse)
+async def get_place_details(query: str = Query(..., min_length=2, max_length=120)):
+    """Fetch place image and map previews using Google Places/Maps with Unsplash fallback."""
+
+    maps_api_key = os.getenv("GOOGLE_MAPS_API_KEY") or os.getenv("GOOGLE_PLACES_API_KEY")
+    if not maps_api_key:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Google Maps API key is not configured"
+        )
+
+    place_query = query.strip()
+    if not place_query:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Query is required")
+
+    fallback_image = f"https://source.unsplash.com/featured/?{quote_plus(place_query)}"
+    image_url = fallback_image
+    place_name = place_query
+    lat, lng = 0.0, 0.0
+    map_static_url = (
+        "https://maps.googleapis.com/maps/api/staticmap"
+        f"?center={quote_plus(place_query)}&zoom=12&size=640x360&maptype=roadmap&markers=color:red|{quote_plus(place_query)}&key={maps_api_key}"
+    )
+    map_embed_url = f"https://www.google.com/maps/embed/v1/search?key={maps_api_key}&q={quote_plus(place_query)}"
+
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            search_resp = await client.get(
+                "https://maps.googleapis.com/maps/api/place/textsearch/json",
+                params={"query": place_query, "key": maps_api_key}
+            )
+            search_resp.raise_for_status()
+            search_data = search_resp.json()
+
+            candidates = search_data.get("results") or []
+            if candidates:
+                first = candidates[0]
+                place_name = first.get("name") or place_query
+                geometry = first.get("geometry", {}).get("location") or {}
+                lat = float(geometry.get("lat") or 0.0)
+                lng = float(geometry.get("lng") or 0.0)
+                place_id = first.get("place_id")
+
+                # Build photo URL if available
+                photos = first.get("photos") or []
+                if photos:
+                    photo_ref = photos[0].get("photo_reference")
+                    if photo_ref:
+                        image_url = (
+                            "https://maps.googleapis.com/maps/api/place/photo"
+                            f"?maxwidth=1600&photo_reference={photo_ref}&key={maps_api_key}"
+                        )
+
+                # Map URLs using coordinates if present
+                if lat and lng:
+                    map_static_url = (
+                        "https://maps.googleapis.com/maps/api/staticmap"
+                        f"?center={lat},{lng}&zoom=13&size=640x360&maptype=roadmap&markers=color:red|{lat},{lng}&key={maps_api_key}"
+                    )
+                    if place_id:
+                        map_embed_url = f"https://www.google.com/maps/embed/v1/place?key={maps_api_key}&q=place_id:{place_id}"
+                    else:
+                        map_embed_url = f"https://www.google.com/maps/embed/v1/search?key={maps_api_key}&q={lat},{lng}"
+
+        return PlaceDetailsResponse(
+            place_name=place_name,
+            image_url=image_url,
+            map_static_url=map_static_url,
+            map_embed_url=map_embed_url,
+            latitude=lat,
+            longitude=lng,
+        )
+    except httpx.HTTPStatusError as http_err:
+        logger.warning(f"Google Places API returned an error: {http_err}")
+        return PlaceDetailsResponse(
+            place_name=place_name,
+            image_url=image_url,
+            map_static_url=map_static_url,
+            map_embed_url=map_embed_url,
+            latitude=lat,
+            longitude=lng,
+        )
+    except Exception as e:
+        logger.error(f"Place details lookup failed: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to fetch place details"
         )
 
 

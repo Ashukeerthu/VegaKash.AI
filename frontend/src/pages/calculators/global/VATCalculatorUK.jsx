@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { EnhancedSEO } from '../../../components/EnhancedSEO';
+import { AEOContentSection } from '../../../components/AEOContentSection';
 import SEO from '../../../components/SEO';
+import Breadcrumb from '../../../components/Breadcrumb';
 import '../../../styles/Calculator.css';
 import '../../../styles/SEOContent.css';
+import '../../../styles/AEOContent.css';
 
 /**
  * UK VAT Calculator - GLOBAL & COUNTRY-SPECIFIC
@@ -11,6 +14,13 @@ import '../../../styles/SEOContent.css';
  */
 function VATCalculatorUK() {
   const { country } = useParams();
+  
+  const breadcrumbItems = [
+    { label: 'Home', path: '/', icon: true },
+    { label: 'Calculators', path: '/calculators' },
+    { label: 'VAT Calculator UK', path: null }
+  ];
+  
   const [amount, setAmount] = useState(100);
   const [vatRate, setVatRate] = useState(20);
   const [result, setResult] = useState(null);
@@ -30,6 +40,7 @@ function VATCalculatorUK() {
 
   return (
     <div className="calculator-container">
+      <Breadcrumb items={breadcrumbItems} />
       <SEO title="UK VAT Calculator – Add or Remove VAT | VegaKash" description="Calculate UK VAT and total price. Free, fast, accurate VAT calculator for the UK." />
       <h1>UK VAT Calculator</h1>
       <form>
@@ -53,6 +64,8 @@ function VATCalculatorUK() {
           <li><strong>How do I add or remove VAT?</strong> Use this calculator to add or remove VAT from any amount.</li>
         </ul>
       </section>
+      <AEOContentSection tool="vat" country={country} />
+
       <script type="application/ld+json">{JSON.stringify({
         "@context": "https://schema.org",
         "@type": "FinancialProduct",

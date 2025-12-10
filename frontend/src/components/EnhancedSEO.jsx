@@ -7,12 +7,15 @@
  * ✓ Country-specific metadata
  * ✓ Schema markup for calculators
  * ✓ Open Graph tags for social sharing
+ * ✓ FAQ Schema for Answer Engine Optimization (AEO)
+ * ✓ Breadcrumb Schema for enhanced navigation
  */
 
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { buildCalculatorURLs, COUNTRY_META } from '../utils/countryRouting';
+import { generateFAQSchema, generateBreadcrumbSchema, generateGEOMetaTags } from '../utils/seoOptimization';
 
 /**
  * Enhanced SEO Component for Global Calculator Pages
@@ -115,6 +118,9 @@ export const EnhancedSEO = ({
 
   const hreflangs = generateHreflangs();
   const calculatorSchema = generateCalculatorSchema();
+  const faqSchema = tool ? generateFAQSchema(tool, country) : null;
+  const breadcrumbSchema = tool ? generateBreadcrumbSchema(tool, country) : null;
+  const geoTags = country ? generateGEOMetaTags(country) : null;
 
   return (
     <Helmet>
@@ -126,6 +132,16 @@ export const EnhancedSEO = ({
       {/* Canonical & Hreflang */}
       {resolvedCanonical && <link rel="canonical" href={resolvedCanonical} />}
       {hreflangs}
+
+      {/* GEO Meta Tags (Geographic Targeting) */}
+      {geoTags && (
+        <>
+          <meta name="ICBM" content={geoTags.position} />
+          <meta name="geo.position" content={geoTags.position} />
+          <meta name="geo.placename" content={geoTags.placename} />
+          <meta name="geo.region" content={geoTags.region} />
+        </>
+      )}
 
       {/* Open Graph Tags (Social Sharing) */}
       <meta property="og:title" content={title} />
@@ -145,6 +161,16 @@ export const EnhancedSEO = ({
 
       {/* Schema Markup - Calculator */}
       <script type="application/ld+json">{JSON.stringify(calculatorSchema)}</script>
+
+      {/* Schema Markup - FAQ (for Answer Engine Optimization) */}
+      {faqSchema && (
+        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
+      )}
+
+      {/* Schema Markup - Breadcrumb */}
+      {breadcrumbSchema && (
+        <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
+      )}
 
       {/* Additional Schema Markup */}
       {structuredData && (

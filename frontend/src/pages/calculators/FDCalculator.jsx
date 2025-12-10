@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { formatSmartCurrency } from '../../utils/helpers';
 import CurrencySelector from '../../components/CurrencySelector';
 import { EnhancedSEO } from '../../components/EnhancedSEO';
+import Breadcrumb from '../../components/Breadcrumb';
 import '../../styles/Calculator.css';
 
 /**
@@ -11,6 +12,11 @@ import '../../styles/Calculator.css';
  */
 function FDCalculator() {
   const { country } = useParams();
+  const breadcrumbItems = [
+    { label: 'Home', path: '/', icon: true },
+    { label: 'Calculators', path: '/calculators' },
+    { label: 'FD Calculator', path: null }
+  ];
   const [currency, setCurrency] = useState('INR');
   const [depositAmount, setDepositAmount] = useState(100000);
   const [interestRate, setInterestRate] = useState(6.5);
@@ -75,6 +81,8 @@ function FDCalculator() {
       <EnhancedSEO {...seoConfig} />
       
       <div className="calculator-container">
+        <Breadcrumb items={breadcrumbItems} />
+        
         <div className="calculator-header">
           <h1>{country ? `FD Calculator (${country.toUpperCase()})` : 'FD Calculator'}</h1>
           <p>Calculate Fixed Deposit maturity amount and interest earned</p>

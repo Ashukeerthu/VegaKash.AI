@@ -1,5 +1,6 @@
 ﻿import React from 'react';
 import SEO from '../../components/SEO';
+import Breadcrumb from '../../components/Breadcrumb';
 import '../../styles/Calculator.css';
 import '../../styles/Pages.css';
 
@@ -7,6 +8,12 @@ import '../../styles/Pages.css';
  * Savings Goal Calculator - Coming Soon
  */
 function SavingsGoalCalculator() {
+  const breadcrumbItems = [
+    { label: 'Home', path: '/', icon: true },
+    { label: 'Calculators', path: '/calculators' },
+    { label: 'Savings Goal Calculator', path: null }
+  ];
+  
   return (
     <>
       <SEO 
@@ -18,6 +25,8 @@ function SavingsGoalCalculator() {
       />
       
       <div className="page-container">
+        <Breadcrumb items={breadcrumbItems} />
+        
         <div className="page-header">
           <h1>🎯 Savings Goal Calculator</h1>
           <p>Plan monthly investments to reach financial goals</p>

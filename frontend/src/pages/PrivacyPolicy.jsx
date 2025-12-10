@@ -1,12 +1,18 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import SEO from '../components/SEO';
+import Breadcrumb from '../components/Breadcrumb';
 
 /**
  * Privacy Policy Page
  * Required for AdSense approval
  */
 function PrivacyPolicy() {
+  const breadcrumbItems = [
+    { label: 'Home', path: '/', icon: true },
+    { label: 'Privacy Policy', path: null }
+  ];
+  
   return (
     <>
       <SEO 
@@ -35,6 +41,7 @@ function PrivacyPolicy() {
       />
 
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+        <Breadcrumb items={breadcrumbItems} />
         
         <div className="max-w-4xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-8">Privacy Policy</h1>
