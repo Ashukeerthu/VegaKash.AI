@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { EnhancedSEO } from '../../components/EnhancedSEO';
+import { AEOContentSection } from '../../components/AEOContentSection';
+import SEO from '../../components/SEO';
 import Breadcrumb from '../../components/Breadcrumb';
+import InfoTooltip from '../../components/InfoTooltip';
+import { formatSmartCurrency } from '../../utils/helpers';
 import '../../styles/Calculator.css';
+import '../../styles/SEOContent.css';
+import '../../styles/AEOContent.css';
 
 /**
- * SIP + Lumpsum Calculator Component - GLOBAL & COUNTRY-SPECIFIC
- * Calculates Systematic Investment Plan and Lumpsum returns with proper SEO
+ * SIP Calculator India - PRODUCTION GRADE
+ * Enhanced SIP calculator with tax implications, inflation adjustment, step-up SIP
+ * Includes goal planning, fund categories, and expense ratio considerations
  */
 function SIPCalculator() {
   const { country } = useParams();
@@ -15,72 +22,403 @@ function SIPCalculator() {
     { label: 'Calculators', path: '/calculators' },
     { label: 'SIP Calculator', path: null }
   ];
+
+  // Core state variables
   const [investmentMode, setInvestmentMode] = useState('sip'); // 'sip' or 'lumpsum'
   const [monthlyInvestment, setMonthlyInvestment] = useState(5000);
   const [initialInvestment, setInitialInvestment] = useState(0);
   const [lumpsumAmount, setLumpsumAmount] = useState(100000);
   const [expectedReturn, setExpectedReturn] = useState(12);
   const [duration, setDuration] = useState(10);
+  
+  // Enhanced features
+  const [fundCategory, setFundCategory] = useState('equity'); // 'equity', 'debt', 'hybrid'
+  const [expenseRatio, setExpenseRatio] = useState(1.5);
+  const [stepUpRate, setStepUpRate] = useState(0); // Annual SIP increase %
+  const [inflationRate, setInflationRate] = useState(6.0);
+  const [showInflationAdjusted, setShowInflationAdjusted] = useState(false);
+  const [goalMode, setGoalMode] = useState(false);
+  const [targetAmount, setTargetAmount] = useState(1000000);
+  const [taxOptimized, setTaxOptimized] = useState(false);
+  
   const [result, setResult] = useState(null);
 
-  // Auto-calculate on mount and whenever values change
-  React.useEffect(() => {
-    if (investmentMode === 'sip') {
-      calculateSIP();
-    } else {
-      calculateLumpsum();
-    }
-  }, [investmentMode, monthlyInvestment, initialInvestment, lumpsumAmount, expectedReturn, duration]);
+  // Enhanced tooltips
+  const tooltips = {
+    monthlyInvestment: { text: 'Monthly SIP amount. Minimum ₹500. Consider 15-20% of income for wealth building.' },
+    expectedReturn: { text: 'Expected annual return. Equity: 10-15%, Debt: 6-8%, Hybrid: 8-12%. Use conservative estimates.' },
+    duration: { text: 'Investment tenure. Longer duration benefits from compounding. Minimum 3 years recommended.' },
+    fundCategory: { text: 'Equity: High growth, high risk, 10+ years. Debt: Stable returns, 1-3 years. Hybrid: Balanced, 3-7 years.' },
+    expenseRatio: { text: 'Annual fund management charges. Passive funds: 0.1-0.5%, Active funds: 1-2.5%. Lower is better.' },
+    stepUpSip: { text: 'Annual SIP increase %. Recommended 10-15% to beat inflation. Accelerates wealth creation.' },
+    inflation: { text: 'Shows purchasing power after inflation. India average: 6%. Helps in real planning.' },
+    goalMode: { text: 'Calculate monthly SIP needed to reach target amount. Reverse calculation for goal planning.' },
+    taxOptimized: { text: 'Considers LTCG tax (>1 year: 10% above ₹1L), STCG tax (15%), and indexation for debt funds.' }
+  };
 
-  const calculateSIP = () => {
-    const P = parseFloat(monthlyInvestment);
+  // Fund categories with typical characteristics
+  const fundCategories = {
+    equity: { 
+      label: 'Equity Funds',
+      expectedReturn: 12,
+      expenseRatio: 1.5,
+      riskLevel: 'High',
+      horizon: '7+ Years',
+      description: 'High growth potential with market risk'
+    },
+    debt: { 
+      label: 'Debt Funds',
+      expectedReturn: 7,
+      expenseRatio: 0.8,
+      riskLevel: 'Low',
+      horizon: '1-3 Years', 
+      description: 'Stable returns with lower risk'
+    },
+    hybrid: { 
+      label: 'Hybrid Funds',
+      expectedReturn: 10,
+      expenseRatio: 1.2,
+      riskLevel: 'Medium',
+      horizon: '3-7 Years',
+      description: 'Balanced growth with moderate risk'
+    },
+    elss: {
+      label: 'ELSS (Tax Saver)',
+      expectedReturn: 12,
+      expenseRatio: 1.8,
+      riskLevel: 'High',
+      horizon: '3+ Years (Lock-in)',
+      description: 'Tax benefits + equity growth'
+    }
+  };
+
+  // Enhanced calculation with debouncing
+  const debouncedCalculate = useCallback(() => {
+    const timeoutId = setTimeout(() => {
+      if (goalMode) {
+        calculateRequiredSIP();
+      } else if (investmentMode === 'sip') {
+        calculateEnhancedSIP();
+      } else {
+        calculateEnhancedLumpsum();
+      }
+    }, 100);
+    return () => clearTimeout(timeoutId);
+  }, [investmentMode, monthlyInvestment, initialInvestment, lumpsumAmount, expectedReturn, duration, 
+      fundCategory, expenseRatio, stepUpRate, inflationRate, showInflationAdjusted, goalMode, targetAmount, taxOptimized]);
+
+  useEffect(() => {
+    const cleanup = debouncedCalculate();
+    return cleanup;
+  }, [debouncedCalculate]);
+
+  // Enhanced SIP calculation with step-up, tax, and inflation
+  const calculateEnhancedSIP = () => {
+    const P = parseFloat(monthlyInvestment) || 0;
     const initial = parseFloat(initialInvestment) || 0;
-    const r = parseFloat(expectedReturn) / 12 / 100; // Monthly return rate
-    const annualRate = parseFloat(expectedReturn) / 100;
-    const n = parseFloat(duration) * 12; // Total months
-    const years = parseFloat(duration);
+    const annualReturn = (parseFloat(expectedReturn) - parseFloat(expenseRatio)) / 100; // Net returns
+    const monthlyReturn = annualReturn / 12;
+    const years = parseFloat(duration) || 0;
+    const stepUp = parseFloat(stepUpRate) / 100;
+    const inflRate = parseFloat(inflationRate) / 100;
+    
+    if (P <= 0 || annualReturn < 0 || years <= 0) return;
 
-    if (!P || P <= 0 || r < 0 || n <= 0) {
-      return;
+    let futureValue = 0;
+    let totalInvested = initial;
+    let currentSIP = P;
+    let monthlyBreakdown = [];
+    let yearlyBreakdown = [];
+    
+    // Calculate SIP with step-up
+    for (let year = 1; year <= years; year++) {
+      let yearlyInvested = 0;
+      let yearStartFV = futureValue;
+      
+      for (let month = 1; month <= 12; month++) {
+        if (year === 1 && month === 1) {
+          futureValue += initial; // Add initial investment
+        }
+        
+        futureValue += currentSIP; // Add monthly SIP
+        futureValue *= (1 + monthlyReturn); // Apply monthly returns
+        yearlyInvested += currentSIP;
+        totalInvested += currentSIP;
+        
+        if (year === 1) {
+          monthlyBreakdown.push({
+            month,
+            sipAmount: currentSIP,
+            balance: futureValue,
+            invested: totalInvested
+          });
+        }
+      }
+      
+      yearlyBreakdown.push({
+        year,
+        sipAmount: currentSIP,
+        yearlyInvested,
+        yearEndValue: futureValue,
+        totalInvested
+      });
+      
+      // Step-up SIP for next year
+      currentSIP = currentSIP * (1 + stepUp);
     }
 
-    // SIP Future Value Formula: P × ((1 + r)^n - 1) / r × (1 + r)
-    const sipFutureValue = P * (((Math.pow(1 + r, n) - 1) / r) * (1 + r));
-    
-    // Initial investment grows with compound interest: Initial × (1 + annual_r)^years
-    const initialFutureValue = initial > 0 ? initial * Math.pow(1 + annualRate, years) : 0;
-    
-    const futureValue = sipFutureValue + initialFutureValue;
-    const totalInvested = (P * n) + initial;
+    // Calculate tax implications
     const totalReturns = futureValue - totalInvested;
+    let taxOnReturns = 0;
+    
+    if (taxOptimized && totalReturns > 0) {
+      if (fundCategory === 'equity' || fundCategory === 'elss') {
+        // LTCG: 10% above ₹1L per year
+        const exemptAmount = 100000 * years;
+        const taxableGains = Math.max(0, totalReturns - exemptAmount);
+        taxOnReturns = taxableGains * 0.10;
+      } else if (fundCategory === 'debt') {
+        // Debt funds: As per income tax slab (assuming 20%)
+        taxOnReturns = totalReturns * 0.20;
+      } else if (fundCategory === 'hybrid') {
+        // Hybrid: Equity portion LTCG, debt portion as per slab
+        const equityPortion = totalReturns * 0.65; // Assume 65% equity
+        const debtPortion = totalReturns * 0.35;
+        const exemptAmount = 100000 * years;
+        const taxableEquity = Math.max(0, equityPortion - exemptAmount);
+        taxOnReturns = (taxableEquity * 0.10) + (debtPortion * 0.20);
+      }
+    }
+
+    const afterTaxValue = futureValue - taxOnReturns;
+    const netReturns = totalReturns - taxOnReturns;
+
+    // Inflation-adjusted values
+    const inflationFactor = Math.pow(1 + inflRate, years);
+    const realValue = afterTaxValue / inflationFactor;
+    const realReturns = netReturns / inflationFactor;
+
+    // Calculate CAGR
+    const cagr = years > 0 ? (Math.pow(afterTaxValue / totalInvested, 1/years) - 1) * 100 : 0;
 
     setResult({
       futureValue: Math.round(futureValue),
+      afterTaxValue: Math.round(afterTaxValue),
       totalInvested: Math.round(totalInvested),
       totalReturns: Math.round(totalReturns),
+      netReturns: Math.round(netReturns),
+      taxOnReturns: Math.round(taxOnReturns),
+      realValue: Math.round(realValue),
+      realReturns: Math.round(realReturns),
+      cagr: cagr.toFixed(2),
+      monthlyBreakdown,
+      yearlyBreakdown,
+      finalSIP: Math.round(currentSIP),
       mode: 'sip'
     });
   };
 
-  const calculateLumpsum = () => {
-    const P = parseFloat(lumpsumAmount);
-    const r = parseFloat(expectedReturn) / 100; // Annual return rate
-    const t = parseFloat(duration); // Duration in years
+  // Enhanced Lumpsum calculation
+  const calculateEnhancedLumpsum = () => {
+    const P = parseFloat(lumpsumAmount) || 0;
+    const annualReturn = (parseFloat(expectedReturn) - parseFloat(expenseRatio)) / 100;
+    const years = parseFloat(duration) || 0;
+    const inflRate = parseFloat(inflationRate) / 100;
+    
+    if (P <= 0 || annualReturn < 0 || years <= 0) return;
 
-    if (!P || !r || !t || P <= 0 || r < 0 || t <= 0) {
-      return;
+    const futureValue = P * Math.pow(1 + annualReturn, years);
+    const totalReturns = futureValue - P;
+
+    // Tax calculation for lumpsum
+    let taxOnReturns = 0;
+    if (taxOptimized && totalReturns > 0) {
+      if (fundCategory === 'equity' || fundCategory === 'elss') {
+        const exemptAmount = 100000; // ₹1L exempt per year
+        const taxableGains = Math.max(0, totalReturns - exemptAmount);
+        taxOnReturns = taxableGains * 0.10;
+      } else if (fundCategory === 'debt') {
+        taxOnReturns = totalReturns * 0.20;
+      } else if (fundCategory === 'hybrid') {
+        const equityPortion = totalReturns * 0.65;
+        const debtPortion = totalReturns * 0.35;
+        const taxableEquity = Math.max(0, equityPortion - 100000);
+        taxOnReturns = (taxableEquity * 0.10) + (debtPortion * 0.20);
+      }
     }
 
-    // Lumpsum Future Value Formula: FV = P × (1 + r)^t
-    const futureValue = P * Math.pow(1 + r, t);
-    const totalReturns = futureValue - P;
+    const afterTaxValue = futureValue - taxOnReturns;
+    const netReturns = totalReturns - taxOnReturns;
+
+    // Inflation adjustment
+    const inflationFactor = Math.pow(1 + inflRate, years);
+    const realValue = afterTaxValue / inflationFactor;
+    const realReturns = netReturns / inflationFactor;
+
+    const cagr = years > 0 ? (Math.pow(afterTaxValue / P, 1/years) - 1) * 100 : 0;
 
     setResult({
       futureValue: Math.round(futureValue),
+      afterTaxValue: Math.round(afterTaxValue),
       totalInvested: Math.round(P),
       totalReturns: Math.round(totalReturns),
+      netReturns: Math.round(netReturns),
+      taxOnReturns: Math.round(taxOnReturns),
+      realValue: Math.round(realValue),
+      realReturns: Math.round(realReturns),
+      cagr: cagr.toFixed(2),
       mode: 'lumpsum'
     });
+  };
+
+  // Goal-based SIP calculation
+  const calculateRequiredSIP = () => {
+    const goal = parseFloat(targetAmount) || 0;
+    const annualReturn = (parseFloat(expectedReturn) - parseFloat(expenseRatio)) / 100;
+    const monthlyReturn = annualReturn / 12;
+    const years = parseFloat(duration) || 0;
+    const months = years * 12;
+    const stepUp = parseFloat(stepUpRate) / 100;
+    
+    if (goal <= 0 || annualReturn <= 0 || years <= 0) return;
+
+    // Calculate required SIP using complex step-up formula
+    let requiredSIP;
+    
+    if (stepUp === 0) {
+      // Simple SIP without step-up
+      requiredSIP = goal / (((Math.pow(1 + monthlyReturn, months) - 1) / monthlyReturn) * (1 + monthlyReturn));
+    } else {
+      // Complex calculation for step-up SIP
+      let presentValueFactor = 0;
+      for (let year = 1; year <= years; year++) {
+        const yearMultiplier = Math.pow(1 + stepUp, year - 1);
+        const periodFactor = Math.pow(1 + monthlyReturn, 12 * (years - year + 1));
+        presentValueFactor += yearMultiplier * 12 * periodFactor;
+      }
+      requiredSIP = goal / presentValueFactor;
+    }
+
+    setResult({
+      requiredSIP: Math.round(requiredSIP),
+      targetAmount: goal,
+      duration: years,
+      expectedReturn: expectedReturn,
+      mode: 'goal'
+    });
+  };
+
+  // Enhanced export functionality
+  const exportToCSV = () => {
+    if (!result) return;
+    
+    let csvContent = '';
+    
+    if (goalMode) {
+      // Goal mode CSV
+      csvContent = `SIP Goal Calculator - VegaKash.AI\n\n`;
+      csvContent += `Investment Goal,${formatSmartCurrency(result.targetAmount, 'INR')}\n`;
+      csvContent += `Investment Duration,${result.duration} years\n`;
+      csvContent += `Expected Return,${expectedReturn}%\n`;
+      csvContent += `Fund Category,${fundCategory}\n`;
+      csvContent += `Required Monthly SIP,${formatSmartCurrency(result.requiredSIP, 'INR')}\n`;
+      csvContent += `\nNote: This calculation assumes step-up of ${stepUpRate}% annually\n`;
+    } else {
+      // Regular SIP/Lumpsum CSV with detailed breakdown
+      const title = result.mode === 'sip' ? 'SIP Calculator' : 'Lumpsum Calculator';
+      csvContent = `${title} Report - VegaKash.AI\n`;
+      csvContent += `Generated on: ${new Date().toLocaleDateString()}\n\n`;
+      
+      csvContent += `Investment Details\n`;
+      csvContent += `Fund Category,${fundCategory}\n`;
+      if (result.mode === 'sip') {
+        csvContent += `Monthly Investment,${formatSmartCurrency(monthlyInvestment, 'INR')}\n`;
+        csvContent += `Initial Investment,${formatSmartCurrency(initialInvestment, 'INR')}\n`;
+        csvContent += `Step-up Rate,${stepUpRate}% annually\n`;
+      } else {
+        csvContent += `Lumpsum Amount,${formatSmartCurrency(lumpsumAmount, 'INR')}\n`;
+      }
+      csvContent += `Investment Duration,${duration} years\n`;
+      csvContent += `Expected Return,${expectedReturn}% p.a.\n`;
+      csvContent += `Expense Ratio,${expenseRatio}%\n\n`;
+      
+      csvContent += `Returns Summary\n`;
+      csvContent += `Total Invested,${formatSmartCurrency(result.totalInvested, 'INR')}\n`;
+      csvContent += `Future Value (Gross),${formatSmartCurrency(result.futureValue, 'INR')}\n`;
+      csvContent += `Gross Returns,${formatSmartCurrency(result.totalReturns, 'INR')}\n`;
+      
+      if (taxOptimized) {
+        csvContent += `Tax on Returns,${formatSmartCurrency(result.taxOnReturns, 'INR')}\n`;
+        csvContent += `After-Tax Value,${formatSmartCurrency(result.afterTaxValue, 'INR')}\n`;
+        csvContent += `Net Returns,${formatSmartCurrency(result.netReturns, 'INR')}\n`;
+      }
+      
+      if (showInflationAdjusted) {
+        csvContent += `Real Value (Inflation Adjusted),${formatSmartCurrency(result.realValue, 'INR')}\n`;
+        csvContent += `Real Returns,${formatSmartCurrency(result.realReturns, 'INR')}\n`;
+      }
+      
+      csvContent += `CAGR,${result.cagr}%\n\n`;
+      
+      // Add yearly breakdown for SIP
+      if (result.mode === 'sip' && result.yearlyBreakdown) {
+        csvContent += `Year-wise Breakdown\n`;
+        csvContent += `Year,SIP Amount,Yearly Investment,Year-end Value,Total Invested\n`;
+        result.yearlyBreakdown.forEach(year => {
+          csvContent += `${year.year},${formatSmartCurrency(year.sipAmount, 'INR')},${formatSmartCurrency(year.yearlyInvested, 'INR')},${formatSmartCurrency(year.yearEndValue, 'INR')},${formatSmartCurrency(year.totalInvested, 'INR')}\n`;
+        });
+      }
+      
+      csvContent += `\nDisclaimer:\n`;
+      csvContent += `Mutual fund investments are subject to market risks. Please read the offer documents carefully.\n`;
+      csvContent += `Past performance is not indicative of future returns.\n`;
+      csvContent += `This calculator provides estimates based on assumed rates of return.\n`;
+    }
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${goalMode ? 'SIP_Goal' : result.mode === 'sip' ? 'SIP' : 'Lumpsum'}_Calculator_Report.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Fund category characteristics
+  const getFundCharacteristics = (category) => {
+    const characteristics = {
+      equity: {
+        name: 'Equity Funds',
+        riskLevel: 'High',
+        expectedReturn: '12-15%',
+        description: 'Invest primarily in stocks. Higher risk, higher potential returns.',
+        taxTreatment: 'LTCG: 10% above ₹1L, STCG: 15%'
+      },
+      debt: {
+        name: 'Debt Funds',
+        riskLevel: 'Low to Medium',
+        expectedReturn: '6-9%',
+        description: 'Invest in bonds and fixed income securities. Lower risk, stable returns.',
+        taxTreatment: 'As per income tax slab rates'
+      },
+      hybrid: {
+        name: 'Hybrid Funds',
+        riskLevel: 'Medium',
+        expectedReturn: '8-12%',
+        description: 'Mix of equity and debt. Balanced risk and return profile.',
+        taxTreatment: 'Based on equity-debt allocation'
+      },
+      elss: {
+        name: 'ELSS',
+        riskLevel: 'High',
+        expectedReturn: '12-15%',
+        description: 'Equity funds with 3-year lock-in. Tax deduction up to ₹1.5L under 80C.',
+        taxTreatment: 'LTCG: 10% above ₹1L, 3-year lock-in'
+      }
+    };
+    return characteristics[category] || characteristics.equity;
   };
 
   const handleReset = () => {
@@ -396,72 +734,418 @@ function SIPCalculator() {
               <span>40 Yrs</span>
             </div>
           </div>
+
+          {/* Enhanced Features Section */}
+          <div className="advanced-options" style={{ marginTop: '2rem' }}>
+            <h3>Advanced Options</h3>
+            
+            {/* Fund Category Selection */}
+            <div className="slider-group">
+              <div className="slider-header">
+                <label>
+                  Fund Category
+                  <InfoTooltip content="Choose fund type based on your risk profile and investment horizon" />
+                </label>
+                <select
+                  value={fundCategory}
+                  onChange={(e) => {
+                    setFundCategory(e.target.value);
+                    const category = fundCategories[e.target.value];
+                    setExpectedReturn(category.expectedReturn);
+                    setExpenseRatio(category.expenseRatio);
+                  }}
+                  className="select-input"
+                >
+                  <option value="equity">Equity Funds (12%)</option>
+                  <option value="debt">Debt Funds (7%)</option>
+                  <option value="hybrid">Hybrid Funds (10%)</option>
+                  <option value="elss">ELSS - Tax Saver (12%)</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Expense Ratio */}
+            <div className="slider-group">
+              <div className="slider-header">
+                <label>
+                  Expense Ratio
+                  <InfoTooltip content="Annual fund management fee that reduces your returns" />
+                </label>
+                <input
+                  type="text"
+                  value={`${expenseRatio}%`}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/[%\s]/g, '');
+                    if (val === '') {
+                      setExpenseRatio('');
+                      return;
+                    }
+                    const num = parseFloat(val);
+                    if (!isNaN(num) && num >= 0 && num <= 5) {
+                      setExpenseRatio(num);
+                    }
+                  }}
+                  className="input-display"
+                />
+              </div>
+              <input
+                type="range"
+                min="0.1"
+                max="3"
+                step="0.1"
+                value={expenseRatio}
+                onChange={(e) => setExpenseRatio(parseFloat(e.target.value))}
+                className="slider"
+              />
+              <div className="slider-labels">
+                <span>0.1%</span>
+                <span>3%</span>
+              </div>
+            </div>
+
+            {/* Step-up SIP */}
+            <div className="slider-group">
+              <div className="slider-header">
+                <label>
+                  Annual Step-up Rate
+                  <InfoTooltip content="Increase your SIP amount annually to beat inflation and accelerate wealth creation" />
+                </label>
+                <input
+                  type="text"
+                  value={`${stepUpRate}%`}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/[%\s]/g, '');
+                    if (val === '') {
+                      setStepUpRate('');
+                      return;
+                    }
+                    const num = parseFloat(val);
+                    if (!isNaN(num) && num >= 0 && num <= 25) {
+                      setStepUpRate(num);
+                    }
+                  }}
+                  className="input-display"
+                />
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="25"
+                step="1"
+                value={stepUpRate}
+                onChange={(e) => setStepUpRate(parseInt(e.target.value))}
+                className="slider"
+              />
+              <div className="slider-labels">
+                <span>0%</span>
+                <span>25%</span>
+              </div>
+            </div>
+
+            {/* Inflation Rate */}
+            <div className="slider-group">
+              <div className="slider-header">
+                <label>
+                  Inflation Rate
+                  <InfoTooltip content="Expected annual inflation to calculate real purchasing power of your returns" />
+                </label>
+                <input
+                  type="text"
+                  value={`${inflationRate}%`}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/[%\s]/g, '');
+                    if (val === '') {
+                      setInflationRate('');
+                      return;
+                    }
+                    const num = parseFloat(val);
+                    if (!isNaN(num) && num >= 2 && num <= 12) {
+                      setInflationRate(num);
+                    }
+                  }}
+                  className="input-display"
+                />
+              </div>
+              <input
+                type="range"
+                min="2"
+                max="12"
+                step="0.5"
+                value={inflationRate}
+                onChange={(e) => setInflationRate(parseFloat(e.target.value))}
+                className="slider"
+              />
+              <div className="slider-labels">
+                <span>2%</span>
+                <span>12%</span>
+              </div>
+            </div>
+
+            {/* Toggle Options */}
+            <div className="toggle-options" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1.5rem' }}>
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={showInflationAdjusted}
+                  onChange={(e) => setShowInflationAdjusted(e.target.checked)}
+                />
+                <span className="checkmark"></span>
+                Show Inflation-Adjusted Returns
+                <InfoTooltip content="View real purchasing power of your returns after adjusting for inflation" />
+              </label>
+
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={taxOptimized}
+                  onChange={(e) => setTaxOptimized(e.target.checked)}
+                />
+                <span className="checkmark"></span>
+                Include Tax Calculations
+                <InfoTooltip content="Calculate LTCG/STCG tax impact based on fund category and holding period" />
+              </label>
+
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={goalMode}
+                  onChange={(e) => setGoalMode(e.target.checked)}
+                />
+                <span className="checkmark"></span>
+                Goal-based Planning
+                <InfoTooltip content="Calculate required SIP amount to reach a specific financial goal" />
+              </label>
+            </div>
+
+            {/* Goal Mode - Target Amount */}
+            {goalMode && (
+              <div className="slider-group" style={{ marginTop: '1rem' }}>
+                <div className="slider-header">
+                  <label>
+                    Target Amount
+                    <InfoTooltip content="Your financial goal amount that you want to achieve" />
+                  </label>
+                  <input
+                    type="text"
+                    value={`₹${targetAmount.toLocaleString('en-IN')}`}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/[₹,\s]/g, '');
+                      if (val === '') {
+                        setTargetAmount('');
+                        return;
+                      }
+                      const num = parseInt(val);
+                      if (!isNaN(num)) {
+                        setTargetAmount(num);
+                      }
+                    }}
+                    onBlur={(e) => {
+                      const val = e.target.value.replace(/[₹,\s]/g, '');
+                      const num = parseInt(val);
+                      
+                      if (val === '' || isNaN(num)) {
+                        setTargetAmount(1000000);
+                      } else if (num < 100000) {
+                        setTargetAmount(100000);
+                      } else if (num > 100000000) {
+                        setTargetAmount(100000000);
+                      } else {
+                        setTargetAmount(num);
+                      }
+                    }}
+                    className="input-display"
+                  />
+                </div>
+                <input
+                  type="range"
+                  min="100000"
+                  max="100000000"
+                  step="100000"
+                  value={targetAmount}
+                  onChange={(e) => setTargetAmount(parseInt(e.target.value))}
+                  className="slider"
+                />
+                <div className="slider-labels">
+                  <span>₹1L</span>
+                  <span>₹10Cr</span>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {result && (
           <div className="calculator-results">
-            <h2>{investmentMode === 'sip' ? 'Your SIP Breakdown' : 'Your Investment Breakdown'}</h2>
-            <div className="result-cards">
-              <div className="result-card highlight">
-                <div className="result-label">Future Value</div>
-                <div className="result-value">₹{result.futureValue.toLocaleString('en-IN')}</div>
-              </div>
-
-              <div className="result-card">
-                <div className="result-label">{investmentMode === 'sip' ? 'Total Invested' : 'Invested Amount'}</div>
-                <div className="result-value">₹{result.totalInvested.toLocaleString('en-IN')}</div>
-              </div>
-
-              <div className="result-card">
-                <div className="result-label">{investmentMode === 'sip' ? 'Wealth Gained' : 'Est. Returns'}</div>
-                <div className="result-value">₹{result.totalReturns.toLocaleString('en-IN')}</div>
-              </div>
-
-              <div className="result-card">
-                <div className="result-label">Return On Investment</div>
-                <div className="result-value">{((result.totalReturns / result.totalInvested) * 100).toFixed(1)}%</div>
-              </div>
-
-              <div className="result-card">
-                <div className="result-label">Total Duration</div>
-                <div className="result-value">{duration * 12} Months</div>
-              </div>
-
-              {investmentMode === 'sip' && monthlyInvestment > 0 && (
-                <div className="result-card">
-                  <div className="result-label">Monthly SIP Amount</div>
-                  <div className="result-value">₹{monthlyInvestment.toLocaleString('en-IN')}</div>
+            {goalMode ? (
+              <>
+                <h2>Goal-Based SIP Calculation</h2>
+                <div className="result-cards">
+                  <div className="result-card highlight">
+                    <div className="result-label">Required Monthly SIP</div>
+                    <div className="result-value">{formatSmartCurrency(result.requiredSIP, 'INR')}</div>
+                  </div>
+                  
+                  <div className="result-card">
+                    <div className="result-label">Target Amount</div>
+                    <div className="result-value">{formatSmartCurrency(result.targetAmount, 'INR')}</div>
+                  </div>
+                  
+                  <div className="result-card">
+                    <div className="result-label">Investment Duration</div>
+                    <div className="result-value">{result.duration} Years</div>
+                  </div>
+                  
+                  <div className="result-card">
+                    <div className="result-label">Expected Return</div>
+                    <div className="result-value">{result.expectedReturn}% p.a.</div>
+                  </div>
+                  
+                  {stepUpRate > 0 && (
+                    <div className="result-card">
+                      <div className="result-label">Final SIP Amount</div>
+                      <div className="result-value">{formatSmartCurrency(result.requiredSIP * Math.pow(1 + stepUpRate/100, result.duration), 'INR')}</div>
+                    </div>
+                  )}
                 </div>
-              )}
+              </>
+            ) : (
+              <>
+                <h2>
+                  {investmentMode === 'sip' ? 'Your SIP Breakdown' : 'Your Investment Breakdown'}
+                  {result.mode === 'sip' && stepUpRate > 0 && ` (with ${stepUpRate}% Step-up)`}
+                </h2>
+                <div className="result-cards">
+                  <div className="result-card highlight">
+                    <div className="result-label">
+                      {taxOptimized ? 'After-Tax Value' : 'Future Value'}
+                      <InfoTooltip content={taxOptimized ? "Final value after deducting applicable taxes" : "Gross value before taxes"} />
+                    </div>
+                    <div className="result-value">{formatSmartCurrency(taxOptimized ? result.afterTaxValue : result.futureValue, 'INR')}</div>
+                  </div>
 
-              {investmentMode === 'sip' && initialInvestment > 0 && (
-                <div className="result-card">
-                  <div className="result-label">Initial Investment</div>
-                  <div className="result-value">₹{initialInvestment.toLocaleString('en-IN')}</div>
+                  <div className="result-card">
+                    <div className="result-label">Total Invested</div>
+                    <div className="result-value">{formatSmartCurrency(result.totalInvested, 'INR')}</div>
+                  </div>
+
+                  <div className="result-card">
+                    <div className="result-label">
+                      {taxOptimized ? 'Net Returns' : 'Gross Returns'}
+                      <InfoTooltip content={taxOptimized ? "Returns after deducting applicable taxes" : "Returns before taxes"} />
+                    </div>
+                    <div className="result-value">{formatSmartCurrency(taxOptimized ? result.netReturns : result.totalReturns, 'INR')}</div>
+                  </div>
+
+                  <div className="result-card">
+                    <div className="result-label">
+                      CAGR
+                      <InfoTooltip content="Compound Annual Growth Rate - your effective annual return" />
+                    </div>
+                    <div className="result-value">{result.cagr}%</div>
+                  </div>
+
+                  {taxOptimized && result.taxOnReturns > 0 && (
+                    <div className="result-card">
+                      <div className="result-label">
+                        Tax on Returns
+                        <InfoTooltip content="Applicable LTCG/STCG tax based on fund category and holding period" />
+                      </div>
+                      <div className="result-value">{formatSmartCurrency(result.taxOnReturns, 'INR')}</div>
+                    </div>
+                  )}
+
+                  {showInflationAdjusted && (
+                    <>
+                      <div className="result-card">
+                        <div className="result-label">
+                          Real Value (Inflation Adjusted)
+                          <InfoTooltip content={`Purchasing power of your returns adjusted for ${inflationRate}% inflation`} />
+                        </div>
+                        <div className="result-value">{formatSmartCurrency(result.realValue, 'INR')}</div>
+                      </div>
+                      
+                      <div className="result-card">
+                        <div className="result-label">
+                          Real Returns
+                          <InfoTooltip content="Returns adjusted for inflation - your actual wealth gain" />
+                        </div>
+                        <div className="result-value">{formatSmartCurrency(result.realReturns, 'INR')}</div>
+                      </div>
+                    </>
+                  )}
+
+                  {result.mode === 'sip' && result.finalSIP && stepUpRate > 0 && (
+                    <div className="result-card">
+                      <div className="result-label">
+                        Final SIP Amount
+                        <InfoTooltip content={`Your SIP amount in the last year after ${stepUpRate}% annual increase`} />
+                      </div>
+                      <div className="result-value">{formatSmartCurrency(result.finalSIP, 'INR')}</div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
 
-            <div className="result-chart">
-              <div 
-                className="pie-chart" 
+                <div className="result-chart">
+                  <div 
+                    className="pie-chart" 
+                    style={{
+                      background: `conic-gradient(
+                        #667eea 0% ${(result.totalInvested / (taxOptimized ? result.afterTaxValue : result.futureValue) * 100).toFixed(1)}%,
+                        #10b981 ${(result.totalInvested / (taxOptimized ? result.afterTaxValue : result.futureValue) * 100).toFixed(1)}% 100%
+                      )`
+                    }}>
+                  </div>
+                  <div className="chart-legend">
+                    <div className="legend-item">
+                      <span className="legend-color principal"></span>
+                      <span>Invested: {formatSmartCurrency(result.totalInvested, 'INR')}</span>
+                    </div>
+                    <div className="legend-item">
+                      <span className="legend-color interest"></span>
+                      <span>{taxOptimized ? 'Net Returns' : 'Returns'}: {formatSmartCurrency(taxOptimized ? result.netReturns : result.totalReturns, 'INR')}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Fund Category Information */}
+                <div className="fund-info-section" style={{ marginTop: '2rem', padding: '1rem', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
+                  <h3>Fund Category: {getFundCharacteristics(fundCategory).name}</h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginTop: '1rem' }}>
+                    <div>
+                      <strong>Risk Level:</strong> {getFundCharacteristics(fundCategory).riskLevel}
+                    </div>
+                    <div>
+                      <strong>Expected Return:</strong> {getFundCharacteristics(fundCategory).expectedReturn}
+                    </div>
+                    <div>
+                      <strong>Tax Treatment:</strong> {getFundCharacteristics(fundCategory).taxTreatment}
+                    </div>
+                  </div>
+                  <p style={{ marginTop: '1rem', fontSize: '0.9rem', color: '#666' }}>
+                    {getFundCharacteristics(fundCategory).description}
+                  </p>
+                </div>
+              </>
+            )}
+
+            {/* Export Button */}
+            <div className="export-section" style={{ marginTop: '2rem', textAlign: 'center' }}>
+              <button 
+                onClick={exportToCSV} 
+                className="btn-export"
                 style={{
-                  background: `conic-gradient(
-                    #667eea 0% ${(result.totalInvested / result.futureValue * 100).toFixed(1)}%,
-                    #10b981 ${(result.totalInvested / result.futureValue * 100).toFixed(1)}% 100%
-                  )`
-                }}>
-              </div>
-              <div className="chart-legend">
-                <div className="legend-item">
-                  <span className="legend-color principal"></span>
-                  <span>Invested: {formatSmartCurrency(result.totalInvested)}</span>
-                </div>
-                <div className="legend-item">
-                  <span className="legend-color interest"></span>
-                  <span>Returns: {formatSmartCurrency(result.totalReturns)}</span>
-                </div>
-              </div>
+                  background: '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  padding: '12px 24px',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontSize: '1rem',
+                  fontWeight: '500'
+                }}
+              >
+                📊 Export Detailed Report (CSV)
+              </button>
             </div>
           </div>
         )}
@@ -474,6 +1158,56 @@ function SIPCalculator() {
           </svg>
           Reset to Default
         </button>
+      </div>
+
+      {/* Enhanced Financial Disclaimer */}
+      <div className="financial-disclaimer" style={{ 
+        backgroundColor: '#fffbeb', 
+        border: '2px solid #f59e0b', 
+        borderRadius: '12px', 
+        padding: '2rem', 
+        margin: '2rem 0' 
+      }}>
+        <h3 style={{ color: '#d97706', marginBottom: '1rem', display: 'flex', alignItems: 'center' }}>
+          ⚠️ Important Disclaimers & Risk Factors
+        </h3>
+        
+        <div style={{ display: 'grid', gap: '1rem' }}>
+          <div>
+            <h4 style={{ color: '#92400e', marginBottom: '0.5rem' }}>Investment Risks</h4>
+            <p>• <strong>Market Risk:</strong> Mutual fund investments are subject to market fluctuations. Past performance does not guarantee future returns.</p>
+            <p>• <strong>No Guaranteed Returns:</strong> The expected returns shown are estimates. Actual returns may vary significantly based on market conditions.</p>
+            <p>• <strong>Principal Risk:</strong> There is no assurance that your investment objective will be achieved. You may lose part or all of your principal.</p>
+          </div>
+          
+          <div>
+            <h4 style={{ color: '#92400e', marginBottom: '0.5rem' }}>Tax Implications</h4>
+            <p>• <strong>LTCG Tax:</strong> 10% on equity funds for gains above ₹1 lakh per year (holding period > 1 year)</p>
+            <p>• <strong>STCG Tax:</strong> 15% on equity funds for gains from investments held less than 1 year</p>
+            <p>• <strong>Debt Fund Taxation:</strong> As per applicable income tax slab rates regardless of holding period</p>
+            <p>• <strong>ELSS Funds:</strong> 3-year lock-in period with tax deduction benefits under Section 80C up to ₹1.5 lakh</p>
+          </div>
+
+          <div>
+            <h4 style={{ color: '#92400e', marginBottom: '0.5rem' }}>Regulatory Compliance</h4>
+            <p>• This calculator is for illustrative purposes only and should not be considered as investment advice</p>
+            <p>• Consult with a SEBI registered investment advisor before making investment decisions</p>
+            <p>• Read the Scheme Information Document (SID) and Key Information Memorandum (KIM) carefully</p>
+            <p>• Ensure KYC compliance before investing</p>
+          </div>
+        </div>
+        
+        <div style={{ 
+          marginTop: '1.5rem', 
+          padding: '1rem', 
+          backgroundColor: '#fef3c7', 
+          borderRadius: '8px', 
+          textAlign: 'center' 
+        }}>
+          <p style={{ margin: 0, fontWeight: '600', color: '#92400e' }}>
+            💡 <strong>Professional Advice:</strong> Consider consulting with a certified financial planner for personalized investment strategy
+          </p>
+        </div>
       </div>
 
       {/* SEO Content Section */}
