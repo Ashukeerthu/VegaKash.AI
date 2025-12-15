@@ -2,17 +2,12 @@
 Budget Planner V1.2 - Unit Tests
 Comprehensive test coverage for budget calculations and alerts
 """
-
-import pytest
-from typing import Dict
-
 from budget_schemas.budget_planner import (
     BudgetGenerateRequest,
     FixedExpenses,
     VariableExpenses,
     LoanInput,
     SavingsGoal,
-    BudgetPlan,
 )
 from utils.budget_calculator import (
     calculate_col_adjusted_budget,

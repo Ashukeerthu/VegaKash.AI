@@ -2,20 +2,41 @@
 VegaKash.AI - FastAPI Backend Application
 AI-powered Budget Planner & Savings Assistant
 """
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from fastapi.exceptions import RequestValidationError
-from slowapi import Limiter, _rate_limit_exceeded_handler  # type: ignore
-from slowapi.util import get_remote_address  # type: ignore
-from slowapi.errors import RateLimitExceeded  # type: ignore
 import logging
-from typing import Dict
-from datetime import datetime
-from dotenv import load_dotenv
-from pathlib import Path
-
 import os
+from datetime import datetime
+from pathlib import Path
+from typing import Dict
+
+from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse, Response
+from slowapi import Limiter, _rate_limit_exceeded_handler  # type: ignore
+from slowapi.errors import RateLimitExceeded  # type: ignore
+from slowapi.util import get_remote_address  # type: ignore
+
+from routes.budget_planner import router as budget_planner_router
+from routes.feedback import router as feedback_router
+from routes.travel_planner import router as travel_planner_router
+from schemas import (
+    AIPlanOutput,
+    AIPlanOutputV2,
+    AIPlanRequest,
+    DebtStrategyComparison,
+    FinancialInput,
+    MultiLoanInput,
+    PDFExportRequest,
+    SmartRecommendationsOutput,
+    SummaryOutput,
+)
+from services.ai_planner import generate_ai_plan
+from services.ai_planner_v2 import generate_ai_plan_v2
+from services.calculations import calculate_summary
+from services.multi_loan import compare_debt_strategies
+from services.pdf_generator_reportlab import generate_pdf_bytes
+from services.smart_recommendations import generate_smart_recommendations
 
 # Load environment variables from .env file (relative to this script)
 env_path = Path(__file__).parent / ".env"
@@ -31,26 +52,6 @@ if api_key_loaded and api_key:
     print(f"✅ API Key: {masked_key}")
 else:
     print("⚠️  WARNING: OPENAI_API_KEY not found in environment!")
-from schemas import (
-    FinancialInput, SummaryOutput, AIPlanRequest, AIPlanOutput,
-    MultiLoanInput, DebtStrategyComparison, PDFExportRequest,
-    SmartRecommendationsOutput, AIPlanOutputV2
-)
-from services.calculations import calculate_summary
-from services.ai_planner import generate_ai_plan
-from services.ai_planner_v2 import generate_ai_plan_v2
-from services.multi_loan import compare_debt_strategies
-from services.smart_recommendations import generate_smart_recommendations
-# from services.cache import get_cache_stats  # Temporarily disabled
-from fastapi.responses import Response
-
-# Import PDF generator (ReportLab - pure Python, no GTK needed)
-from services.pdf_generator_reportlab import generate_pdf_bytes
-
-# Import routes for Phase 2
-from routes.budget_planner import router as budget_planner_router
-from routes.travel_planner import router as travel_planner_router
-from routes.feedback import router as feedback_router
 
 # Import security middleware (commented out temporarily - will add after testing)
 # from middleware.security import (

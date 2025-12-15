@@ -88,7 +88,7 @@ def _calculate_payoff_strategy(
             
             # Determine payment
             if active_loans.index(loan) == next(
-                i for i, l in enumerate(active_loans) if not l['paid_off']
+                i for i, loan_item in enumerate(active_loans) if not loan_item['paid_off']
             ):
                 # First unpaid loan gets extra payment
                 payment = min(loan['min_payment'] + available_extra, loan['balance'] + interest_charge)
@@ -121,16 +121,16 @@ def _calculate_payoff_strategy(
     # Generate summary
     payoff_order: List[str] = [loan.loan_id for loan in sorted_loans]
     strategy_desc = (
-        f"Snowball Strategy: Pay off smallest balance first for psychological wins"
+        "Snowball Strategy: Pay off smallest balance first for psychological wins"
         if strategy_type == "snowball"
-        else f"Avalanche Strategy: Pay off highest interest first to minimize total interest"
+        else "Avalanche Strategy: Pay off highest interest first to minimize total interest"
     )
     
     summary = (
         f"{strategy_desc}\n"
         f"Total months to debt-free: {month}\n"
         f"Total interest paid: ₹{round(total_interest, 2):,}\n"
-        f"Payoff order: {', '.join([l.loan_name for l in sorted_loans])}"
+        f"Payoff order: {', '.join([loan.loan_name for loan in sorted_loans])}"
     )
     
     return DebtPayoffStrategy(

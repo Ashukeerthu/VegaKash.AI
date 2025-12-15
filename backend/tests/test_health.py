@@ -49,7 +49,7 @@ class TestReadinessEndpoint:
         assert response.status_code == 200
         data = response.json()
         assert data["status"] == "ok"
-        assert data["ready"] == True
+        assert data["ready"]
 
     def test_ready_api_v1_returns_ok(self, client: TestClient) -> None:
         """Test that /api/v1/ready returns status ok"""

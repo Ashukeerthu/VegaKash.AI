@@ -760,7 +760,6 @@ async def generate_itinerary(request: ItineraryRequest):
         # Always try to generate AI-powered itinerary for better quality
         # Falls back to template only if AI fails
         ai_itinerary_data = {}
-        ai_used = False
         
         try:
             ai_itinerary_data = await generate_ai_itinerary_details(
@@ -773,10 +772,9 @@ async def generate_itinerary(request: ItineraryRequest):
                 detail_level=detail_level
             )
             if ai_itinerary_data:
-                ai_used = True
                 logger.info(f"✅ AI-powered {detail_level} itinerary generated successfully")
             else:
-                logger.warning(f"AI returned empty response, using template")
+                logger.warning("AI returned empty response, using template")
                 ai_itinerary_data = create_template_itinerary(request.travelData.destinationCity, trip_days)
         except Exception as e:
             logger.warning(f"⚠️ AI itinerary generation failed: {str(e)}. Using enhanced template as fallback")
@@ -795,7 +793,7 @@ async def generate_itinerary(request: ItineraryRequest):
             
             # Get day-specific data with fallback
             day_key = f"day_{day}"
-            day_data = ai_itinerary_data.get(day_key, {})
+            day_data: Dict[str, Any] = ai_itinerary_data.get(day_key, {})
             
             if not day_data:
                 logger.warning(f"No data for {day_key}, using defaults")
@@ -815,7 +813,7 @@ async def generate_itinerary(request: ItineraryRequest):
             sections: List[ItinerarySection] = []
             
             # Morning section (6 AM - 12 PM)
-            morning_activities = []
+            morning_activities: List[Activity] = []
             if "morning_activity" in day_data and day_data["morning_activity"]:
                 morning_tips = day_data["morning_activity"].get("tips", [])
                 morning_activities.append(Activity(
@@ -842,7 +840,7 @@ async def generate_itinerary(request: ItineraryRequest):
                 ))
             
             # Afternoon section (12 PM - 6 PM)
-            afternoon_activities = []
+            afternoon_activities: List[Activity] = []
             
             # Lunch
             if "lunch" in day_data and day_data["lunch"]:
@@ -888,7 +886,7 @@ async def generate_itinerary(request: ItineraryRequest):
                 ))
             
             # Evening section (6 PM - 11 PM)
-            evening_activities = []
+            evening_activities: List[Activity] = []
             
             # Dinner
             if "dinner" in day_data and day_data["dinner"]:
@@ -1157,7 +1155,7 @@ def create_template_itinerary(destination_city: str, trip_days: int) -> Dict[str
                 "tips": ["Book in advance if needed", "Carry water and sunscreen"]
             },
             "dinner": {
-                "description": f"Evening exploration and dinner",
+                "description": "Evening exploration and dinner",
                 "evening_activity": "Local market or street food walk",
                 "tips": ["Try street food from trusted vendors", "Explore local markets"]
             },

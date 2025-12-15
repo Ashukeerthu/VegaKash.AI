@@ -60,7 +60,7 @@ class BudgetPlannerService:
         budget_mode = request.mode
         
         # Calculate total EMI
-        total_emi = calculate_total_emi([l.model_dump() for l in request.loans])
+        total_emi = calculate_total_emi([loan.model_dump() for loan in request.loans])
         
         # Calculate total expenses from inputs
         total_fixed = sum([
@@ -144,7 +144,7 @@ class BudgetPlannerService:
             savings_amount=savings_amount,
             fixed_expenses=request.fixed_expenses.model_dump(),
             variable_expenses=request.variable_expenses.model_dump(),
-            loans=[l.model_dump() for l in request.loans],
+            loans=[loan.model_dump() for loan in request.loans],
             goals=[g.model_dump() for g in request.goals],
         )
         
@@ -186,7 +186,7 @@ class BudgetPlannerService:
             savings_amount=savings_amount,
             emergency_fund=0,  # Assume 0 for new budget
             city_tier=city_tier,
-            loans=[l.model_dump() for l in request.loans],
+            loans=[loan.model_dump() for loan in request.loans],
             budget_mode=budget_mode,
             savings_percent=savings_percent,
         )
@@ -313,7 +313,7 @@ class BudgetPlannerService:
             rent=original_inputs.fixed_expenses.rent if hasattr(original_inputs, 'fixed_expenses') else 0,
             total_emi=0,
             total_expenses=total_expenses,
-            loans=[l.model_dump() for l in original_inputs.loans] if hasattr(original_inputs, 'loans') else [],
+            loans=[loan.model_dump() for loan in original_inputs.loans] if hasattr(original_inputs, 'loans') else [],
             savings_amount=edited_plan_dict.get('budget_amounts', {}).get('savings', 0),
             savings_percent=savings_percent,
             wants_percent=wants_percent,

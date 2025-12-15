@@ -473,7 +473,7 @@ def generate_ai_plan(financial_input: FinancialInput, summary: SummaryOutput) ->
         except APITimeoutError as e:
             logger.warning(f"API timeout on attempt {attempt}: {e}")
             if attempt < AI_MAX_RETRIES:
-                logger.info(f"Retrying after timeout...")
+                logger.info("Retrying after timeout...")
                 time.sleep(AI_RETRY_DELAY)
             else:
                 logger.error("Max retries reached due to timeouts")
@@ -482,7 +482,7 @@ def generate_ai_plan(financial_input: FinancialInput, summary: SummaryOutput) ->
         except APIConnectionError as e:
             logger.warning(f"Connection error on attempt {attempt}: {e}")
             if attempt < AI_MAX_RETRIES:
-                logger.info(f"Retrying after connection error...")
+                logger.info("Retrying after connection error...")
                 time.sleep(AI_RETRY_DELAY)
             else:
                 logger.error("Max retries reached due to connection errors")

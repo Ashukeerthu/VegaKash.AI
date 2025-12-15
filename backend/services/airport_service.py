@@ -4,7 +4,7 @@ Provides airport lookup by city and IATA code resolution.
 Includes ~500 major airports globally; can be extended.
 """
 import logging
-from typing import Dict, Optional, List, Any, TypedDict
+from typing import Dict, Optional, List, TypedDict
 
 logger = logging.getLogger(__name__)
 
@@ -13,6 +13,14 @@ class AirportData(TypedDict):
     city: str
     country: str
     distance_km: int
+
+class AirportResolution(TypedDict, total=False):
+    hasAirport: bool
+    code: Optional[str]
+    city: str
+    country: Optional[str]
+    distance_km: Optional[int]
+    nearest: Optional[Dict[str, object]]
 
 # Curated IATA airport database (major airports globally)
 # Format: city_normalized -> [{"code": "XXX", "city": "Full City Name", "country": "Country", "distance_km": 0}]
@@ -207,7 +215,7 @@ def get_primary_airport(city: str) -> Optional[AirportData]:
     return airports[0] if airports else None
 
 
-def resolve_airport_with_iata(city: str) -> Dict:
+def resolve_airport_with_iata(city: str) -> AirportResolution:
     """
     Resolve airport for a city. Returns primary airport or nearest alternative.
     Used to determine if destination has direct airport access.
@@ -222,7 +230,7 @@ def resolve_airport_with_iata(city: str) -> Dict:
     
     if airports:
         primary = airports[0]
-        result = {
+        result: AirportResolution = {
             "hasAirport": True,
             "code": primary["code"],
             "city": primary["city"],

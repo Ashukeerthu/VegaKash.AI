@@ -4,9 +4,7 @@ Tests all budget planner endpoints with real request/response data
 """
 
 import pytest
-import json
 from fastapi.testclient import TestClient
-from datetime import datetime
 import sys
 import os
 
@@ -279,7 +277,7 @@ class TestBudgetGeneration:
         assert "net_savings" in summary
         assert "savings_rate" in summary
         
-        print(f"✅ India Budget Generated")
+        print("✅ India Budget Generated")
         print(f"   Income: ₹{summary['total_monthly_income']}")
         print(f"   Net Savings: ₹{summary['net_savings']}")
         print(f"   Savings Rate: {summary['savings_rate']:.1f}%")
@@ -298,7 +296,7 @@ class TestBudgetGeneration:
         summary = data["summary"]
         assert summary["total_monthly_income"] == 8000
         
-        print(f"✅ US Budget Generated")
+        print("✅ US Budget Generated")
         print(f"   Income: ${summary['total_monthly_income']}")
         print(f"   Net Savings: ${summary['net_savings']}")
         print(f"   Savings Rate: {summary['savings_rate']:.1f}%")
@@ -317,7 +315,7 @@ class TestBudgetGeneration:
         summary = data["summary"]
         assert summary["total_monthly_income"] == 5000
         
-        print(f"✅ UK Budget Generated")
+        print("✅ UK Budget Generated")
         print(f"   Income: £{summary['total_monthly_income']}")
         print(f"   Net Savings: £{summary['net_savings']}")
         print(f"   Savings Rate: {summary['savings_rate']:.1f}%")
@@ -375,7 +373,7 @@ class TestBudgetGeneration:
         data = response.json()
         
         assert "alerts" in data
-        print(f"✅ Budget with Loan Generated")
+        print("✅ Budget with Loan Generated")
         print(f"   Alerts: {len(data['alerts'])} detected")
 
 
@@ -405,7 +403,7 @@ class TestBudgetRebalancing:
         
         assert "rebalanced_allocation" in data
         assert "changes" in data
-        print(f"✅ Budget Rebalanced")
+        print("✅ Budget Rebalanced")
         print(f"   Changes: {data['changes']}")
 
 
@@ -614,7 +612,7 @@ class TestIntegrationFlow:
         assert "budget_breakdown" in budget_data
         assert "alerts" in budget_data
         
-        print(f"✅ Complete flow successful!")
+        print("✅ Complete flow successful!")
         print(f"   Budget ID: {budget_data['id']}")
         print(f"   Alerts: {len(budget_data['alerts'])}")
 

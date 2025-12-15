@@ -180,7 +180,7 @@ def allocate_budget(
     """
     
     # Calculate total EMI
-    total_emi = sum([calculate_emi(l) for l in loans])
+    total_emi = sum(calculate_emi(loan) for loan in loans)
     
     # NEEDS ALLOCATION
     needs_categories: Dict[str, float] = {
@@ -344,7 +344,7 @@ def calculate_total_expenses(fixed_expenses: Dict[str, float], variable_expenses
     """
     fixed_total = sum(fixed_expenses.values())
     variable_total = sum(variable_expenses.values())
-    emi_total = sum([calculate_emi(l) for l in loans])
+    emi_total = sum(calculate_emi(loan) for loan in loans)
     
     return fixed_total + variable_total + emi_total
 
@@ -359,7 +359,7 @@ def calculate_total_emi(loans: List[Dict[str, float]]) -> float:
     Returns:
         Total EMI amount
     """
-    return sum([calculate_emi(l) for l in loans])
+    return sum(calculate_emi(loan) for loan in loans)
 
 
 # ============================================

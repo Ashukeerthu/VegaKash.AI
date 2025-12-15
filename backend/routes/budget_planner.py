@@ -190,7 +190,7 @@ async def generate_budget(
         # Generate budget using service
         budget_plan = BudgetPlannerService.generate_budget(request)
         
-        logger.info(f"Budget generated successfully")
+        logger.info("Budget generated successfully")
         
         return BudgetGenerateResponse(
             success=True,
