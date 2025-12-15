@@ -40,6 +40,9 @@ function SIPCalculator() {
   const [goalMode, setGoalMode] = useState(false);
   const [targetAmount, setTargetAmount] = useState(1000000);
   const [taxOptimized, setTaxOptimized] = useState(false);
+  const [taxSlab, setTaxSlab] = useState(30); // Tax slab for debt funds (5%, 20%, 30%)
+  const [hybridType, setHybridType] = useState('equity-oriented'); // 'equity-oriented' or 'debt-oriented'
+  const [isIndexFund, setIsIndexFund] = useState(false); // Index fund toggle
   
   const [result, setResult] = useState(null);
 
@@ -61,15 +64,15 @@ function SIPCalculator() {
     equity: { 
       label: 'Equity Funds',
       expectedReturn: 12,
-      expenseRatio: 1.5,
+      expenseRatio: isIndexFund ? 0.3 : 1.5,
       riskLevel: 'High',
       horizon: '7+ Years',
-      description: 'High growth potential with market risk'
+      description: isIndexFund ? 'Low-cost market tracking with minimal management' : 'High growth potential with market risk'
     },
     debt: { 
       label: 'Debt Funds',
       expectedReturn: 7,
-      expenseRatio: 0.8,
+      expenseRatio: isIndexFund ? 0.2 : 0.8,
       riskLevel: 'Low',
       horizon: '1-3 Years', 
       description: 'Stable returns with lower risk'
@@ -80,7 +83,9 @@ function SIPCalculator() {
       expenseRatio: 1.2,
       riskLevel: 'Medium',
       horizon: '3-7 Years',
-      description: 'Balanced growth with moderate risk'
+      description: hybridType === 'equity-oriented' 
+        ? 'Aggressive hybrid with 65%+ equity allocation'
+        : 'Conservative hybrid with 65%+ debt allocation'
     },
     elss: {
       label: 'ELSS (Tax Saver)',
@@ -88,7 +93,7 @@ function SIPCalculator() {
       expenseRatio: 1.8,
       riskLevel: 'High',
       horizon: '3+ Years (Lock-in)',
-      description: 'Tax benefits + equity growth'
+      description: 'Tax benefits + equity growth. 3-year lock-in mandatory'
     }
   };
 
@@ -105,7 +110,8 @@ function SIPCalculator() {
     }, 100);
     return () => clearTimeout(timeoutId);
   }, [investmentMode, monthlyInvestment, initialInvestment, lumpsumAmount, expectedReturn, duration, 
-      fundCategory, expenseRatio, stepUpRate, inflationRate, showInflationAdjusted, goalMode, targetAmount, taxOptimized]);
+      fundCategory, expenseRatio, stepUpRate, inflationRate, showInflationAdjusted, goalMode, targetAmount, 
+      taxOptimized, taxSlab, hybridType, isIndexFund]);
 
   useEffect(() => {
     const cleanup = debouncedCalculate();
@@ -173,20 +179,23 @@ function SIPCalculator() {
     
     if (taxOptimized && totalReturns > 0) {
       if (fundCategory === 'equity' || fundCategory === 'elss') {
-        // LTCG: 10% above ₹1L per year
-        const exemptAmount = 100000 * years;
+        // LTCG: 10% above ₹1L per financial year (corrected logic)
+        const exemptAmount = 100000; // ₹1L exemption per year, not cumulative
         const taxableGains = Math.max(0, totalReturns - exemptAmount);
         taxOnReturns = taxableGains * 0.10;
       } else if (fundCategory === 'debt') {
-        // Debt funds: As per income tax slab (assuming 20%)
-        taxOnReturns = totalReturns * 0.20;
+        // Debt funds: As per income tax slab (post-April 2023 rules)
+        taxOnReturns = totalReturns * (taxSlab / 100);
       } else if (fundCategory === 'hybrid') {
-        // Hybrid: Equity portion LTCG, debt portion as per slab
-        const equityPortion = totalReturns * 0.65; // Assume 65% equity
-        const debtPortion = totalReturns * 0.35;
-        const exemptAmount = 100000 * years;
+        // Hybrid: Based on equity vs debt orientation
+        const equityPortion = hybridType === 'equity-oriented' 
+          ? totalReturns * 0.65 
+          : totalReturns * 0.35;
+        const debtPortion = totalReturns - equityPortion;
+        
+        const exemptAmount = 100000; // Corrected: ₹1L per year
         const taxableEquity = Math.max(0, equityPortion - exemptAmount);
-        taxOnReturns = (taxableEquity * 0.10) + (debtPortion * 0.20);
+        taxOnReturns = (taxableEquity * 0.10) + (debtPortion * (taxSlab / 100));
       }
     }
 
@@ -238,12 +247,15 @@ function SIPCalculator() {
         const taxableGains = Math.max(0, totalReturns - exemptAmount);
         taxOnReturns = taxableGains * 0.10;
       } else if (fundCategory === 'debt') {
-        taxOnReturns = totalReturns * 0.20;
+        // Post-2023 debt fund taxation as per income slab
+        taxOnReturns = totalReturns * (taxSlab / 100);
       } else if (fundCategory === 'hybrid') {
-        const equityPortion = totalReturns * 0.65;
-        const debtPortion = totalReturns * 0.35;
+        const equityPortion = hybridType === 'equity-oriented'
+          ? totalReturns * 0.65
+          : totalReturns * 0.35;
+        const debtPortion = totalReturns - equityPortion;
         const taxableEquity = Math.max(0, equityPortion - 100000);
-        taxOnReturns = (taxableEquity * 0.10) + (debtPortion * 0.20);
+        taxOnReturns = (taxableEquity * 0.10) + (debtPortion * (taxSlab / 100));
       }
     }
 
@@ -330,7 +342,10 @@ function SIPCalculator() {
       csvContent += `Generated on: ${new Date().toLocaleDateString()}\n\n`;
       
       csvContent += `Investment Details\n`;
-      csvContent += `Fund Category,${fundCategory}\n`;
+      csvContent += `Fund Category,${fundCategory}${isIndexFund ? ' (Index Fund)' : ''}\n`;
+      if (fundCategory === 'hybrid') {
+        csvContent += `Hybrid Type,${hybridType}\n`;
+      }
       if (result.mode === 'sip') {
         csvContent += `Monthly Investment,${formatSmartCurrency(monthlyInvestment, 'INR')}\n`;
         csvContent += `Initial Investment,${formatSmartCurrency(initialInvestment, 'INR')}\n`;
@@ -340,7 +355,11 @@ function SIPCalculator() {
       }
       csvContent += `Investment Duration,${duration} years\n`;
       csvContent += `Expected Return,${expectedReturn}% p.a.\n`;
-      csvContent += `Expense Ratio,${expenseRatio}%\n\n`;
+      csvContent += `Expense Ratio,${expenseRatio}%\n`;
+      if (taxOptimized && (fundCategory === 'debt' || fundCategory === 'hybrid')) {
+        csvContent += `Tax Slab Used,${taxSlab}%\n`;
+      }
+      csvContent += `\n`;
       
       csvContent += `Returns Summary\n`;
       csvContent += `Total Invested,${formatSmartCurrency(result.totalInvested, 'INR')}\n`;
@@ -390,32 +409,36 @@ function SIPCalculator() {
   const getFundCharacteristics = (category) => {
     const characteristics = {
       equity: {
-        name: 'Equity Funds',
+        name: isIndexFund ? 'Equity Index Funds' : 'Equity Funds',
         riskLevel: 'High',
         expectedReturn: '12-15%',
-        description: 'Invest primarily in stocks. Higher risk, higher potential returns.',
-        taxTreatment: 'LTCG: 10% above ₹1L, STCG: 15%'
+        description: isIndexFund 
+          ? 'Low-cost passive funds tracking market indices. Minimal fund manager risk.'
+          : 'Invest primarily in stocks. Higher risk, higher potential returns.',
+        taxTreatment: 'LTCG: 10% above ₹1L per year, STCG: 15%'
       },
       debt: {
         name: 'Debt Funds',
         riskLevel: 'Low to Medium',
         expectedReturn: '6-9%',
         description: 'Invest in bonds and fixed income securities. Lower risk, stable returns.',
-        taxTreatment: 'As per income tax slab rates'
+        taxTreatment: `As per income tax slab (${taxSlab}% assumed). Post-April 2023 rules.`
       },
       hybrid: {
-        name: 'Hybrid Funds',
-        riskLevel: 'Medium',
+        name: `${hybridType === 'equity-oriented' ? 'Aggressive' : 'Conservative'} Hybrid Funds`,
+        riskLevel: hybridType === 'equity-oriented' ? 'Medium to High' : 'Low to Medium',
         expectedReturn: '8-12%',
-        description: 'Mix of equity and debt. Balanced risk and return profile.',
-        taxTreatment: 'Based on equity-debt allocation'
+        description: hybridType === 'equity-oriented'
+          ? 'Equity-oriented hybrid with 65%+ equity allocation for growth.'
+          : 'Debt-oriented hybrid with 65%+ debt allocation for stability.',
+        taxTreatment: `Equity portion: 10% above ₹1L. Debt portion: ${taxSlab}% slab rate.`
       },
       elss: {
-        name: 'ELSS',
+        name: 'ELSS (Tax Saver)',
         riskLevel: 'High',
         expectedReturn: '12-15%',
-        description: 'Equity funds with 3-year lock-in. Tax deduction up to ₹1.5L under 80C.',
-        taxTreatment: 'LTCG: 10% above ₹1L, 3-year lock-in'
+        description: 'Equity funds with 3-year mandatory lock-in. Tax deduction up to ₹1.5L under 80C.',
+        taxTreatment: 'LTCG: 10% above ₹1L per year. 3-year lock-in period.'
       }
     };
     return characteristics[category] || characteristics.equity;
@@ -762,6 +785,58 @@ function SIPCalculator() {
                   <option value="elss">ELSS - Tax Saver (12%)</option>
                 </select>
               </div>
+              
+              {/* Index Fund Toggle */}
+              <div style={{ marginTop: '1rem' }}>
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={isIndexFund}
+                    onChange={(e) => {
+                      setIsIndexFund(e.target.checked);
+                      const category = fundCategories[fundCategory];
+                      setExpenseRatio(e.target.checked ? (fundCategory === 'equity' ? 0.3 : 0.2) : category.expenseRatio);
+                    }}
+                  />
+                  <span className="checkmark"></span>
+                  Index Fund (Low-cost passive investing)
+                  <InfoTooltip content="Index funds track market indices with minimal expenses (0.1-0.5% vs 1-2.5% for active funds)" />
+                </label>
+              </div>
+              
+              {/* Hybrid Fund Type */}
+              {fundCategory === 'hybrid' && (
+                <div style={{ marginTop: '1rem' }}>
+                  <label>
+                    Hybrid Fund Type
+                    <InfoTooltip content="Equity-oriented: >65% equity allocation. Debt-oriented: >65% debt allocation" />
+                  </label>
+                  <select
+                    value={hybridType}
+                    onChange={(e) => setHybridType(e.target.value)}
+                    className="select-input"
+                    style={{ marginTop: '0.5rem' }}
+                  >
+                    <option value="equity-oriented">Equity-Oriented (65%+ Equity)</option>
+                    <option value="debt-oriented">Debt-Oriented (65%+ Debt)</option>
+                  </select>
+                </div>
+              )}
+              
+              {/* ELSS Lock-in Warning */}
+              {fundCategory === 'elss' && (
+                <div style={{ 
+                  marginTop: '1rem', 
+                  padding: '0.75rem', 
+                  backgroundColor: '#fef3c7', 
+                  border: '1px solid #f59e0b',
+                  borderRadius: '6px',
+                  fontSize: '0.9rem',
+                  color: '#92400e'
+                }}>
+                  ⚠️ <strong>ELSS Lock-in:</strong> 3-year mandatory lock-in period. No partial withdrawals allowed.
+                </div>
+              )}
             </div>
 
             {/* Expense Ratio */}
@@ -904,6 +979,33 @@ function SIPCalculator() {
                 Include Tax Calculations
                 <InfoTooltip content="Calculate LTCG/STCG tax impact based on fund category and holding period" />
               </label>
+              
+              {/* Tax Slab Selector for Debt Funds */}
+              {taxOptimized && (fundCategory === 'debt' || fundCategory === 'hybrid') && (
+                <div style={{ marginTop: '1rem', marginLeft: '2rem' }}>
+                  <label>
+                    Your Income Tax Slab
+                    <InfoTooltip content="Debt fund gains are taxed as per your income tax slab (post-April 2023 rules)" />
+                  </label>
+                  <select
+                    value={taxSlab}
+                    onChange={(e) => setTaxSlab(parseInt(e.target.value))}
+                    className="select-input"
+                    style={{ marginTop: '0.5rem', width: '200px' }}
+                  >
+                    <option value={5}>5% (Income up to ₹3L)</option>
+                    <option value={20}>20% (Income ₹3-7L)</option>
+                    <option value={30}>30% (Income ₹7L+)</option>
+                  </select>
+                  <div style={{ 
+                    fontSize: '0.85rem', 
+                    color: '#666', 
+                    marginTop: '0.5rem'
+                  }}>
+                    💡 Tax laws subject to change. Assumptions based on current regulations.
+                  </div>
+                </div>
+              )}
 
               <label className="checkbox-label">
                 <input
@@ -1181,11 +1283,16 @@ function SIPCalculator() {
           </div>
           
           <div>
-            <h4 style={{ color: '#92400e', marginBottom: '0.5rem' }}>Tax Implications</h4>
-            <p>• <strong>LTCG Tax:</strong> 10% on equity funds for gains above ₹1 lakh per year (holding period > 1 year)</p>
-            <p>• <strong>STCG Tax:</strong> 15% on equity funds for gains from investments held less than 1 year</p>
-            <p>• <strong>Debt Fund Taxation:</strong> As per applicable income tax slab rates regardless of holding period</p>
-            <p>• <strong>ELSS Funds:</strong> 3-year lock-in period with tax deduction benefits under Section 80C up to ₹1.5 lakh</p>
+            <h4 style={{ color: '#92400e', marginBottom: '0.5rem' }}>Tax Implications (Updated Rules)</h4>
+            <p>• <strong>Equity Fund LTCG:</strong> 10% on gains above ₹1 lakh per financial year (holding period > 1 year)</p>
+            <p>• <strong>Equity Fund STCG:</strong> 15% on gains from investments held less than 1 year</p>
+            <p>• <strong>Debt Fund Taxation:</strong> As per income tax slab rates for all gains (post-April 2023 rules)</p>
+            <p>• <strong>ELSS Funds:</strong> 3-year mandatory lock-in + tax deduction benefits under Section 80C up to ₹1.5 lakh</p>
+            <p>• <strong>Hybrid Funds:</strong> Pro-rata taxation based on equity vs debt allocation and fund type</p>
+            <p>• <strong>Index Funds:</strong> Same tax treatment as underlying category but with lower expense burden</p>
+            <p style={{ fontSize: '0.9rem', color: '#b45309', marginTop: '0.5rem' }}>
+              💡 <strong>Important:</strong> Tax laws are subject to change. Current calculations based on regulations as of 2023-24.
+            </p>
           </div>
 
           <div>
