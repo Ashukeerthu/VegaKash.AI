@@ -5,6 +5,7 @@ import { AEOContentSection } from '../../components/AEOContentSection';
 import SEO from '../../components/SEO';
 import Breadcrumb from '../../components/Breadcrumb';
 import InfoTooltip from '../../components/InfoTooltip';
+import ScrollToTop from '../../modules/core/ui/ScrollToTop';
 import { formatSmartCurrency } from '../../utils/helpers';
 import '../../styles/Calculator.css';
 import '../../styles/SEOContent.css';

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
+import ScrollToTop from '../modules/core/ui/ScrollToTop';
 import '../styles/HomeEnhanced.css';
 
 /**
@@ -120,6 +121,7 @@ function Home() {
 
   return (
     <>
+      <ScrollToTop threshold={300} />
       <SEO 
         title="VegaKash.AI - Plan Anything in Seconds with AI | Smart Calculators & Planners"
         description="Intelligent platform offering AI-powered financial and lifestyle planners. From monthly budgeting to event planning and travel costs. Plan better, save more."

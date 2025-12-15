@@ -31,6 +31,7 @@ import {
 import '../../../styles/Calculator.css';
 import '../../../styles/SEOContent.css';
 import '../../../styles/AEOContent.css';
+import ScrollToTop from '../../../modules/core/ui/ScrollToTop';
 
 /**
  * US Loan Payment Calculator - GLOBAL & COUNTRY-SPECIFIC
@@ -171,6 +172,7 @@ function LoanPaymentCalculatorUS() {
 
   return (
     <>
+      <ScrollToTop threshold={300} />
       {/* SEO Tags - Global & Country-Specific */}
       <EnhancedSEO {...seoConfig} />
       <SEO 

@@ -9,6 +9,7 @@ import { calculateMortgage, debounce } from '../../../utils/mortgageCalculator';
 import { getTooltip } from '../../../utils/mortgageTooltips';
 import '../../../styles/Calculator.css';
 import '../../../styles/SEOContent.css';
+import ScrollToTop from '../../../modules/core/ui/ScrollToTop';
 
 /**
  * US Mortgage Calculator - GLOBAL & COUNTRY-SPECIFIC
@@ -131,6 +132,7 @@ function MortgageCalculatorUS() {
 
   return (
     <>
+      <ScrollToTop threshold={300} />
       {/* SEO Tags - Global & Country-Specific */}
       <EnhancedSEO {...seoConfig} />
       <SEO 

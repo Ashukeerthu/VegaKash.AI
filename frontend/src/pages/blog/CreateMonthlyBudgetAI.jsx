@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import SEO from '../../components/SEO';
 import Breadcrumb from '../../components/Breadcrumb';
+import ScrollToTop from '../../modules/core/ui/ScrollToTop';
 import '../../styles/Blog.css';
 
 /**
@@ -51,6 +52,7 @@ function CreateMonthlyBudgetAI() {
   };
   return (
     <>
+      <ScrollToTop threshold={300} />
       <SEO 
         title="How to Create a Monthly Budget Using AI (Global 2025 Guide) | VegaKash.AI"
         description="Learn how to create a monthly budget using AI. A global budgeting guide for the US, UK, India, Canada, and Australia. Smart AI budgeting tips, tools, and methods for 2025."

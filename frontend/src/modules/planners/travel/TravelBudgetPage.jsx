@@ -4,6 +4,7 @@ import TravelForm from './components/TravelForm';
 import TravelSummary from './components/TravelSummary';
 import TravelAIPlan from './components/TravelAIPlan';
 import TravelLoadingScreen from './components/TravelLoadingScreen';
+import ScrollToTop from '../../core/ui/ScrollToTop';
 import './TravelBudget.css';
 
 /**
@@ -464,6 +465,7 @@ function TravelBudgetPage() {
 
   return (
     <>
+      <ScrollToTop threshold={300} />
       <SEO 
         title={pageTitle}
         description={pageDescription}

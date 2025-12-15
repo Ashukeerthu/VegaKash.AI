@@ -7,6 +7,7 @@ import Breadcrumb from '../../../components/Breadcrumb';
 import '../../../styles/Calculator.css';
 import '../../../styles/SEOContent.css';
 import '../../../styles/AEOContent.css';
+import ScrollToTop from '../../../modules/core/ui/ScrollToTop';
 
 /**
  * India Home Loan Eligibility Calculator - GLOBAL & COUNTRY-SPECIFIC
@@ -365,6 +366,7 @@ function HomeLoanEligibilityIndia() {
 
   return (
     <>
+      <ScrollToTop threshold={300} />
       <SEO 
         title="India Home Loan Eligibility Calculator | VegaKash"
         description="Calculate your home loan eligibility in India. Free calculator with FOIR, LTV, processing fees, stamp duty, and GST. Check how much home loan you can get instantly."

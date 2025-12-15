@@ -8,6 +8,7 @@ import InfoTooltip from '../../../components/InfoTooltip';
 import '../../../styles/Calculator.css';
 import '../../../styles/SEOContent.css';
 import '../../../styles/AEOContent.css';
+import ScrollToTop from '../../../modules/core/ui/ScrollToTop';
 
 /**
  * US Savings Growth Calculator - PRODUCTION GRADE
@@ -257,6 +258,7 @@ function SavingsGrowthCalculatorUS() {
 
   return (
     <>
+      <ScrollToTop threshold={300} />
       <EnhancedSEO 
         title={`US Savings Growth Calculator${country ? ` for ${country.toUpperCase()}` : ''}`}
         description={`Estimate your savings growth with regular deposits${country ? ` for ${country.toUpperCase()}` : ''}. Free savings calculator.`}

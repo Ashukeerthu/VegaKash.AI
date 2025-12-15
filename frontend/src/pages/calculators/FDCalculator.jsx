@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { formatSmartCurrency } from '../../utils/helpers';
 import { EnhancedSEO } from '../../components/EnhancedSEO';
 import Breadcrumb from '../../components/Breadcrumb';
+import ScrollToTop from '../../modules/core/ui/ScrollToTop';
 import '../../styles/Calculator.css';
 
 /**

@@ -8,6 +8,7 @@ import InfoTooltip from '../../../components/InfoTooltip';
 import '../../../styles/Calculator.css';
 import '../../../styles/SEOContent.css';
 import '../../../styles/AEOContent.css';
+import ScrollToTop from '../../../modules/core/ui/ScrollToTop';
 
 /**
  * US 401(k) Retirement Calculator - PRODUCTION GRADE
@@ -215,6 +216,7 @@ function Retirement401kCalculatorUS() {
 
   return (
     <>
+      <ScrollToTop threshold={300} />
       <EnhancedSEO 
         title={`US 401(k) Retirement Calculator${country ? ` for ${country.toUpperCase()}` : ''}`}
         description={`Estimate your 401k retirement savings growth${country ? ` for ${country.toUpperCase()}` : ''}. Plan your retirement with our 401k calculator.`}

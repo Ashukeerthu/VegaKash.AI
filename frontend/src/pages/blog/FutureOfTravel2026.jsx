@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import SEO from '../../components/SEO';
 import Breadcrumb from '../../components/Breadcrumb';
+import ScrollToTop from '../../modules/core/ui/ScrollToTop';
 import '../../styles/Blog.css';
 
 /**
@@ -16,6 +17,7 @@ function FutureOfTravel2026() {
 
   return (
     <>
+      <ScrollToTop threshold={300} />
       <SEO 
         title="Future of Travel 2026: How AI Will Redefine Trip Planning Forever | VegaKash.AI"
         description="Discover how AI is transforming travel with smart planning, predictive budgeting, real-time updates, and personalized itineraries. Experience the future of travel in 2026."

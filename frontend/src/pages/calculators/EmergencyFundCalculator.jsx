@@ -3,6 +3,7 @@ import SEO from '../../components/SEO';
 import Breadcrumb from '../../components/Breadcrumb';
 import '../../styles/Calculator.css';
 import '../../styles/Pages.css';
+import ScrollToTop from '../../modules/core/ui/ScrollToTop';
 
 /**
  * Emergency Fund Calculator - Coming Soon
@@ -16,6 +17,7 @@ function EmergencyFundCalculator() {
   
   return (
     <>
+      <ScrollToTop threshold={300} />
       <SEO 
         title="Emergency Fund Calculator - Coming Soon | VegaKash.AI"
         description="Calculate how much emergency fund you need based on your monthly expenses and financial situation. Build financial security."

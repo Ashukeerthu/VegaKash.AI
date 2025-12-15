@@ -2,6 +2,7 @@ import React from 'react';
 import SEO from '../components/SEO';
 import Breadcrumb from '../components/Breadcrumb';
 import { Link } from 'react-router-dom';
+import ScrollToTop from '../modules/core/ui/ScrollToTop';
 import './CalculatorHub.css';
 
 /**
@@ -209,12 +210,14 @@ function CalculatorHub() {
     : calculators.filter(calc => calc.category === selectedCategory);
 
   return (
-    <div className="calculator-hub">
-      <SEO 
-        title="Financial Calculators | VegaKash.AI"
-        description="All financial calculators in one place — EMI, SIP, FD, RD, Car Loan, Income Tax and more."
-        keywords="financial calculators, emi calculator, sip calculator, fd calculator, rd calculator, car loan calculator, income tax calculator"
-        canonical="/calculators"
+    <>
+      <ScrollToTop threshold={300} />
+      <div className="calculator-hub">
+        <SEO 
+          title="Financial Calculators | VegaKash.AI"
+          description="All financial calculators in one place — EMI, SIP, FD, RD, Car Loan, Income Tax and more."
+          keywords="financial calculators, emi calculator, sip calculator, fd calculator, rd calculator, car loan calculator, income tax calculator"
+          canonical="/calculators"
         structuredData={{
           "@graph": [
             {
@@ -313,6 +316,7 @@ function CalculatorHub() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

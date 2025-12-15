@@ -2,6 +2,7 @@ import React from 'react';
 import { Card } from '../../core/ui';
 import { PageLayout } from '../../core/layout';
 import { useSEO } from '../../core/seo';
+import ScrollToTop from '../../core/ui/ScrollToTop';
 
 /**
  * Event Budget Planner - Coming Soon
@@ -19,8 +20,10 @@ function EventBudget() {
   });
 
   return (
-    <PageLayout maxWidth="lg" spacing="large" background="gradient">
-      <Card variant="elevated" padding="large">
+    <>
+      <ScrollToTop threshold={300} />
+      <PageLayout maxWidth="lg" spacing="large" background="gradient">
+        <Card variant="elevated" padding="large">
         <Card.Header 
           title="🎉 Event Budget Planner"
           subtitle="Coming Soon"
@@ -59,8 +62,9 @@ function EventBudget() {
             </div>
           </div>
         </Card.Body>
-      </Card>
-    </PageLayout>
+        </Card>
+      </PageLayout>
+    </>
   );
 }
 

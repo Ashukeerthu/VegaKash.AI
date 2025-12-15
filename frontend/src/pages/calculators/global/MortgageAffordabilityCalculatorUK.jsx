@@ -7,6 +7,7 @@ import Breadcrumb from '../../../components/Breadcrumb';
 import '../../../styles/Calculator.css';
 import '../../../styles/SEOContent.css';
 import '../../../styles/AEOContent.css';
+import ScrollToTop from '../../../modules/core/ui/ScrollToTop';
 
 /**
  * UK Mortgage Affordability Calculator - GLOBAL & COUNTRY-SPECIFIC
@@ -102,6 +103,7 @@ function MortgageAffordabilityCalculatorUK() {
 
   return (
     <>
+      <ScrollToTop threshold={300} />
       <SEO 
         title="UK Mortgage Affordability Calculator | Free Online Tool | VegaKash"
         description="Calculate how much mortgage you can afford in the UK. Free mortgage affordability calculator with instant results. Estimate monthly payments, LTV, and stamp duty."

@@ -2,6 +2,7 @@
 import SEO from '../../components/SEO';
 import Breadcrumb from '../../components/Breadcrumb';
 import '../../styles/Calculator.css';
+import ScrollToTop from '../../modules/core/ui/ScrollToTop';
 
 /**
  * Income Tax Calculator - Coming Soon
@@ -15,6 +16,7 @@ function IncomeTaxCalculator() {
   
   return (
     <>
+      <ScrollToTop threshold={300} />
       <SEO 
         title="Income Tax Calculator - Coming Soon | VegaKash.AI"
         description="Compare old vs new tax regime and calculate income tax for FY 2024-25. Smart tax planning tool coming soon."

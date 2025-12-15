@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import SEO from '../../components/SEO';
 import Breadcrumb from '../../components/Breadcrumb';
+import ScrollToTop from '../../modules/core/ui/ScrollToTop';
 import '../../styles/Blog.css';
 
 /**
@@ -49,6 +50,7 @@ function BlogIndex() {
 
   return (
     <>
+      <ScrollToTop threshold={300} />
       <SEO 
         title="Financial Blog & Learning Articles | VegaKash.AI"
         description="Learn about personal finance, budgeting, investing, and money management. Expert articles on AI budgeting, financial calculators, and smart money strategies."

@@ -8,6 +8,7 @@ import InfoTooltip from '../../../components/InfoTooltip';
 import '../../../styles/Calculator.css';
 import '../../../styles/SEOContent.css';
 import '../../../styles/AEOContent.css';
+import ScrollToTop from '../../../modules/core/ui/ScrollToTop';
 
 /**
  * UK Savings Account Interest Calculator - PRODUCTION GRADE
@@ -273,6 +274,7 @@ function SavingsInterestCalculatorUK() {
 
   return (
     <>
+      <ScrollToTop threshold={300} />
       {/* SEO Tags - Global & Country-Specific */}
       <EnhancedSEO {...seoConfig} />
       <SEO 

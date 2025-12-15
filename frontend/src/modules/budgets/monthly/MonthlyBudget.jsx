@@ -9,6 +9,7 @@ import DashboardCharts from '../../../components/Dashboard';
 import SmartRecommendations from '../../../components/SmartRecommendations';
 import { calculateSummary, generateAIPlan, exportPDF } from '../../../services/api';
 import { trackEvent } from '../../../components/GoogleAnalytics';
+import ScrollToTop from '../../core/ui/ScrollToTop';
 import '../../../styles/SEOContent.css';
 // MIGRATED: Modular structure from modules/budgets/monthly/
 
@@ -165,6 +166,7 @@ function MonthlyBudget() {
 
   return (
     <>
+      <ScrollToTop threshold={300} />
       <SEO 
         title="AI Budget Planner | VegaKash.AI"
         description="Plan your monthly budget using AI — works globally for USD, GBP, INR, CAD and more."

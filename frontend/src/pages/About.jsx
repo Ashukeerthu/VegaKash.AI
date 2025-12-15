@@ -1,6 +1,7 @@
 import React from 'react';
 import SEO from '../components/SEO';
 import Breadcrumb from '../components/Breadcrumb';
+import ScrollToTop from '../modules/core/ui/ScrollToTop';
 import '../styles/Pages.css';
 
 function About() {
@@ -25,6 +26,7 @@ function About() {
 
   return (
     <>
+      <ScrollToTop threshold={300} />
       <SEO 
         title="About VegaKash.AI - AI-Powered Financial Planning Platform"
         description="Learn about VegaKash.AI, the intelligent financial planning platform helping thousands manage their money better with AI-powered insights."

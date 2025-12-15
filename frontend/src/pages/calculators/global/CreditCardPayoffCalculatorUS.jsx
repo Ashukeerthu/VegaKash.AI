@@ -7,6 +7,7 @@ import Breadcrumb from '../../../components/Breadcrumb';
 import '../../../styles/Calculator.css';
 import '../../../styles/SEOContent.css';
 import '../../../styles/AEOContent.css';
+import ScrollToTop from '../../../modules/core/ui/ScrollToTop';
 
 /**
  * US Credit Card Payoff Calculator - GLOBAL & COUNTRY-SPECIFIC
@@ -54,6 +55,7 @@ function CreditCardPayoffCalculatorUS() {
 
   return (
     <>
+      <ScrollToTop threshold={300} />
       <EnhancedSEO 
         title={`US Credit Card Payoff Calculator${country ? ` for ${country.toUpperCase()}` : ''}`}
         description={`Calculate how long it will take to pay off your credit card debt and total interest${country ? ` for ${country.toUpperCase()}` : ''}. Free, fast, accurate payoff calculator.`}

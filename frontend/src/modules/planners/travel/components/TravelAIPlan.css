@@ -1196,17 +1196,25 @@
 
 .activity-rich-details {
   background: linear-gradient(135deg, #f0f4ff 0%, #f7fafc 100%);
-  padding: 15px;
+  padding: 12px 14px;
   border-radius: 8px;
   border-left: 4px solid #667eea;
-  margin: 12px 0 0 0;
+  margin: 10px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .detail-item {
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: #4a5568;
-  line-height: 1.6;
-  margin-bottom: 8px;
+  line-height: 1.5;
+  margin-bottom: 0;
+  padding: 4px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: baseline;
 }
 
 .detail-item:last-child {
@@ -1216,6 +1224,8 @@
 .detail-item strong {
   color: #2d3748;
   font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .activity-actions {

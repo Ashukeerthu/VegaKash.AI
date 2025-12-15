@@ -639,7 +639,7 @@
   margin: 0 auto;
 }
 
-.section-title {
+.blog-index .section-title {
   font-size: 2rem;
   color: #0d47a1;
   margin-bottom: 2rem;
@@ -647,7 +647,7 @@
 }
 
 /* Featured Posts */
-.featured-posts {
+.blog-index .featured-posts {
   margin-bottom: 4rem;
 }
 

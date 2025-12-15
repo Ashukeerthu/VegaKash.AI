@@ -9,6 +9,7 @@ import '../../../styles/Calculator.css';
 import '../../../styles/SEOContent.css';
 import '../../../styles/AEOContent.css';
 import '../../../styles/VATCalculator.css';
+import ScrollToTop from '../../../modules/core/ui/ScrollToTop';
 
 /**
  * UK VAT Calculator - PRODUCTION GRADE
@@ -169,6 +170,7 @@ function VATCalculatorUK() {
 
   return (
     <>
+      <ScrollToTop threshold={300} />
       <EnhancedSEO 
         title={`UK VAT Calculator${country ? ` for ${country.toUpperCase()}` : ''}`}
         description={`Calculate UK VAT - Add or Remove VAT from prices${country ? ` for ${country.toUpperCase()}` : ''}. Free VAT calculator with Standard (20%), Reduced (5%), and Zero (0%) rates.`}

@@ -2,8 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { formatSmartCurrency } from '../../utils/helpers';
 import { EnhancedSEO } from '../../components/EnhancedSEO';
-import Breadcrumb from '../../components/Breadcrumb';
-import '../../styles/Calculator.css';
+import Breadcrumb from '../../components/Breadcrumb';import ScrollToTop from '../../modules/core/ui/ScrollToTop';import '../../styles/Calculator.css';
 
 /**
  * RD Calculator Component - INDIA ONLY

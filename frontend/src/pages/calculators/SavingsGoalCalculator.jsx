@@ -3,6 +3,7 @@ import SEO from '../../components/SEO';
 import Breadcrumb from '../../components/Breadcrumb';
 import '../../styles/Calculator.css';
 import '../../styles/Pages.css';
+import ScrollToTop from '../../modules/core/ui/ScrollToTop';
 
 /**
  * Savings Goal Calculator - Coming Soon
@@ -16,6 +17,7 @@ function SavingsGoalCalculator() {
   
   return (
     <>
+      <ScrollToTop threshold={300} />
       <SEO 
         title="Savings Goal Calculator - Coming Soon | VegaKash.AI"
         description="Plan monthly investments to reach your financial goals. Calculate how much to save for dream purchases, education, or retirement."
