@@ -291,6 +291,10 @@ function SavingsInterestCalculatorUK() {
         <div className="calculator-content">
           <div className="calculator-main-grid">
             <div className="calculator-inputs">
+              <div className="inputs-grid">
+              {/* Account Details Section */}
+              <details open style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.75rem 1rem', background: 'white' }}>
+                <summary style={{ fontWeight: 700, fontSize: '1rem', color: '#334155', cursor: 'pointer', marginBottom: '1rem' }}>Account Details</summary>
               
               {/* Initial Amount */}
               <div className="slider-group">
@@ -500,6 +504,12 @@ function SavingsInterestCalculatorUK() {
                 </div>
               </div>
 
+                </details>
+
+                {/* Interest Settings Section */}
+                <details style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.75rem 1rem', background: 'white' }}>
+                  <summary style={{ fontWeight: 700, fontSize: '1rem', color: '#334155', cursor: 'pointer', marginBottom: '1rem' }}>Interest Settings</summary>
+
               {/* Compounding Frequency */}
               <div className="slider-group">
                 <div className="slider-header">
@@ -619,6 +629,9 @@ function SavingsInterestCalculatorUK() {
                     </div>
                   )}
                 </div>
+              </div>
+
+                </details>
               </div>
 
               {/* Reset Button */}

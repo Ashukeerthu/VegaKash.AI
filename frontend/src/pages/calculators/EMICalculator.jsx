@@ -1,46 +1,132 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
+import { computeEmi, buildAmortization, simulatePrepayment, shockRate } from '../../utils/emiEngine';
+import { exportCalculatorPDF } from '../../utils/pdfExport';
 import { useParams, Link } from 'react-router-dom';
 import { formatSmartCurrency } from '../../utils/helpers';
 import { EnhancedSEO } from '../../components/EnhancedSEO';
 import Breadcrumb from '../../components/Breadcrumb';
+import Tooltip from '../../components/Tooltip';
 import '../../styles/Calculator.css';
+
+// Loan type presets configuration
+const LOAN_PRESETS = {
+  home: { rate: [7, 12], tenure: [10, 30] },
+  car: { rate: [7, 12], tenure: [3, 7] },
+  personal: { rate: [10, 24], tenure: [1, 5] },
+  education: { rate: [7, 12], tenure: [5, 15] }
+};
 
 /**
  * EMI Calculator Component - GLOBAL & COUNTRY-SPECIFIC
  * Calculates Equated Monthly Installment for loans with proper SEO
  */
 function EMICalculator() {
+  const location = useLocation();
   const { country } = useParams(); // From URL if available
   const breadcrumbItems = [
     { label: 'Home', path: '/', icon: true },
     { label: 'Calculators', path: '/calculators' },
     { label: 'EMI Calculator', path: null }
   ];
-  const [loanAmount, setLoanAmount] = useState(1000000);
-  const [interestRate, setInterestRate] = useState(8.5);
-  const [tenure, setTenure] = useState(20);
+  // Initialize from query params if present
+  const params = new URLSearchParams(location.search);
+  const qpAmount = params.get('amount');
+  const qpRate = params.get('rate');
+  const qpTenure = params.get('tenure');
+  const [loanAmount, setLoanAmount] = useState(qpAmount ? Math.max(100000, Math.min(50000000, parseFloat(qpAmount))) : 1000000);
+  const [interestRate, setInterestRate] = useState(qpRate ? Math.max(5, Math.min(20, parseFloat(qpRate))) : 8.5);
+  const [tenure, setTenure] = useState(qpTenure ? Math.max(1, Math.min(30, parseFloat(qpTenure))) : 20);
   const [result, setResult] = useState(null);
   const [amortizationView, setAmortizationView] = useState('yearly'); // 'yearly' or 'monthly'
+  // Prepayment and strategy
+  const [prepayMode, setPrepayMode] = useState('reduceTenure'); // 'reduceEmi' | 'reduceTenure'
+  const [yearlyPrepay, setYearlyPrepay] = useState(0);
+  const [prepayStartYear, setPrepayStartYear] = useState(1);
+  // Floating rate shock
+  const [shockDelta, setShockDelta] = useState(0);
+  // Income indicator
+  const [monthlyIncome, setMonthlyIncome] = useState('');
+  // Loan type presets
+  const [loanType, setLoanType] = useState('home'); // home | car | personal | education
+  // Advanced options toggle
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   // Auto-calculate on mount and whenever values change
   React.useEffect(() => {
     calculateEMI();
-  }, [loanAmount, interestRate, tenure]);
+  }, [loanAmount, interestRate, tenure, loanType]);
+
+  // Memoize prepayment simulation (used in both amortization and summary)
+  const prepaySim = useMemo(() => {
+    const P = parseFloat(loanAmount);
+    const rate = parseFloat(interestRate);
+    const years = parseFloat(tenure);
+    return simulatePrepayment(P, rate, years, yearlyPrepay, prepayStartYear, prepayMode);
+  }, [loanAmount, interestRate, tenure, yearlyPrepay, prepayStartYear, prepayMode]);
+
+  // Compute amortization rows OUTSIDE conditional render (Rules of Hooks)
+  const amortizationRows = useMemo(() => {
+    if (!result) return [];
+    const P = parseFloat(loanAmount);
+    const prepay = prepaySim;
+    
+    if (amortizationView === 'monthly') {
+      return prepay.rows.map((row) => (
+        <tr key={`m-${row.period}`}>
+          <td>{row.period}</td>
+          <td>₹{Math.round(row.emi).toLocaleString('en-IN')}</td>
+          <td>₹{Math.round(row.principal).toLocaleString('en-IN')}</td>
+          <td>₹{Math.round(row.interest).toLocaleString('en-IN')}</td>
+          <td>₹{Math.round(row.balance).toLocaleString('en-IN')}</td>
+        </tr>
+      ));
+    } else {
+      // Yearly view
+      const yearly = [];
+      let currentYear = 1;
+      let yearPrincipal = 0;
+      let yearInterest = 0;
+      let lastBalance = P;
+      prepay.rows.forEach((row, idx) => {
+        const y = Math.ceil(row.period / 12);
+        if (y !== currentYear) {
+          yearly.push(
+            <tr key={`y-${currentYear}`}>
+              <td>{currentYear}</td>
+              <td>₹{Math.round(yearPrincipal).toLocaleString('en-IN')}</td>
+              <td>₹{Math.round(yearInterest).toLocaleString('en-IN')}</td>
+              <td>₹{Math.round(lastBalance).toLocaleString('en-IN')}</td>
+            </tr>
+          );
+          currentYear = y;
+          yearPrincipal = 0;
+          yearInterest = 0;
+        }
+        yearPrincipal += row.principal;
+        yearInterest += row.interest;
+        lastBalance = row.balance;
+        if (idx === prepay.rows.length - 1) {
+          yearly.push(
+            <tr key={`y-${currentYear}`}>
+              <td>{currentYear}</td>
+              <td>₹{Math.round(yearPrincipal).toLocaleString('en-IN')}</td>
+              <td>₹{Math.round(yearInterest).toLocaleString('en-IN')}</td>
+              <td>₹{Math.round(lastBalance).toLocaleString('en-IN')}</td>
+            </tr>
+          );
+        }
+      });
+      return yearly;
+    }
+  }, [result, loanAmount, amortizationView, prepaySim]);
 
   const calculateEMI = () => {
     const P = parseFloat(loanAmount);
-    const r = parseFloat(interestRate) / 12 / 100; // Monthly interest rate
-    const n = parseFloat(tenure) * 12; // Tenure in months
-
-    if (!P || !r || !n || P <= 0 || r < 0 || n <= 0) {
-      return;
-    }
-
-    // EMI Formula: P × r × (1 + r)^n / ((1 + r)^n - 1)
-    const emi = (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
-    const totalAmount = emi * n;
-    const totalInterest = totalAmount - P;
-
+    const rate = parseFloat(interestRate);
+    const years = parseFloat(tenure);
+    const { emi, totalInterest, totalAmount } = computeEmi(P, rate, years);
+    if (!emi) return;
     setResult({
       emi: emi.toFixed(2),
       totalInterest: totalInterest.toFixed(2),
@@ -55,22 +141,15 @@ function EMICalculator() {
     setTenure(20);
   };
 
-  const formatCurrency = (value) => {
-    if (value >= 10000000) {
-      return `₹${(value / 10000000).toFixed(2)} Cr`;
-    } else if (value >= 100000) {
-      return `₹${(value / 100000).toFixed(2)} L`;
-    } else if (value >= 1000) {
-      return `₹${(value / 1000).toFixed(2)} K`;
-    }
-    return `₹${value}`;
-  };
+  // Removed unused formatCurrency. Using formatSmartCurrency across UI.
 
   // SEO configuration for global/country-specific versions
   const seoConfig = {
-    title: country 
-      ? `EMI Calculator for ${country.toUpperCase()}`
-      : 'EMI Calculator - Free Equated Monthly Installment Calculator',
+    title: (country && country.toLowerCase() === 'in')
+      ? 'EMI Calculator India – Home Loan, Car Loan & Personal Loan'
+      : country 
+        ? `EMI Calculator for ${country.toUpperCase()}`
+        : 'EMI Calculator India – Home Loan, Car Loan & Personal Loan',
     description: country
       ? `Calculate EMI for ${country.toUpperCase()} with our free EMI calculator. Get monthly payment, total interest, and amortization schedule.`
       : 'Free EMI calculator to calculate equated monthly installment for home loans, car loans, and personal loans. Get amortization breakdown.',
@@ -87,6 +166,20 @@ function EMICalculator() {
     <>
       {/* SEO Tags - Global & Country-Specific */}
       <EnhancedSEO {...seoConfig} />
+      {/* JSON-LD Schema for FinancialProduct */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FinancialProduct",
+          name: (country && country.toLowerCase() === 'in') ? 'EMI Calculator India' : 'EMI Calculator',
+          applicationCategory: 'FinanceApplication',
+          offers: {
+            "@type": "Offer",
+            price: '0',
+            priceCurrency: 'INR'
+          }
+        })}
+      </script>
       
       <div className="calculator-container">
         <Breadcrumb items={breadcrumbItems} />
@@ -98,7 +191,8 @@ function EMICalculator() {
 
         <div className="calculator-content">
         <div className="calculator-inputs">
-          <div className="slider-group">
+          <div className="inputs-grid">
+            <div className="slider-group">
             <div className="slider-header">
               <label>Loan Amount</label>
               <input
@@ -147,7 +241,7 @@ function EMICalculator() {
             </div>
           </div>
 
-          <div className="slider-group">
+            <div className="slider-group">
             <div className="slider-header">
               <label>Interest Rate (p.a.)</label>
               <input
@@ -245,6 +339,126 @@ function EMICalculator() {
             </div>
           </div>
 
+          {/* Loan Type - Dropdown (compact) */}
+          <div className="slider-group">
+            <div className="slider-header">
+              <label>Loan Type</label>
+              <select
+                className="input-select"
+                value={loanType}
+                onChange={(e)=>{
+                  const t = e.target.value;
+                  setLoanType(t);
+                  const preset = LOAN_PRESETS[t];
+                  setInterestRate(Math.min(Math.max(interestRate, preset.rate[0]), preset.rate[1]));
+                  setTenure(Math.min(Math.max(tenure, preset.tenure[0]), preset.tenure[1]));
+                }}
+              >
+                <option value="home">Home Loan</option>
+                <option value="car">Car Loan</option>
+                <option value="personal">Personal Loan</option>
+                <option value="education">Education Loan</option>
+              </select>
+            </div>
+          </div>
+          </div>{/* End inputs-grid */}
+
+          {/* Advanced Options Toggle */}
+          <div style={{textAlign:'center',marginTop:'0.75rem'}}>
+            <button 
+              className="btn-secondary" 
+              onClick={()=>setShowAdvanced(!showAdvanced)}
+              style={{fontSize:'0.82rem',padding:'0.5rem 1rem'}}
+            >
+              {showAdvanced ? '▲ Hide' : '▼ Show'} Advanced Options
+            </button>
+          </div>
+
+          {showAdvanced && (
+            <div className="advanced-section">
+            <>
+          {/* Income Indicator */}
+          <div className="slider-group">
+            <div className="slider-header">
+              <label>Monthly Income (INR)</label>
+              <input
+                type="text"
+                value={monthlyIncome ? `₹${parseInt(monthlyIncome).toLocaleString('en-IN')}` : ''}
+                onChange={(e)=>{
+                  const v=e.target.value.replace(/[₹,\s]/g,'');
+                  setMonthlyIncome(v);
+                }}
+                placeholder="e.g., ₹1,00,000"
+                className="input-display"
+              />
+            </div>
+          </div>
+
+          {/* Prepayment Simulator */}
+          <div className="slider-group">
+            <div className="slider-header">
+              <label>Prepayment Simulator</label>
+            </div>
+            <div className="toggle-row" style={{gap:'0.5rem'}}>
+              <span>Strategy:</span>
+              <button className={`tab-btn ${prepayMode==='reduceTenure'?'active':''}`} onClick={()=>setPrepayMode('reduceTenure')}>Reduce Tenure</button>
+              <button className={`tab-btn ${prepayMode==='reduceEmi'?'active':''}`} onClick={()=>setPrepayMode('reduceEmi')}>Reduce EMI</button>
+            </div>
+            <div className="slider-header">
+              <label>Yearly Prepayment</label>
+              <span className="input-value">₹{yearlyPrepay.toLocaleString('en-IN')}</span>
+            </div>
+            <input
+              type="range"
+              min="0"
+              max="500000"
+              step="10000"
+              value={yearlyPrepay}
+              onChange={(e)=>setYearlyPrepay(parseFloat(e.target.value))}
+              className="slider"
+            />
+            <div className="slider-labels"><span>₹0</span><span>₹5L</span></div>
+            <div className="slider-header">
+              <label>Start Year</label>
+              <span className="input-value">Year {prepayStartYear}</span>
+            </div>
+            <input
+              type="range"
+              min="1"
+              max={Math.max(1, parseFloat(tenure))}
+              step="1"
+              value={prepayStartYear}
+              onChange={(e)=>setPrepayStartYear(parseInt(e.target.value))}
+              className="slider"
+            />
+            <div className="slider-labels"><span>Year 1</span><span>Year {tenure}</span></div>
+          </div>
+
+          {/* Floating Rate Shock */}
+          <div className="slider-group">
+            <div className="slider-header">
+              <label>Interest Rate Shock</label>
+            </div>
+            <div className="shock-row" style={{display:'flex',gap:'0.5rem',flexWrap:'wrap'}}>
+              {[0,0.5,1,2].map(d=>{
+                // Determine severity class for color coding
+                const severityClass = d === 0 ? 'shock-none' : d <= 1 ? 'shock-low' : 'shock-high';
+                return (
+                  <button 
+                    key={d} 
+                    className={`tab-btn ${shockDelta===d?`active ${severityClass}`:''}`} 
+                    onClick={()=>setShockDelta(d)}
+                  >
+                    {d===0? 'No Shock' : `+${d}%`}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+            </>
+            </div>
+          )}
+
           {/* Reset Button Inside Input Box */}
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
             <button onClick={handleReset} className="btn-reset">
@@ -261,7 +475,10 @@ function EMICalculator() {
             <h2>Your Loan Breakdown</h2>
             <div className="result-cards">
               <div className="result-card highlight">
-                <div className="result-label">Monthly EMI</div>
+                <div className="result-label">
+                  Monthly EMI
+                  <Tooltip text="Your fixed monthly payment including interest and principal.">ℹ️</Tooltip>
+                </div>
                 <div className={`result-value ${String(result.emi).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.emi)}</div>
               </div>
 
@@ -271,7 +488,10 @@ function EMICalculator() {
               </div>
 
               <div className="result-card">
-                <div className="result-label">Total Interest</div>
+                <div className="result-label">
+                  Total Interest
+                  <Tooltip text="Sum of all interest over the full loan. Longer tenures raise this.">ℹ️</Tooltip>
+                </div>
                 <div className={`result-value ${String(result.totalInterest).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.totalInterest)}</div>
               </div>
 
@@ -303,6 +523,83 @@ function EMICalculator() {
                   <span>Interest: ₹{Number(result.totalInterest).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
                 </div>
               </div>
+              {/* Pie Chart Insight Text */}
+              <div className="pie-insight">
+                <span className="emoji">💡</span>
+                You will pay <strong>{((parseFloat(result.totalInterest) / parseFloat(result.principal)) * 100).toFixed(0)}%</strong> of the loan amount as interest over <strong>{tenure}</strong> years
+              </div>
+            </div>
+
+            {/* Confidence Meter & EMI to Income */}
+            <div className="confidence-row" style={{marginTop:'1rem'}}>
+              {(() => {
+                const emiNum = parseFloat(result.emi);
+                const incomeNum = parseFloat(monthlyIncome || '0');
+                const ratio = incomeNum>0 ? (emiNum / incomeNum) : 0;
+                let status = 'Safe';
+                let statusClass = 'safe';
+                if (ratio > 0.5) { status = 'Risky'; statusClass = 'risky'; }
+                else if (ratio > 0.4) { status = 'Stretching'; statusClass = 'stretching'; }
+                return (
+                  <div className="income-bar-wrapper">
+                    <div className="income-bar-label">
+                      <span>
+                        <strong>EMI as % of Income:</strong> {incomeNum>0 ? (ratio*100).toFixed(1)+'%' : '—'}
+                        <Tooltip text="Banks prefer EMI ≤ 40–50% of monthly income for approval.">ℹ️</Tooltip>
+                      </span>
+                      <span className={`income-status-badge ${statusClass}`}>
+                        <span style={{width:8,height:8,borderRadius:'50%',background:'currentColor'}}></span>
+                        {status}
+                      </span>
+                    </div>
+                    {incomeNum > 0 && (
+                      <>
+                        <div className="income-bar-container">
+                          <div 
+                            className={`income-bar-fill ${statusClass}`} 
+                            style={{width:`${Math.min(ratio*100,100)}%`}}
+                          ></div>
+                          <div className="income-bar-zones"></div>
+                        </div>
+                        <div className="confidence-markers">
+                          <span className="confidence-zone">Safe (0-40%)</span>
+                          <span className="confidence-zone">Stretching (40-50%)</span>
+                          <span className="confidence-zone">Risky (&gt;50%)</span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                );
+              })()}
+            </div>
+
+            {/* Shock Summary */}
+            {(() => {
+              const P = parseFloat(loanAmount); const rate = parseFloat(interestRate); const years = parseFloat(tenure);
+              const shock = shockRate(P, rate, years, shockDelta);
+              if (!shock.base.emi || shockDelta === 0) return null;
+              // Use high-shock class for +2% rate increase
+              const shockClass = shockDelta >= 2 ? 'shock-summary high-shock' : 'shock-summary';
+              return (
+                <div className={shockClass} style={{marginTop:'1rem'}}>
+                  <div><strong>New EMI with +{shockDelta}% shock:</strong> {formatSmartCurrency(shock.shocked.emi)}</div>
+                  <div><strong>Extra interest payable:</strong> {formatSmartCurrency(shock.extraInterest)}</div>
+                </div>
+              );
+            })()}
+
+            {/* Share & Copy */}
+            <div style={{display:'flex',gap:'0.5rem',marginTop:'1rem',flexWrap:'wrap'}}>
+              <button className="tab-btn" onClick={() => {
+                const text = `EMI: ${formatSmartCurrency(result.emi)}\nPrincipal: ${formatSmartCurrency(result.principal)}\nInterest: ${formatSmartCurrency(result.totalInterest)}\nTotal: ${formatSmartCurrency(result.totalAmount)}`;
+                navigator.clipboard?.writeText(text);
+              }}>Copy Summary</button>
+              <a className="tab-btn" href={`https://wa.me/?text=${encodeURIComponent('EMI Summary\n'+
+                'EMI: '+formatSmartCurrency(result.emi)+'\n'+
+                'Principal: '+formatSmartCurrency(result.principal)+'\n'+
+                'Interest: '+formatSmartCurrency(result.totalInterest)+'\n'+
+                'Total: '+formatSmartCurrency(result.totalAmount))}`} target="_blank" rel="noopener noreferrer">Share WhatsApp</a>
+              <button className="tab-btn" onClick={() => exportCalculatorPDF('.calculator-container','emi-summary.pdf')}>Download PDF</button>
             </div>
           </div>
         )}
@@ -336,69 +633,20 @@ function EMICalculator() {
                   </tr>
                 </thead>
                 <tbody>
-                  {(() => {
-                    const P = parseFloat(loanAmount);
-                    const r = parseFloat(interestRate) / 12 / 100;
-                    const totalMonths = parseFloat(tenure) * 12;
-                    const emi = parseFloat(result.emi);
-                    let balance = P;
-                    const rows = [];
-                    
-                    if (amortizationView === 'yearly') {
-                      // Yearly view
-                      for (let year = 1; year <= tenure; year++) {
-                        let yearlyPrincipal = 0;
-                        let yearlyInterest = 0;
-                        const startBalance = balance;
-                        
-                        const monthsInYear = year === tenure ? (totalMonths % 12 || 12) : 12;
-                        
-                        for (let month = 1; month <= monthsInYear; month++) {
-                          if (balance <= 0) break;
-                          
-                          const interestPayment = balance * r;
-                          const principalPayment = Math.min(emi - interestPayment, balance);
-                          
-                          yearlyPrincipal += principalPayment;
-                          yearlyInterest += interestPayment;
-                          balance = Math.max(0, balance - principalPayment);
-                        }
-                        
-                        rows.push(
-                          <tr key={year}>
-                            <td>{year}</td>
-                            <td>₹{Math.round(yearlyPrincipal).toLocaleString('en-IN')}</td>
-                            <td>₹{Math.round(yearlyInterest).toLocaleString('en-IN')}</td>
-                            <td>₹{Math.round(balance).toLocaleString('en-IN')}</td>
-                          </tr>
-                        );
-                      }
-                    } else {
-                      // Monthly view - show all months
-                      for (let month = 1; month <= totalMonths; month++) {
-                        if (balance <= 0) break;
-                        
-                        const interestPayment = balance * r;
-                        const principalPayment = Math.min(emi - interestPayment, balance);
-                        
-                        balance = Math.max(0, balance - principalPayment);
-                        
-                        rows.push(
-                          <tr key={month}>
-                            <td>{month}</td>
-                            <td>₹{Math.round(emi).toLocaleString('en-IN')}</td>
-                            <td>₹{Math.round(principalPayment).toLocaleString('en-IN')}</td>
-                            <td>₹{Math.round(interestPayment).toLocaleString('en-IN')}</td>
-                            <td>₹{Math.round(balance).toLocaleString('en-IN')}</td>
-                          </tr>
-                        );
-                      }
-                    }
-                    
-                    return rows;
-                  })()}
+                  {amortizationRows}
                 </tbody>
               </table>
+            </div>
+            {/* Prepayment summary - only show if prepayment is active */}
+            {yearlyPrepay > 0 && (
+              <div className="prepay-summary" style={{marginTop:'1rem'}}>
+                <div><strong>Interest saved:</strong> {formatSmartCurrency(prepaySim.interestSaved)}</div>
+                <div><strong>Years reduced:</strong> {prepaySim.yearsReduced.toFixed(2)}</div>
+                {prepayMode==='reduceEmi' && <div><strong>EMI change:</strong> {formatSmartCurrency(prepaySim.emiChanged)}</div>}
+              </div>
+            )}
+            <div className="disclaimer" style={{ marginTop: '1rem', fontSize: '0.9rem', color: '#6b7280' }}>
+              ⚠️ Indicative only. Actual EMI may vary by lender.
             </div>
           </div>
         )}
@@ -533,6 +781,12 @@ function EMICalculator() {
             <li><strong>Analyze Breakdown:</strong> Check the amortization schedule to see year-wise principal and interest payments</li>
             <li><strong>Adjust & Compare:</strong> Modify values to find the optimal loan structure for your needs</li>
           </ol>
+        </div>
+
+        {/* Answer Block for AEO */}
+        <div className="content-block">
+          <h2>EMI on ₹10 Lakh Home Loan for 20 Years</h2>
+          <p>At 8.5% interest, EMI is approximately ₹8,678.</p>
         </div>
 
         <div className="content-block">

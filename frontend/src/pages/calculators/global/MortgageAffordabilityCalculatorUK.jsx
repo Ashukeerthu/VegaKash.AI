@@ -120,6 +120,11 @@ function MortgageAffordabilityCalculatorUK() {
         <div className="calculator-content">
           <div className="calculator-main-grid">
             <div className="calculator-inputs">
+              <div className="inputs-grid">
+              {/* Income & Expenses Section */}
+              <details open style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.75rem 1rem', background: 'white' }}>
+                <summary style={{ fontWeight: 700, fontSize: '1rem', color: '#334155', cursor: 'pointer', marginBottom: '1rem' }}>Income & Expenses</summary>
+
               <div className="slider-group">
                 <div className="slider-header">
                   <label>Annual Income</label>
@@ -263,6 +268,11 @@ function MortgageAffordabilityCalculatorUK() {
                   <span>£10k</span>
                 </div>
               </div>
+                </details>
+
+                {/* Property Details Section */}
+                <details style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.75rem 1rem', background: 'white' }}>
+                  <summary style={{ fontWeight: 700, fontSize: '1rem', color: '#334155', cursor: 'pointer', marginBottom: '1rem' }}>Property Details</summary>
 
               <div className="slider-group">
                 <div className="slider-header">
@@ -358,6 +368,8 @@ function MortgageAffordabilityCalculatorUK() {
                   <span>5 Yrs</span>
                   <span>40 Yrs</span>
                 </div>
+              </div>
+                </details>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>

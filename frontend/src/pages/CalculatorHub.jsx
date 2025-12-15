@@ -190,13 +190,13 @@ function CalculatorHub() {
       comingSoon: true
     },
     {
-      id: 'home-loan-affordability',
-      title: 'Home Loan Affordability (India)',
+      id: 'home-loan-eligibility',
+      title: 'Home Loan Eligibility (India)',
       description: 'Calculate home loan eligibility with bank-specific FOIR, approval probability, and RBI-compliant LTV calculations',
       icon: '🏡',
       category: 'Loans',
       priority: 'high',
-      route: '/in/calculators/home-loan-affordability',
+      route: '/india/calculators/home-loan-eligibility',
       region: 'India'
     }
   ];

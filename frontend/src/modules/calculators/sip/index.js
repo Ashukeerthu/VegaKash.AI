@@ -1,5 +1,2 @@
-/**
- * SIP Calculator Module Export (Aliased to enhanced Pages implementation)
- */
-
-export { default } from '../../../pages/calculators/SIPCalculator';
+// Deprecated: SIP calculator now served from pages/calculators/SIPCalculator.jsx
+export default function DeprecatedSIP() { return null; }

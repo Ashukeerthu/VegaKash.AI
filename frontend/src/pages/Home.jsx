@@ -65,7 +65,7 @@ function Home() {
     { icon: '🏦', title: 'FD Calculator', path: '/calculators/fd' },
     { icon: '📅', title: 'RD Calculator', path: '/calculators/rd' },
     { icon: '📈', title: 'SIP Calculator', path: '/calculators/sip' },
-    { icon: '🏠', title: 'EMI Calculator', path: '/calculators/emi' },
+    { icon: '🏠', title: 'EMI Calculator', path: '/in/calculators/emi' },
     { icon: '🇺🇸', title: 'US Loan Calculator', path: '/us/calculators/loan' },
     { icon: '📊', title: 'Income Tax Calculator', path: '/calculators/tax' }
   ];

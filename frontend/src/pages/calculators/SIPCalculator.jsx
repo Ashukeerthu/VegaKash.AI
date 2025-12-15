@@ -487,21 +487,26 @@ function SIPCalculator() {
 
         <div className="calculator-content">
           <div className="calculator-inputs">
-            {/* Investment Mode Tabs */}
-          <div className="amortization-tabs" style={{ marginBottom: '2rem' }}>
-            <button 
-              className={`tab-btn ${investmentMode === 'sip' ? 'active' : ''}`}
-              onClick={() => setInvestmentMode('sip')}
-            >
-              SIP
-            </button>
-            <button 
-              className={`tab-btn ${investmentMode === 'lumpsum' ? 'active' : ''}`}
-              onClick={() => setInvestmentMode('lumpsum')}
-            >
-              Lumpsum
-            </button>
-          </div>
+            <div className="inputs-grid">
+            {/* Investment Parameters Section */}
+            <details open style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.75rem 1rem', background: 'white' }}>
+              <summary style={{ fontWeight: 700, fontSize: '1rem', color: '#334155', cursor: 'pointer', marginBottom: '1rem' }}>Investment Parameters</summary>
+              
+              {/* Investment Mode Tabs */}
+              <div className="amortization-tabs" style={{ marginBottom: '2rem' }}>
+                <button 
+                  className={`tab-btn ${investmentMode === 'sip' ? 'active' : ''}`}
+                  onClick={() => setInvestmentMode('sip')}
+                >
+                  SIP
+                </button>
+                <button 
+                  className={`tab-btn ${investmentMode === 'lumpsum' ? 'active' : ''}`}
+                  onClick={() => setInvestmentMode('lumpsum')}
+                >
+                  Lumpsum
+                </button>
+              </div>
 
           {/* SIP Mode Inputs */}
           {investmentMode === 'sip' && (
@@ -757,26 +762,14 @@ function SIPCalculator() {
               <span>40 Yrs</span>
             </div>
           </div>
+            </details>
 
-          {/* Enhanced Features Section */}
-          <div className="advanced-options" style={{ 
-            marginTop: '2rem', 
-            padding: '1.5rem', 
-            backgroundColor: '#f8f9fa', 
-            borderRadius: '12px',
-            border: '2px solid #e9ecef'
-          }}>
-            <h3 style={{ 
-              color: '#495057', 
-              marginBottom: '1.5rem',
-              fontSize: '1.25rem',
-              fontWeight: '600'
-            }}>
-              🎯 Advanced Options
-            </h3>
+            {/* Advanced Options Section */}
+            <details style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.75rem 1rem', background: 'white', marginTop: '0.75rem' }}>
+              <summary style={{ fontWeight: 700, fontSize: '1rem', color: '#334155', cursor: 'pointer', marginBottom: '1rem' }}>Advanced Options</summary>
             
             {/* Fund Category Selection */}
-            <div className="slider-group">
+            <div className="slider-group" style={{ marginBottom: '1rem' }}>
               <div className="slider-header">
                 <label>
                   Fund Category
@@ -800,18 +793,19 @@ function SIPCalculator() {
               </div>
               
               {/* Index Fund Toggle */}
-              <div style={{ marginTop: '1rem' }}>
-                <label className="checkbox-label">
-                  <input
-                    type="checkbox"
-                    checked={isIndexFund}
-                    onChange={(e) => {
-                      setIsIndexFund(e.target.checked);
-                      const category = fundCategories[fundCategory];
-                      setExpenseRatio(e.target.checked ? (fundCategory === 'equity' ? 0.3 : 0.2) : category.expenseRatio);
-                    }}
-                  />
-                  <span className="checkmark"></span>
+              <div style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <input
+                  type="checkbox"
+                  id="indexFundToggle"
+                  checked={isIndexFund}
+                  onChange={(e) => {
+                    setIsIndexFund(e.target.checked);
+                    const category = fundCategories[fundCategory];
+                    setExpenseRatio(e.target.checked ? (fundCategory === 'equity' ? 0.3 : 0.2) : category.expenseRatio);
+                  }}
+                  style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                />
+                <label htmlFor="indexFundToggle" style={{ cursor: 'pointer', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                   Index Fund (Low-cost passive investing)
                   <InfoTooltip content="Index funds track market indices with minimal expenses (0.1-0.5% vs 1-2.5% for active funds)" />
                 </label>
@@ -819,8 +813,8 @@ function SIPCalculator() {
               
               {/* Hybrid Fund Type */}
               {fundCategory === 'hybrid' && (
-                <div style={{ marginTop: '1rem' }}>
-                  <label>
+                <div style={{ marginTop: '0.75rem' }}>
+                  <label style={{ fontSize: '0.9rem', color: '#334155', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '0.3rem', marginBottom: '0.5rem' }}>
                     Hybrid Fund Type
                     <InfoTooltip content="Equity-oriented: >65% equity allocation. Debt-oriented: >65% debt allocation" />
                   </label>
@@ -839,12 +833,12 @@ function SIPCalculator() {
               {/* ELSS Lock-in Warning */}
               {fundCategory === 'elss' && (
                 <div style={{ 
-                  marginTop: '1rem', 
+                  marginTop: '0.75rem', 
                   padding: '0.75rem', 
                   backgroundColor: '#fef3c7', 
                   border: '1px solid #f59e0b',
                   borderRadius: '6px',
-                  fontSize: '0.9rem',
+                  fontSize: '0.875rem',
                   color: '#92400e'
                 }}>
                   ⚠️ <strong>ELSS Lock-in:</strong> 3-year mandatory lock-in period. No partial withdrawals allowed.
@@ -853,7 +847,7 @@ function SIPCalculator() {
             </div>
 
             {/* Expense Ratio */}
-            <div className="slider-group">
+            <div className="slider-group" style={{ marginBottom: '1rem' }}>
               <div className="slider-header">
                 <label>
                   Expense Ratio
@@ -892,7 +886,7 @@ function SIPCalculator() {
             </div>
 
             {/* Step-up SIP */}
-            <div className="slider-group">
+            <div className="slider-group" style={{ marginBottom: '1rem' }}>
               <div className="slider-header">
                 <label>
                   Annual Step-up Rate
@@ -931,7 +925,7 @@ function SIPCalculator() {
             </div>
 
             {/* Inflation Rate */}
-            <div className="slider-group">
+            <div className="slider-group" style={{ marginBottom: '1rem' }}>
               <div className="slider-header">
                 <label>
                   Inflation Rate
@@ -970,33 +964,39 @@ function SIPCalculator() {
             </div>
 
             {/* Toggle Options */}
-            <div className="toggle-options" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1.5rem' }}>
-              <label className="checkbox-label">
+            <div className="toggle-options" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #e2e8f0' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <input
                   type="checkbox"
+                  id="showInflation"
                   checked={showInflationAdjusted}
                   onChange={(e) => setShowInflationAdjusted(e.target.checked)}
+                  style={{ width: '18px', height: '18px', cursor: 'pointer' }}
                 />
-                <span className="checkmark"></span>
-                Show Inflation-Adjusted Returns
-                <InfoTooltip content="View real purchasing power of your returns after adjusting for inflation" />
-              </label>
+                <label htmlFor="showInflation" style={{ cursor: 'pointer', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  Show Inflation-Adjusted Returns
+                  <InfoTooltip content="View real purchasing power of your returns after adjusting for inflation" />
+                </label>
+              </div>
 
-              <label className="checkbox-label">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <input
                   type="checkbox"
+                  id="includeTax"
                   checked={taxOptimized}
                   onChange={(e) => setTaxOptimized(e.target.checked)}
+                  style={{ width: '18px', height: '18px', cursor: 'pointer' }}
                 />
-                <span className="checkmark"></span>
-                Include Tax Calculations
-                <InfoTooltip content="Calculate LTCG/STCG tax impact based on fund category and holding period" />
-              </label>
+                <label htmlFor="includeTax" style={{ cursor: 'pointer', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  Include Tax Calculations
+                  <InfoTooltip content="Calculate LTCG/STCG tax impact based on fund category and holding period" />
+                </label>
+              </div>
               
               {/* Tax Slab Selector for Debt Funds */}
               {taxOptimized && (fundCategory === 'debt' || fundCategory === 'hybrid') && (
-                <div style={{ marginTop: '1rem', marginLeft: '2rem' }}>
-                  <label>
+                <div style={{ marginTop: '0.5rem', marginLeft: '2rem' }}>
+                  <label style={{ fontSize: '0.9rem', color: '#334155', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '0.3rem', marginBottom: '0.5rem' }}>
                     Your Income Tax Slab
                     <InfoTooltip content="Debt fund gains are taxed as per your income tax slab (post-April 2023 rules)" />
                   </label>
@@ -1012,24 +1012,28 @@ function SIPCalculator() {
                   </select>
                   <div style={{ 
                     fontSize: '0.85rem', 
-                    color: '#666', 
-                    marginTop: '0.5rem'
+                    color: '#64748b', 
+                    marginTop: '0.5rem',
+                    fontStyle: 'italic'
                   }}>
                     💡 Tax laws subject to change. Assumptions based on current regulations.
                   </div>
                 </div>
               )}
 
-              <label className="checkbox-label">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <input
                   type="checkbox"
+                  id="goalMode"
                   checked={goalMode}
                   onChange={(e) => setGoalMode(e.target.checked)}
+                  style={{ width: '18px', height: '18px', cursor: 'pointer' }}
                 />
-                <span className="checkmark"></span>
-                Goal-based Planning
-                <InfoTooltip content="Calculate required SIP amount to reach a specific financial goal" />
-              </label>
+                <label htmlFor="goalMode" style={{ cursor: 'pointer', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  Goal-based Planning
+                  <InfoTooltip content="Calculate required SIP amount to reach a specific financial goal" />
+                </label>
+              </div>
             </div>
 
             {/* Goal Mode - Target Amount */}
@@ -1086,6 +1090,7 @@ function SIPCalculator() {
                 </div>
               </div>
             )}
+            </details>
           </div>
         </div>
 
@@ -1297,7 +1302,7 @@ function SIPCalculator() {
           
           <div>
             <h4 style={{ color: '#92400e', marginBottom: '0.5rem' }}>Tax Implications (Updated Rules)</h4>
-            <p>• <strong>Equity Fund LTCG:</strong> 10% on gains above ₹1 lakh per financial year (holding period > 1 year)</p>
+            <p>• <strong>Equity Fund LTCG:</strong> 10% on gains above ₹1 lakh per financial year (holding period &gt; 1 year)</p>
             <p>• <strong>Equity Fund STCG:</strong> 15% on gains from investments held less than 1 year</p>
             <p>• <strong>Debt Fund Taxation:</strong> As per income tax slab rates for all gains (post-April 2023 rules)</p>
             <p>• <strong>ELSS Funds:</strong> 3-year mandatory lock-in + tax deduction benefits under Section 80C up to ₹1.5 lakh</p>

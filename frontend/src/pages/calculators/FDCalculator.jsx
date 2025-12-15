@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { formatSmartCurrency } from '../../utils/helpers';
-import CurrencySelector from '../../components/CurrencySelector';
 import { EnhancedSEO } from '../../components/EnhancedSEO';
 import Breadcrumb from '../../components/Breadcrumb';
 import '../../styles/Calculator.css';
@@ -17,38 +16,50 @@ function FDCalculator() {
     { label: 'Calculators', path: '/calculators' },
     { label: 'FD Calculator', path: null }
   ];
-  const [currency, setCurrency] = useState('INR');
+  const currency = 'INR'; // Locked to INR to avoid cross-country mismatch
   const [depositAmount, setDepositAmount] = useState(100000);
   const [interestRate, setInterestRate] = useState(6.5);
   const [tenure, setTenure] = useState(12);
+  const [compounding, setCompounding] = useState('quarterly'); // quarterly | monthly | annual
+  const [isSenior, setIsSenior] = useState(false);
+  const [includeTax, setIncludeTax] = useState(false);
+  const [taxSlab, setTaxSlab] = useState(30);
   const [result, setResult] = useState(null);
 
   // Auto-calculate on mount and whenever values change
   React.useEffect(() => {
     calculateFD();
-  }, [depositAmount, interestRate, tenure]);
+  }, [depositAmount, interestRate, tenure, compounding, isSenior, includeTax, taxSlab]);
 
   const calculateFD = () => {
     const P = parseFloat(depositAmount);
-    const r = parseFloat(interestRate) / 100; // Annual interest rate
+    const baseRate = parseFloat(interestRate);
+    const r = (baseRate + (isSenior ? 0.5 : 0)) / 100; // Annual rate with senior bump
     const t = parseFloat(tenure) / 12; // Convert months to years
 
     if (!P || !r || !t || P <= 0 || r < 0 || t <= 0) {
       return;
     }
 
-    // Compounding frequency - quarterly
-    const n = 4;
+    // Compounding frequency
+    const n = compounding === 'monthly' ? 12 : compounding === 'annual' ? 1 : 4;
 
     // FD Formula: A = P × (1 + r/n)^(n×t)
     const maturityAmount = P * Math.pow(1 + (r / n), n * t);
     const interestEarned = maturityAmount - P;
+    const taxOnInterest = includeTax ? interestEarned * (taxSlab / 100) : 0;
+    const postTaxAmount = maturityAmount - taxOnInterest;
+    const cagr = (Math.pow(maturityAmount / P, 1 / t) - 1) * 100;
 
     setResult({
       maturityAmount: maturityAmount.toFixed(2),
       depositAmount: P.toFixed(2),
       interestEarned: interestEarned.toFixed(2),
-      effectiveRate: (((maturityAmount / P) - 1) * (1 / t) * 100).toFixed(2)
+      taxOnInterest: taxOnInterest.toFixed(2),
+      postTaxAmount: postTaxAmount.toFixed(2),
+      cagr: cagr.toFixed(2),
+      appliedRate: (baseRate + (isSenior ? 0.5 : 0)).toFixed(2),
+      compounding: n
     });
   };
 
@@ -56,23 +67,21 @@ function FDCalculator() {
     setDepositAmount(100000);
     setInterestRate(6.5);
     setTenure(12);
+    setCompounding('quarterly');
+    setIsSenior(false);
+    setIncludeTax(false);
+    setTaxSlab(30);
   };
 
   // SEO configuration for global/country-specific versions
   const seoConfig = {
-    title: country 
-      ? `FD Calculator for ${country.toUpperCase()}`
-      : 'FD Calculator - Free Fixed Deposit Calculator',
-    description: country
-      ? `Calculate FD maturity amount, interest and returns for ${country.toUpperCase()}. Free fixed deposit calculator with detailed breakdown.`
-      : 'Free FD calculator to calculate fixed deposit maturity amount, interest earned and returns. Get accurate breakdown with compounding.',
-    keywords: country
-      ? `FD calculator ${country.toUpperCase()}, fixed deposit, FD interest, maturity amount`
-      : 'FD calculator, fixed deposit calculator, FD interest calculator, maturity amount',
+    title: 'FD Calculator India – Quarterly/Monthly/Annual Compounding with Tax & Senior Citizen',
+    description: 'Calculate India FD maturity with quarterly/monthly/annual compounding, senior citizen extra rate, and optional post-tax returns.',
+    keywords: 'fd calculator, fixed deposit calculator, fd interest calculator, post tax fd returns, senior citizen fd rate',
     tool: 'fd',
-    country: country || undefined,
-    supportedCountries: ['in', 'us', 'uk'],
-    isGlobal: !country,
+    country: 'in',
+    supportedCountries: ['in'],
+    isGlobal: false,
   };
 
   return (
@@ -84,20 +93,21 @@ function FDCalculator() {
         <Breadcrumb items={breadcrumbItems} />
         
         <div className="calculator-header">
-          <h1>{country ? `FD Calculator (${country.toUpperCase()})` : 'FD Calculator'}</h1>
-          <p>Calculate Fixed Deposit maturity amount and interest earned</p>
+          <h1>FD Calculator (India)</h1>
+          <p>Calculate fixed deposit maturity, post-tax amount, and senior citizen benefits</p>
         </div>
 
         <div className="calculator-content">
-        {/* Currency Selector */}
-        <CurrencySelector 
-          selectedCurrency={currency}
-          onCurrencyChange={setCurrency}
-        />
+        {/* Note: FD logic is India-specific; currency locked to INR */}
 
         <div className="calculator-main-grid">
           <div className="calculator-inputs">
-            <div className="slider-group">
+            <div className="inputs-grid">
+            {/* Deposit Details Section */}
+            <details open style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.75rem 1rem', background: 'white' }}>
+              <summary style={{ fontWeight: 700, fontSize: '1rem', color: '#334155', cursor: 'pointer', marginBottom: '1rem' }}>Deposit Details</summary>
+              
+              <div className="slider-group">
             <div className="slider-header">
               <label>Deposit Amount</label>
               <input
@@ -194,7 +204,7 @@ function FDCalculator() {
               <span>15%</span>
             </div>
           </div>
-
+          
           <div className="slider-group">
             <div className="slider-header">
               <label>FD Tenure</label>
@@ -243,7 +253,73 @@ function FDCalculator() {
               <span>120 Mos</span>
             </div>
           </div>
+              </details>
 
+              {/* Additional Options Section */}
+              <details style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.75rem 1rem', background: 'white' }}>
+                <summary style={{ fontWeight: 700, fontSize: '1rem', color: '#334155', cursor: 'pointer', marginBottom: '1rem' }}>Additional Options</summary>
+
+            <div className="slider-group">
+              <div className="slider-header">
+                <label>Compounding Frequency</label>
+              </div>
+              <select
+              value={compounding}
+              onChange={(e) => setCompounding(e.target.value)}
+              className="full-width-select"
+            >
+              <option value="quarterly">Quarterly (Most banks)</option>
+              <option value="monthly">Monthly (some NBFCs)</option>
+              <option value="annual">Annual (simple payout)</option>
+            </select>
+            <div className="slider-labels" style={{ marginTop: '0.75rem' }}>
+              <span>Default: Quarterly</span>
+              <span>India FD standard</span>
+            </div>
+            </div>
+
+          <div className="slider-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <label style={{ fontWeight: 600, color: '#2c3e50' }}>Senior Citizen (add +0.5%)</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, color: '#1e293b' }}>
+              <input
+                type="checkbox"
+                checked={isSenior}
+                onChange={(e) => setIsSenior(e.target.checked)}
+                style={{ width: 18, height: 18 }}
+              />
+              Apply senior citizen additional rate
+            </label>
+          </div>
+
+          <div className="slider-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <label style={{ fontWeight: 600, color: '#2c3e50' }}>Include Tax on Interest</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, color: '#1e293b' }}>
+              <input
+                type="checkbox"
+                checked={includeTax}
+                onChange={(e) => setIncludeTax(e.target.checked)}
+                style={{ width: 18, height: 18 }}
+              />
+              Show post-tax maturity (interest taxed per slab)
+            </label>
+            {includeTax && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontWeight: 600, color: '#2c3e50' }}>Tax Slab</label>
+                <select
+                  value={taxSlab}
+                  onChange={(e) => setTaxSlab(parseInt(e.target.value))}
+                  className="full-width-select"
+                >
+                  <option value={5}>5% (up to ₹5L after deductions)</option>
+                  <option value={20}>20% (middle slab)</option>
+                  <option value={30}>30% (highest slab)</option>
+                </select>
+              </div>
+            )}
+          </div>
+
+          </details>
+          </div>
           {/* Reset Button Inside Input Box */}
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
             <button onClick={handleReset} className="btn-reset">
@@ -264,6 +340,19 @@ function FDCalculator() {
               <div className={`result-value ${String(result.maturityAmount).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.maturityAmount, currency)}</div>
             </div>
 
+            {includeTax && (
+              <div className="result-cards" style={{ marginTop: '0.5rem' }}>
+                <div className="result-card">
+                  <div className="result-label">Tax on Interest</div>
+                  <div className={`result-value ${String(result.taxOnInterest).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.taxOnInterest, currency)}</div>
+                </div>
+                <div className="result-card success">
+                  <div className="result-label">Post-Tax Maturity</div>
+                  <div className={`result-value ${String(result.postTaxAmount).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.postTaxAmount, currency)}</div>
+                </div>
+              </div>
+            )}
+
             <div className="result-cards">
               <div className="result-card">
                 <div className="result-label">Deposit Amount</div>
@@ -273,6 +362,17 @@ function FDCalculator() {
               <div className="result-card">
                 <div className="result-label">Interest Earned</div>
                 <div className={`result-value ${String(result.interestEarned).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.interestEarned, currency)}</div>
+              </div>
+            </div>
+
+            <div className="result-cards" style={{ marginTop: '0.5rem' }}>
+              <div className="result-card">
+                <div className="result-label">Applied Rate (p.a.)</div>
+                <div className="result-value">{result.appliedRate}%</div>
+              </div>
+              <div className="result-card">
+                <div className="result-label">CAGR (effective annual)</div>
+                <div className="result-value">{result.cagr}%</div>
               </div>
             </div>
 

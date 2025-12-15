@@ -4,7 +4,7 @@ Ensures JSON responses from Claude/OpenAI are guaranteed to be valid.
 Uses structured output with Pydantic models.
 """
 from pydantic import BaseModel, Field, field_validator
-from typing import Optional, List
+from typing import List, Dict, Any
 
 
 class PricingBreakdown(BaseModel):
@@ -104,7 +104,7 @@ class ItineraryDay(BaseModel):
     """A single day in the itinerary."""
     day: int = Field(..., description="Day number (1, 2, 3...)", ge=1)
     title: str = Field(..., description="Day title/theme")
-    activities: List[ItineraryActivity] = Field(default_factory=list)
+    activities: List[ItineraryActivity] = Field(default=[])
     summary: str = Field(..., description="Brief summary of the day")
 
 
@@ -126,7 +126,7 @@ class OptimizationResult(BaseModel):
     )
 
 
-def get_pricing_function_schema() -> dict:
+def get_pricing_function_schema() -> Dict[str, Any]:
     """
     Get OpenAI function schema for pricing breakdown.
     Used with functions parameter in chat completion API.
@@ -138,11 +138,11 @@ def get_pricing_function_schema() -> dict:
     }
 
 
-def get_itinerary_function_schema() -> dict:
+def get_itinerary_function_schema() -> Dict[str, Any]:
     """
     Get OpenAI function schema for itinerary generation.
     """
-    schema = {
+    schema: Dict[str, Any] = {
         "name": "generate_travel_itinerary",
         "description": "Generate detailed day-by-day itinerary for a trip",
         "parameters": {
@@ -160,7 +160,7 @@ def get_itinerary_function_schema() -> dict:
     return schema
 
 
-def get_optimization_function_schema() -> dict:
+def get_optimization_function_schema() -> Dict[str, Any]:
     """
     Get OpenAI function schema for budget optimization.
     """

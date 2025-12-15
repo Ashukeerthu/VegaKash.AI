@@ -237,6 +237,10 @@ function Retirement401kCalculatorUS() {
         <div className="calculator-content">
           <div className="calculator-main-grid">
             <div className="calculator-inputs">
+              <div className="inputs-grid">
+              {/* Current Situation Section */}
+              <details open style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.75rem 1rem', background: 'white' }}>
+                <summary style={{ fontWeight: 700, fontSize: '1rem', color: '#334155', cursor: 'pointer', marginBottom: '1rem' }}>Current Situation</summary>
               
               {/* Age & Timeline Section */}
               <div style={{ marginBottom: '2rem', padding: '1.5rem', background: '#f8f9ff', borderRadius: '12px', border: '1px solid #e0e7ff' }}>
@@ -391,6 +395,11 @@ function Retirement401kCalculatorUS() {
                   <span>$500K</span>
                 </div>
               </div>
+                </details>
+
+                {/* Projections Section */}
+                <details style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.75rem 1rem', background: 'white' }}>
+                  <summary style={{ fontWeight: 700, fontSize: '1rem', color: '#334155', cursor: 'pointer', marginBottom: '1rem' }}>Projections</summary>
 
               {/* Contribution Percentage */}
               <div className="slider-group">
@@ -549,6 +558,8 @@ function Retirement401kCalculatorUS() {
                     <option value="roth">Roth 401(k) (Post-tax)</option>
                   </select>
                 </div>
+              </div>
+                </details>
               </div>
 
               {/* Reset Button */}

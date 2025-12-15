@@ -1,18 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { formatSmartCurrency } from '../../utils/helpers';
-import CurrencySelector from '../../components/CurrencySelector';
 import { EnhancedSEO } from '../../components/EnhancedSEO';
 import Breadcrumb from '../../components/Breadcrumb';
 import '../../styles/Calculator.css';
 
 /**
- * RD Calculator Component - GLOBAL & COUNTRY-SPECIFIC
+ * RD Calculator Component - INDIA ONLY
  * Calculates Recurring Deposit maturity amount with proper SEO
+ * 
+ * Production-grade improvements:
+ * - useMemo for calculation (not useEffect)
+ * - INR-locked (India market only)
+ * - Numeric-only state (no string mixing)
+ * - Accessibility with aria-labels
  * 
  * Supports:
  * - Global route: /calculators/rd/
- * - Country routes: /{country}/calculators/rd/
+ * - Country routes: /{country}/calculators/rd/ (for SEO hreflang)
  * - Auto-generated hreflang tags for all country versions
  * - Proper schema markup for calculators
  */
@@ -23,47 +28,54 @@ function RDCalculator() {
     { label: 'Calculators', path: '/calculators' },
     { label: 'RD Calculator', path: null }
   ];
-  const [currency, setCurrency] = useState(country === 'us' ? 'USD' : country === 'uk' ? 'GBP' : 'INR');
+  
+  // Core state - numeric only, always valid numbers
   const [monthlyDeposit, setMonthlyDeposit] = useState(5000);
   const [interestRate, setInterestRate] = useState(6.5);
   const [tenure, setTenure] = useState(12);
-  const [result, setResult] = useState(null);
+  const [isSeniorCitizen, setIsSeniorCitizen] = useState(false);
+  
+  // useMemo for calculation - production-grade React pattern
+  const result = useMemo(() => {
+    const P = Number(monthlyDeposit) || 0;
+    const baseRate = Number(interestRate) || 0;
+    // Senior citizen bonus: +0.5% per year
+    const rate = isSeniorCitizen ? baseRate + 0.5 : baseRate;
+    const r = rate / 100 / 12; // Monthly interest rate
+    const n = Number(tenure) || 0;
 
-  // Auto-calculate on mount and whenever values change
-  React.useEffect(() => {
-    calculateRD();
-  }, [monthlyDeposit, interestRate, tenure]);
-
-  const calculateRD = () => {
-    const P = parseFloat(monthlyDeposit);
-    const r = parseFloat(interestRate) / 100 / 12; // Monthly interest rate
-    const n = parseFloat(tenure); // Tenure in months
-
-    if (!P || !r || !n || P <= 0 || r < 0 || n <= 0) {
-      return;
+    if (P <= 0 || rate <= 0 || n <= 0) {
+      return null;
     }
 
     // RD Formula: M = P × [(1 + r)^n - 1] / r × (1 + r)
-    // This is similar to SIP formula
     const maturityAmount = P * (((Math.pow(1 + r, n) - 1) / r) * (1 + r));
     const totalDeposited = P * n;
     const interestEarned = maturityAmount - totalDeposited;
+    
+    // Total Return % - not an annualized rate, just the percentage return
+    const totalReturnPercent = totalDeposited > 0 
+      ? ((interestEarned / totalDeposited) * 100)
+      : 0;
 
-    setResult({
+    return {
       maturityAmount: maturityAmount.toFixed(2),
       totalDeposited: totalDeposited.toFixed(2),
       interestEarned: interestEarned.toFixed(2),
-      effectiveRate: ((interestEarned / totalDeposited) * 100).toFixed(2)
-    });
-  };
+      totalReturnPercent: totalReturnPercent.toFixed(2),
+      appliedRate: rate.toFixed(2)
+    };
+  }, [monthlyDeposit, interestRate, tenure, isSeniorCitizen]);
 
   const handleReset = () => {
     setMonthlyDeposit(5000);
     setInterestRate(6.5);
     setTenure(12);
+    setIsSeniorCitizen(false);
   };
 
   // SEO configuration for global/country-specific versions
+  // Note: RD calculation is India-only (INR locked), but SEO pages support multiple countries
   const seoConfig = {
     title: country 
       ? `Recurring Deposit (RD) Calculator for ${country.toUpperCase()}`
@@ -94,28 +106,28 @@ function RDCalculator() {
         </div>
 
         <div className="calculator-content">
-          {/* Currency Selector */}
-          <CurrencySelector 
-            selectedCurrency={currency}
-            onCurrencyChange={setCurrency}
-          />
-
           <div className="calculator-main-grid">
             <div className="calculator-inputs">
-              <div className="slider-group">
+              <div className="inputs-grid">
+              {/* Deposit Details Section */}
+              <div style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.75rem 1rem', background: 'white' }}>
+                <div style={{ fontWeight: 700, fontSize: '1rem', color: '#334155', marginBottom: '1rem' }}>Deposit Details</div>
+                
+                <div className="slider-group">
               <div className="slider-header">
-                <label>Monthly Deposit</label>
+                <label htmlFor="monthlyDeposit">Monthly Deposit</label>
                 <input
+                  id="monthlyDeposit"
                   type="text"
                   value={`₹${monthlyDeposit.toLocaleString('en-IN')}`}
                   onChange={(e) => {
                     const val = e.target.value.replace(/[₹,\s]/g, '');
                     if (val === '') {
-                      setMonthlyDeposit('');
+                      setMonthlyDeposit(5000); // Always maintain numeric state
                       return;
                     }
                     const num = parseInt(val);
-                    if (!isNaN(num)) {
+                    if (!isNaN(num) && num >= 500 && num <= 100000) {
                       setMonthlyDeposit(num);
                     }
                   }}
@@ -134,6 +146,7 @@ function RDCalculator() {
                     }
                   }}
                   className="input-display"
+                  aria-label="Monthly deposit amount in INR"
                 />
               </div>
               <input
@@ -144,6 +157,7 @@ function RDCalculator() {
                 value={monthlyDeposit}
                 onChange={(e) => setMonthlyDeposit(parseInt(e.target.value))}
                 className="slider"
+                aria-label="Adjust monthly deposit using slider"
               />
               <div className="slider-labels">
                 <span>₹500</span>
@@ -153,18 +167,19 @@ function RDCalculator() {
 
             <div className="slider-group">
               <div className="slider-header">
-                <label>Interest Rate (p.a.)</label>
+                <label htmlFor="interestRate">Interest Rate (p.a.)</label>
                 <input
+                  id="interestRate"
                   type="text"
                   value={`${interestRate}%`}
                   onChange={(e) => {
                     const val = e.target.value.replace(/[%\s]/g, '');
                     if (val === '') {
-                      setInterestRate('');
+                      setInterestRate(6.5); // Always maintain numeric state
                       return;
                     }
                     const num = parseFloat(val);
-                    if (!isNaN(num)) {
+                    if (!isNaN(num) && num >= 1 && num <= 15) {
                       setInterestRate(num);
                     }
                   }}
@@ -183,6 +198,7 @@ function RDCalculator() {
                     }
                   }}
                   className="input-display"
+                  aria-label="Annual interest rate percentage"
                 />
               </div>
               <input
@@ -193,23 +209,29 @@ function RDCalculator() {
                 value={interestRate}
                 onChange={(e) => setInterestRate(parseFloat(e.target.value))}
                 className="slider"
+                aria-label="Adjust interest rate using slider"
               />
               <div className="slider-labels">
                 <span>1%</span>
                 <span>15%</span>
               </div>
             </div>
+              </div>
 
+              {/* Settings Section */}
+              <div style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.75rem 1rem', background: 'white' }}>
+                <div style={{ fontWeight: 700, fontSize: '1rem', color: '#334155', marginBottom: '1rem' }}>Settings</div>
             <div className="slider-group">
               <div className="slider-header">
-                <label>RD Tenure</label>
+                <label htmlFor="rdTenure">RD Tenure</label>
                 <input
+                  id="rdTenure"
                   type="text"
                   value={`${tenure} ${tenure === 1 ? 'Month' : 'Months'}`}
                   onChange={(e) => {
                     const val = e.target.value.replace(/[^0-9]/g, '');
                     if (val === '') {
-                      setTenure('');
+                      setTenure(12); // Always maintain numeric state
                       return;
                     }
                     const num = parseInt(val);
@@ -232,6 +254,7 @@ function RDCalculator() {
                     }
                   }}
                   className="input-display"
+                  aria-label="RD tenure in months"
                 />
               </div>
               <input
@@ -242,6 +265,7 @@ function RDCalculator() {
                 value={tenure}
                 onChange={(e) => setTenure(parseInt(e.target.value))}
                 className="slider"
+                aria-label="Adjust tenure using slider"
               />
               <div className="slider-labels">
                 <span>1 Mo</span>
@@ -249,14 +273,34 @@ function RDCalculator() {
               </div>
             </div>
 
-            {/* Reset Button Inside Input Box */}
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
-              <button onClick={handleReset} className="btn-reset">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M14 8C14 11.3137 11.3137 14 8 14C4.68629 14 2 8C2 4.68629 4.68629 2 8 2C9.84871 2 11.5151 2.87161 12.6 4.2M12.6 4.2V1M12.6 4.2H9.4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                Reset to Default
-              </button>
+            {/* Senior Citizen Toggle */}
+            <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #e2e8f0' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={isSeniorCitizen}
+                  onChange={(e) => setIsSeniorCitizen(e.target.checked)}
+                  aria-label="Apply senior citizen bonus rate of 0.5 percent"
+                />
+                <span>Senior Citizen (+0.5%)</span>
+              </label>
+              {isSeniorCitizen && (
+                <div style={{ fontSize: '0.85rem', color: '#059669', marginTop: '0.5rem', fontWeight: 500 }}>
+                  ✓ Extra 0.5% added to your interest rate
+                </div>
+              )}
+            </div>
+              </div>
+
+          {/* Reset Button Inside Input Box */}
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
+            <button onClick={handleReset} className="btn-reset" aria-label="Reset all calculator fields to default values">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M2 8C2 4.686 4.686 2 8 2C9.849 2 11.515 2.872 12.6 4.2M12.6 4.2V1M12.6 4.2H9.4M14 8C14 11.314 11.314 14 8 14C4.686 14 2 11.314 2 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Reset to Default
+            </button>
+          </div>
             </div>
           </div>
 
@@ -266,18 +310,18 @@ function RDCalculator() {
               
               <div className="result-card highlight">
                 <div className="result-label">Maturity Amount</div>
-                <div className={`result-value ${String(result.maturityAmount).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.maturityAmount, currency)}</div>
+                <div className={`result-value ${String(result.maturityAmount).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.maturityAmount, 'INR')}</div>
               </div>
 
               <div className="result-cards">
                 <div className="result-card">
                   <div className="result-label">Total Deposited</div>
-                  <div className={`result-value ${String(result.totalDeposited).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.totalDeposited, currency)}</div>
+                  <div className={`result-value ${String(result.totalDeposited).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.totalDeposited, 'INR')}</div>
                 </div>
 
                 <div className="result-card">
                   <div className="result-label">Interest Earned</div>
-                  <div className={`result-value ${String(result.interestEarned).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.interestEarned, currency)}</div>
+                  <div className={`result-value ${String(result.interestEarned).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.interestEarned, 'INR')}</div>
                 </div>
               </div>
 
@@ -308,8 +352,8 @@ function RDCalculator() {
               </div>
             </div>
           )}
-          </div>
         </div>
+      </div>
 
       {/* SEO Content Section */}
       <div className="seo-content-section">
@@ -595,6 +639,7 @@ function RDCalculator() {
         </div>
       </div>
     </div>
+
     </>
   );
 }

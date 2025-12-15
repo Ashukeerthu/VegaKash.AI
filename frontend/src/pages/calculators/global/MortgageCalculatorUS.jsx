@@ -149,6 +149,9 @@ function MortgageCalculatorUS() {
         <div className="calculator-content">
           <div className="calculator-main-grid">
             <div className="calculator-inputs">
+              <div className="inputs-grid">
+                <details open style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.75rem 1rem', background: 'white' }}>
+                  <summary style={{ fontWeight: 700, fontSize: '1rem', color: '#334155', cursor: 'pointer' }}>Loan Details</summary>
               {/* Home Price */}
               <div className="slider-group">
                 <div className="slider-header">
@@ -401,6 +404,10 @@ function MortgageCalculatorUS() {
                 </div>
               </div>
 
+              </details>
+
+                <details style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.75rem 1rem', background: 'white' }}>
+                  <summary style={{ fontWeight: 700, fontSize: '1rem', color: '#334155', cursor: 'pointer' }}>Taxes & Costs (Optional)</summary>
               {/* Include Taxes & Costs Checkbox */}
               <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
@@ -638,6 +645,9 @@ function MortgageCalculatorUS() {
                   </div>
                 </div>
               )}
+
+              </details>
+              </div>
 
               {/* Reset Button */}
               <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>

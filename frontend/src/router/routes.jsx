@@ -30,12 +30,11 @@ const MortgageAffordabilityCalculatorUK = lazy(() => import('../pages/calculator
 const SavingsInterestCalculatorUK = lazy(() => import('../pages/calculators/global/SavingsInterestCalculatorUK'));
 
 // India calculators
-const EMICalculator = lazy(() => import('../modules/calculators/emi'));
+const EMICalculator = lazy(() => import('../pages/calculators/EMICalculator'));
 const SIPCalculator = lazy(() => import('../pages/calculators/SIPCalculator'));
-const FDCalculator = lazy(() => import('../modules/calculators/fd'));
-const RDCalculator = lazy(() => import('../modules/calculators/rd'));
-const AutoLoanCalculator = lazy(() => import('../modules/calculators/autoloan'));
-const MortgageAffordabilityCalculatorIndia = lazy(() => import('../pages/calculators/global/MortgageAffordabilityCalculatorIndia'));
+const FDCalculator = lazy(() => import('../pages/calculators/FDCalculator'));
+const RDCalculator = lazy(() => import('../pages/calculators/RDCalculator'));
+const HomeLoanEligibilityIndia = lazy(() => import('../pages/calculators/global/MortgageAffordabilityCalculatorIndia'));
 
 // Pages
 const Home = lazy(() => import('../pages/Home'));
@@ -46,6 +45,7 @@ const TravelBudgetPage = lazy(() => import('../modules/planners/travel/TravelBud
 const BlogIndex = lazy(() => import('../pages/blog/BlogIndex'));
 const CreateMonthlyBudgetAI = lazy(() => import('../pages/blog/CreateMonthlyBudgetAI'));
 const FutureOfTravel2026 = lazy(() => import('../pages/blog/FutureOfTravel2026'));
+const FinancialCalculatorsExplained = lazy(() => import('../pages/blog/FinancialCalculatorsExplained'));
 const About = lazy(() => import('../pages/About'));
 const VideoTutorials = lazy(() => import('../pages/VideoTutorials'));
 const PrivacyPolicy = lazy(() => import('../pages/PrivacyPolicy'));
@@ -295,12 +295,12 @@ export const countrySpecificCalculatorRoutes = [
     hreflang: 'en-in',
   },
   {
-    path: '/in/calculators/home-loan-affordability',
-    element: MortgageAffordabilityCalculatorIndia,
-    title: 'India Home Loan Affordability Calculator – Eligibility & EMI Calculator',
+    path: '/india/calculators/home-loan-eligibility',
+    element: HomeLoanEligibilityIndia,
+    title: 'India Home Loan Eligibility Calculator',
     description: 'Calculate home loan eligibility based on Indian banking norms (FOIR, LTV, income multipliers). Bank-specific FOIR, approval probability meter, and detailed eligibility analysis.',
     category: 'Loans',
-    tool: 'home-loan-affordability',
+    tool: 'home-loan-eligibility',
     country: 'in',
     countryName: 'India',
     currency: 'INR',
@@ -362,6 +362,13 @@ export const blogRoutes = [
     title: 'Financial Blog & Learning Articles',
     description: 'Learn about personal finance, budgeting, investing, and money management',
     category: 'Learning'
+  },
+  {
+    path: '/learning/blog/financial-calculators-explained',
+    element: FinancialCalculatorsExplained,
+    title: 'Financial Calculators Explained: FD, RD, SIP & EMI',
+    description: 'Understand how FD, RD, SIP, and EMI calculators work and when to use each to make smarter money decisions.',
+    category: 'Personal Finance',
   },
   {
     path: '/learning/blog/create-monthly-budget-ai',
@@ -431,6 +438,9 @@ export const contentRoutes = [
  * Ensures backward compatibility and prevents broken links
  */
 export const legacyRedirectRoutes = [
+  // Blog legacy paths → new learning path
+  { path: '/blog/financial-calculators-explained', redirectTo: '/learning/blog/financial-calculators-explained' },
+  { path: '/learning/financial-calculators-explained', redirectTo: '/learning/blog/financial-calculators-explained' },
   // Old US calculators → new global routes
   { path: '/calculators/mortgage-us', redirectTo: '/us/calculators/mortgage' },
   { path: '/calculators/loan-payment-us', redirectTo: '/us/calculators/loan' },
@@ -450,6 +460,8 @@ export const legacyRedirectRoutes = [
   { path: '/rd-calculator', redirectTo: '/calculators/rd' },
   { path: '/car-loan-calculator', redirectTo: '/calculators/emi' },
   { path: '/income-tax-calculator', redirectTo: '/calculators/tax' },
+  // India eligibility legacy → new India-friendly path
+  { path: '/in/calculators/home-loan-eligibility', redirectTo: '/india/calculators/home-loan-eligibility' },
 ];
 
 // ==================== COMBINED ROUTES ====================

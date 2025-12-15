@@ -9,17 +9,17 @@ import '../../../styles/SEOContent.css';
 import '../../../styles/AEOContent.css';
 
 /**
- * India Home Loan Affordability Calculator - GLOBAL & COUNTRY-SPECIFIC
+ * India Home Loan Eligibility Calculator - GLOBAL & COUNTRY-SPECIFIC
  * Calculates home loan eligibility based on Indian banking norms (FOIR, LTV, income multipliers)
  * Includes processing fees, registration charges, and GST considerations
  */
-function MortgageAffordabilityCalculatorIndia() {
+function HomeLoanEligibilityIndia() {
   const { country } = useParams();
   
   const breadcrumbItems = [
     { label: 'Home', path: '/', icon: true },
     { label: 'Calculators', path: '/calculators' },
-    { label: 'India Home Loan Affordability', path: null }
+    { label: 'India Home Loan Eligibility', path: null }
   ];
   
   // Income inputs
@@ -366,24 +366,27 @@ function MortgageAffordabilityCalculatorIndia() {
   return (
     <>
       <SEO 
-        title="India Home Loan Affordability Calculator | Check Eligibility | VegaKash"
+        title="India Home Loan Eligibility Calculator | VegaKash"
         description="Calculate your home loan eligibility in India. Free calculator with FOIR, LTV, processing fees, stamp duty, and GST. Check how much home loan you can get instantly."
         keywords="home loan calculator india, home loan eligibility, loan affordability india, FOIR calculator, LTV calculator, home loan EMI india"
-        canonical="/india/calculators/home-loan-affordability"
+        canonical="/india/calculators/home-loan-eligibility"
       />
       
       <div className="calculator-container">
         <Breadcrumb items={breadcrumbItems} />
         
         <div className="calculator-header">
-          <h1>🏠 India Home Loan Affordability Calculator</h1>
+          <h1>🏠 India Home Loan Eligibility Calculator</h1>
           <p>Calculate your home loan eligibility based on income, FOIR, and LTV norms as per Indian banking guidelines</p>
         </div>
 
         <div className="calculator-content">
           <div className="calculator-main-grid">
             <div className="calculator-inputs">
-              {/* Annual Income */}
+              <div className="inputs-grid">
+                <details open style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.75rem 1rem', background: 'white' }}>
+                  <summary style={{ fontWeight: 700, fontSize: '1rem', color: '#334155', cursor: 'pointer' }}>Core Profile</summary>
+                {/* Annual Income */}
               <div className="slider-group">
                 <div className="slider-header">
                   <label>Annual Income (Primary)</label>
@@ -651,6 +654,11 @@ function MortgageAffordabilityCalculatorIndia() {
                   <option value="below-650" style={{ padding: '1rem', fontSize: '1rem', fontWeight: '600', background: '#fff' }}>🔴 Below 650 (+1.5% rate)</option>
                 </select>
               </div>
+
+              </details>
+
+                <details open style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.75rem 1rem', background: 'white' }}>
+                  <summary style={{ fontWeight: 700, fontSize: '1rem', color: '#334155', cursor: 'pointer' }}>Property & Loan</summary>
 
               {/* Property Type */}
               <div className="slider-group">
@@ -955,6 +963,11 @@ function MortgageAffordabilityCalculatorIndia() {
                 </div>
               </div>
 
+              </details>
+
+              <details open style={{ gridColumn: '1 / -1', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.75rem 1rem', background: 'white' }}>
+                <summary style={{ fontWeight: 700, fontSize: '1rem', color: '#334155', cursor: 'pointer' }}>Advanced Bank Parameters</summary>
+
               {/* FOIR */}
               <div className="slider-group">
                 <div className="slider-header">
@@ -1078,6 +1091,9 @@ function MortgageAffordabilityCalculatorIndia() {
                   <span style={{ fontSize: '0.95rem', fontWeight: '500' }}>Include Processing & Registration Charges</span>
                 </label>
               </div>
+
+              </details>
+            </div>
 
               <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
                 <button onClick={handleReset} className="btn-reset">
@@ -1663,7 +1679,7 @@ function MortgageAffordabilityCalculatorIndia() {
       <script type="application/ld+json">{JSON.stringify({
         "@context": "https://schema.org",
         "@type": "MortgageLoan",
-        "name": "India Home Loan Affordability Calculator",
+        "name": "India Home Loan Eligibility Calculator",
         "description": "Calculate home loan eligibility in India based on FOIR, LTV, and RBI guidelines. Includes processing fees, stamp duty, and GST calculations.",
         "provider": {"@type": "Organization", "name": "VegaKash.AI"},
         "applicationCategory": "FinanceApplication",
@@ -1682,4 +1698,4 @@ function MortgageAffordabilityCalculatorIndia() {
   );
 }
 
-export default MortgageAffordabilityCalculatorIndia;
+export default HomeLoanEligibilityIndia;

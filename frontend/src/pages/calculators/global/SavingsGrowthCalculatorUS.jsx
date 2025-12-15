@@ -279,6 +279,10 @@ function SavingsGrowthCalculatorUS() {
         <div className="calculator-content">
           <div className="calculator-main-grid">
             <div className="calculator-inputs">
+              <div className="inputs-grid">
+              {/* Savings Details Section */}
+              <details open style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.75rem 1rem', background: 'white' }}>
+                <summary style={{ fontWeight: 700, fontSize: '1rem', color: '#334155', cursor: 'pointer', marginBottom: '1rem' }}>Savings Details</summary>
               
               {/* Calculator Mode Toggle */}
               <div style={{ marginBottom: '2rem' }}>
@@ -526,7 +530,12 @@ function SavingsGrowthCalculatorUS() {
                     </div>
                   </div>
                 </>
-              )}
+              )}            
+                </details>
+
+                {/* Growth Factors Section */}
+                <details style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.75rem 1rem', background: 'white' }}>
+                  <summary style={{ fontWeight: 700, fontSize: '1rem', color: '#334155', cursor: 'pointer', marginBottom: '1rem' }}>Growth Factors</summary>
 
               {/* Common Inputs for Both Modes */}
               
@@ -688,6 +697,8 @@ function SavingsGrowthCalculatorUS() {
                     <strong style={{ color: '#15803d' }}>{formatCurrency(monthlyExpenses * 6)}</strong>
                   </div>
                 </div>
+              </div>
+                </details>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>

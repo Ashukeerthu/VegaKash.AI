@@ -5,16 +5,16 @@ Reduces cost by storing identical request results for 6 hours.
 import json
 import hashlib
 from datetime import datetime, timedelta
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Tuple
 
 class ResultCache:
     """Simple in-memory cache with 6-hour TTL."""
     
     def __init__(self, ttl_hours: int = 6):
-        self.cache: Dict[str, tuple] = {}  # {hash: (result, timestamp)}
+        self.cache: Dict[str, Tuple[Dict[str, Any], datetime]] = {}  # {hash: (result, timestamp)}
         self.ttl = timedelta(hours=ttl_hours)
     
-    def _make_key(self, request_data: Dict[str, Any]) -> str:
+    def _make_key(self, request_data: Dict[str, Any]) -> Optional[str]:
         """Generate cache key from request (order-independent)."""
         try:
             key_str = json.dumps(request_data, sort_keys=True, default=str)

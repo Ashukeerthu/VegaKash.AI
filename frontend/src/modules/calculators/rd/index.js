@@ -1,5 +1,2 @@
-/**
- * RD Calculator Module Export
- */
-
-export { default } from './RDCalculator';
+// Deprecated: RD calculator moved to pages/calculators/RDCalculator.jsx
+export default function DeprecatedRD() { return null; }

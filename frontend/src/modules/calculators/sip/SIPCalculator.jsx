@@ -526,9 +526,149 @@ function SIPCalculator() {
           
           <h3>SIP Formula</h3>
           <div className="formula-box">
-            // DEPRECATED: This module has been aliased to the enhanced Pages implementation.
-            // Keeping this file as a thin re-export to avoid breaking any legacy imports.
-            export { default } from '../../../pages/calculators/SIPCalculator';
+            <strong>FV = P × [((1 + r)^n - 1) / r] × (1 + r)</strong>
+          </div>
+          <p>Where:</p>
+          <ul>
+            <li><strong>FV</strong> = Future Value of investment</li>
+            <li><strong>P</strong> = Monthly SIP amount</li>
+            <li><strong>r</strong> = Expected monthly return rate (Annual return / 12 / 100)</li>
+            <li><strong>n</strong> = Total number of SIP installments (Years × 12)</li>
+          </ul>
+          
+          <h3>Lumpsum Formula</h3>
+          <div className="formula-box">
+            <strong>FV = P × (1 + r)^t</strong>
+          </div>
+          <p>Where:</p>
+          <ul>
+            <li><strong>FV</strong> = Future Value of investment</li>
+            <li><strong>P</strong> = Principal (one-time investment amount)</li>
+            <li><strong>r</strong> = Expected annual return rate (Annual return / 100)</li>
+            <li><strong>t</strong> = Investment duration in years</li>
+          </ul>
+
+          <p>
+            <strong>Example - SIP:</strong> If you invest ₹10,000 monthly with 12% annual return for 10 years:
+          </p>
+          <ul>
+            <li>Total Invested = ₹12,00,000</li>
+            <li>Future Value = ₹23,23,391</li>
+            <li>Wealth Gained = ₹11,23,391</li>
+          </ul>
+
+          <p>
+            <strong>Example - Lumpsum:</strong> If you invest ₹1,00,000 one-time with 12% annual return for 10 years:
+          </p>
+          <ul>
+            <li>Invested Amount = ₹1,00,000</li>
+            <li>Future Value = ₹3,10,585</li>
+            <li>Returns = ₹2,10,585</li>
+          </ul>
+        </div>
+
+        <div className="content-block">
+          <h2>SIP vs Lumpsum - Which is Better?</h2>
+          <p>Both investment methods have their advantages. The choice depends on your financial situation, market conditions, and risk appetite:</p>
+          
+          <h3>When to Choose SIP</h3>
+          <ul>
+            <li>You have regular monthly income (salaried individuals)</li>
+            <li>You want to avoid market timing risks</li>
+            <li>You're new to mutual fund investing</li>
+            <li>You want disciplined, automated investing</li>
+            <li>Markets are at higher levels or volatile</li>
+            <li>You want to benefit from rupee cost averaging</li>
+          </ul>
+
+          <h3>When to Choose Lumpsum</h3>
+          <ul>
+            <li>You have a large corpus available (bonus, inheritance, maturity)</li>
+            <li>Markets are at significantly lower levels</li>
+            <li>You have high risk tolerance</li>
+            <li>You want to maximize returns in bullish markets</li>
+            <li>Investment horizon is very long (15+ years)</li>
+          </ul>
+
+          <h3>Best Approach: Hybrid Strategy</h3>
+          <p>
+            Many successful investors use a combination of both. Start a SIP for regular investing and deploy lumpsum amounts when markets correct 
+            by 10-15% or more. This approach balances risk, ensures discipline, and allows you to capitalize on market opportunities.
+          </p>
+        </div>
+
+        <div className="content-block">
+          <h2>Advantages of Using This Calculator</h2>
+          <ul>
+            <li><strong>Compare Both Methods:</strong> Instantly compare SIP vs Lumpsum returns for your investment amount and duration</li>
+            <li><strong>Goal Planning:</strong> Calculate exactly how much to invest to reach your financial goals</li>
+            <li><strong>Wealth Projection:</strong> Visualize how your investments can grow over time with realistic return assumptions</li>
+            <li><strong>Flexible Scenarios:</strong> Test different amounts, return rates, and time periods to find optimal strategy</li>
+            <li><strong>Realistic Expectations:</strong> Understand the power of compounding and set achievable targets</li>
+            <li><strong>Time Value of Money:</strong> See how starting early makes a massive difference to final corpus</li>
+            <li><strong>Financial Planning:</strong> Integrate calculations into your overall financial plan and asset allocation</li>
+          </ul>
+        </div>
+
+        <div className="content-block">
+          <h2>Types of Mutual Fund Investments</h2>
+          
+          <h3>Equity Funds</h3>
+          <p>
+            Invest primarily in stocks. Highest growth potential with 12-18% historical returns but higher volatility. Ideal for long-term goals 
+            (7+ years) like retirement, children's education. Best suited for aggressive investors with high risk appetite.
+          </p>
+
+          <h3>Debt Funds</h3>
+          <p>
+            Invest in fixed-income securities like bonds, treasury bills. Offer stable returns of 6-9% with lower risk. Suitable for conservative 
+            investors and short to medium-term goals (1-5 years). Better than bank FDs in terms of liquidity and tax efficiency.
+          </p>
+
+          <h3>Hybrid Funds</h3>
+          <p>
+            Balanced mix of equity and debt providing growth with stability. Deliver moderate returns (9-12%) with controlled risk. Ideal for 
+            moderate risk investors seeking balanced portfolio without active management.
+          </p>
+
+          <h3>ELSS (Tax Saver)</h3>
+          <p>
+            Equity-linked savings schemes offering tax deduction up to ₹1.5 lakh under Section 80C. Come with 3-year lock-in period. Combine 
+            wealth creation with tax savings - shortest lock-in among all 80C investment options.
+          </p>
+
+          <h3>Index Funds</h3>
+          <p>
+            Passive funds that replicate market indices like Nifty, Sensex. Offer market returns with lowest expense ratios (0.1-0.5%). 
+            Ideal for investors who want to match market performance without active fund selection.
+          </p>
+        </div>
+
+        <div className="content-block">
+          <h2>How to Use This Calculator</h2>
+          <ol>
+            <li><strong>Choose Investment Mode:</strong> Select SIP or Lumpsum tab based on your investment style</li>
+            <li><strong>Enter Investment Amount:</strong> For SIP - monthly amount (₹500 to ₹10L). For Lumpsum - one-time amount (₹10K to ₹1Cr)</li>
+            <li><strong>Set Expected Return:</strong> Input realistic annual return (10-12% for equity, 7-8% for debt, 9-10% for hybrid)</li>
+            <li><strong>Choose Time Period:</strong> Select investment duration (1-40 years). Longer duration = more compounding benefit</li>
+            <li><strong>View Results:</strong> Instantly see future value, total invested, and wealth gained with visual breakdown</li>
+            <li><strong>Compare & Plan:</strong> Switch between SIP/Lumpsum to compare which works better for your situation</li>
+          </ol>
+        </div>
+
+        <div className="content-block">
+          <h2>Tips to Maximize Your Investment Returns</h2>
+          <ul>
+            <li><strong>Start Early:</strong> Even ₹2,000/month started at age 25 beats ₹10,000/month started at 35 due to compounding</li>
+            <li><strong>Stay Invested:</strong> Don't stop SIPs during market downturns - that's when you accumulate more units cheaply</li>
+            <li><strong>Increase SIP Annually:</strong> Step up your SIP by 10-15% every year as your income grows - dramatically boosts final corpus</li>
+            <li><strong>Choose Right Funds:</strong> Match fund type to goal timeline - equity for 7+ years, debt for 1-3 years, hybrid for 3-7 years</li>
+            <li><strong>Diversify:</strong> Spread across large-cap, mid-cap, and multi-cap funds - don't put everything in one fund</li>
+            <li><strong>Review Annually:</strong> Check fund performance once a year, switch underperformers after giving 3+ year time</li>
+            <li><strong>Use Lumpsum Wisely:</strong> Deploy lumpsum amounts during 10-15% market corrections for optimal entry points</li>
+            <li><strong>Reinvest Dividends:</strong> Choose growth option over dividend to maximize compounding benefits</li>
+          </ul>
+        </div>
 
         <div className="content-block faq-section">
           <h2>Frequently Asked Questions (FAQs)</h2>

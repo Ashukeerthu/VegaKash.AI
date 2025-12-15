@@ -191,7 +191,10 @@ function LoanPaymentCalculatorUS() {
 
         <div className="calculator-content">
           <div className="calculator-main-grid">
-            <div className="calculator-inputs">
+            <div className="calculator-inputs">              <div className="inputs-grid">
+              {/* Loan Details Section */}
+              <details open style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.75rem 1rem', background: 'white' }}>
+                <summary style={{ fontWeight: 700, fontSize: '1rem', color: '#334155', cursor: 'pointer', marginBottom: '1rem' }}>Loan Details</summary>
               {/* Loan Type Selector */}
               <div className="slider-group">
                 <div className="slider-header" style={{ marginBottom: '0.5rem' }}>
@@ -290,6 +293,11 @@ function LoanPaymentCalculatorUS() {
                   <span>36%</span>
                 </div>
               </div>
+                </details>
+
+                {/* Payment Options Section */}
+                <details style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.75rem 1rem', background: 'white' }}>
+                  <summary style={{ fontWeight: 700, fontSize: '1rem', color: '#334155', cursor: 'pointer', marginBottom: '1rem' }}>Payment Options</summary>
 
               {/* Loan Term */}
               <div className="slider-group">
@@ -367,6 +375,8 @@ function LoanPaymentCalculatorUS() {
                     />
                   </div>
                 </div>
+              </div>
+                </details>
               </div>
 
               {/* Reset Button */}

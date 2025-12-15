@@ -76,6 +76,11 @@ function CreditCardPayoffCalculatorUS() {
         <div className="calculator-content">
           <div className="calculator-main-grid">
             <div className="calculator-inputs">
+              <div className="inputs-grid">
+              {/* Card Details Section */}
+              <details open style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.75rem 1rem', background: 'white' }}>
+                <summary style={{ fontWeight: 700, fontSize: '1rem', color: '#334155', cursor: 'pointer', marginBottom: '1rem' }}>Card Details</summary>
+
               {/* Credit Card Balance */}
               <div className="slider-group">
                 <div className="slider-header">
@@ -175,6 +180,11 @@ function CreditCardPayoffCalculatorUS() {
                   <span>36%</span>
                 </div>
               </div>
+                </details>
+
+                {/* Payment Strategy Section */}
+                <details style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.75rem 1rem', background: 'white' }}>
+                  <summary style={{ fontWeight: 700, fontSize: '1rem', color: '#334155', cursor: 'pointer', marginBottom: '1rem' }}>Payment Strategy</summary>
 
               {/* Monthly Payment */}
               <div className="slider-group">
@@ -224,6 +234,8 @@ function CreditCardPayoffCalculatorUS() {
                   <span>$10</span>
                   <span>$10K</span>
                 </div>
+              </div>
+                </details>
               </div>
 
               {/* Reset Button */}

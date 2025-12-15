@@ -20,12 +20,10 @@ const SavingsInterestCalculatorUK = lazy(() => import('../pages/calculators/glob
 
 // ==================== CALCULATOR ROUTES ====================
 // Financial calculators - lazy loaded for performance
-const EMICalculator = lazy(() => import('../modules/calculators/emi'));
+const EMICalculator = lazy(() => import('../pages/calculators/EMICalculator'));
 const SIPCalculator = lazy(() => import('../pages/calculators/SIPCalculator'));
-const FDCalculator = lazy(() => import('../modules/calculators/fd'));
-const RDCalculator = lazy(() => import('../modules/calculators/rd'));
-const TaxCalculator = lazy(() => import('../modules/calculators/tax'));
-const AutoLoanCalculator = lazy(() => import('../modules/calculators/autoloan'));
+const FDCalculator = lazy(() => import('../pages/calculators/FDCalculator'));
+const RDCalculator = lazy(() => import('../pages/calculators/RDCalculator'));
 
 // Coming Soon Calculators
 const SavingsGoalCalculator = lazy(() => import('../pages/calculators/SavingsGoalCalculator'));
@@ -159,7 +157,7 @@ export const calculatorRoutes = [
   },
   {
     path: '/income-tax-calculator',
-    element: TaxCalculator,
+    element: CalculatorHub,
     title: 'Income Tax Calculator',
     description: 'Calculate income tax for FY 2024-25',
     category: 'Tax',
@@ -168,7 +166,7 @@ export const calculatorRoutes = [
   // Legacy alias for backward compatibility
   {
     path: '/calculators/income-tax',
-    element: TaxCalculator,
+    element: CalculatorHub,
     title: 'Income Tax Calculator',
     description: 'Calculate income tax for FY 2024-25',
     category: 'Tax',
@@ -176,7 +174,7 @@ export const calculatorRoutes = [
   },
   {
     path: '/car-loan-calculator',
-    element: AutoLoanCalculator,
+    element: CalculatorHub,
     title: 'Auto Loan Calculator',
     description: 'Calculate car loan EMI and plan vehicle purchase',
     category: 'Loans'
@@ -184,7 +182,7 @@ export const calculatorRoutes = [
   // Legacy alias for backward compatibility
   {
     path: '/calculators/auto-loan',
-    element: AutoLoanCalculator,
+    element: CalculatorHub,
     title: 'Auto Loan Calculator',
     description: 'Calculate car loan EMI and plan vehicle purchase',
     category: 'Loans'

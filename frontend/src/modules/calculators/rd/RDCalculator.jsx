@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import SEO from '../../../components/SEO';
-import { formatSmartCurrency, getCurrencySymbol } from '../../../utils/helpers';
-import CurrencySelector from '../../../components/CurrencySelector';
+import { formatSmartCurrency } from '../../../utils/helpers';
 import '../../../styles/Calculator.css';
 import '../../../styles/SEOContent.css';
 
@@ -11,39 +10,47 @@ import '../../../styles/SEOContent.css';
  * Calculates Recurring Deposit maturity amount
  */
 function RDCalculator() {
-  const [currency, setCurrency] = useState('INR');
   const [monthlyDeposit, setMonthlyDeposit] = useState(5000);
   const [interestRate, setInterestRate] = useState(6.5);
   const [tenure, setTenure] = useState(12);
-  const [result, setResult] = useState(null);
+  const [compounding, setCompounding] = useState('quarterly'); // monthly | quarterly | annual
+  const [isSenior, setIsSenior] = useState(false);
+  const [includeTax, setIncludeTax] = useState(false);
+  const [taxSlab, setTaxSlab] = useState(30);
 
-  // Auto-calculate on mount and whenever values change
-  React.useEffect(() => {
-    calculateRD();
-  }, [monthlyDeposit, interestRate, tenure]);
+  // Calculate with useMemo (no side effects)
+  const result = useMemo(() => {
+    const P = Number(monthlyDeposit);
+    const baseRate = Number(interestRate);
+    const annualRate = baseRate + (isSenior ? 0.5 : 0);
+    const nMonths = Number(tenure);
+    if (!P || !annualRate || !nMonths || P <= 0 || annualRate < 0 || nMonths <= 0) return null;
 
-  const calculateRD = () => {
-    const P = parseFloat(monthlyDeposit);
-    const r = parseFloat(interestRate) / 100 / 12; // Monthly interest rate
-    const n = parseFloat(tenure); // Tenure in months
+    // Convert annual rate to effective monthly based on compounding selection
+    const rMonthly = compounding === 'quarterly'
+      ? Math.pow(1 + annualRate / 100 / 4, 1 / 3) - 1 // approx monthly from quarterly
+      : compounding === 'annual'
+      ? Math.pow(1 + annualRate / 100, 1 / 12) - 1
+      : (annualRate / 100) / 12;
 
-    if (!P || !r || !n || P <= 0 || r < 0 || n <= 0) {
-      return;
-    }
+    // RD formula (same as SIP future value): M = P * [((1+r)^n - 1)/r] * (1 + r)
+    const maturity = P * (((Math.pow(1 + rMonthly, nMonths) - 1) / rMonthly) * (1 + rMonthly));
+    const totalDeposited = P * nMonths;
+    const interestEarned = maturity - totalDeposited;
+    const taxOnInterest = includeTax ? interestEarned * (taxSlab / 100) : 0;
+    const postTaxAmount = maturity - taxOnInterest;
+    const effectiveAnnual = (Math.pow(maturity / totalDeposited, 12 / nMonths) - 1) * 100; // approximate
 
-    // RD Formula: M = P × [(1 + r)^n - 1] / r × (1 + r)
-    // This is similar to SIP formula
-    const maturityAmount = P * (((Math.pow(1 + r, n) - 1) / r) * (1 + r));
-    const totalDeposited = P * n;
-    const interestEarned = maturityAmount - totalDeposited;
-
-    setResult({
-      maturityAmount: maturityAmount.toFixed(2),
+    return {
+      maturityAmount: maturity.toFixed(2),
       totalDeposited: totalDeposited.toFixed(2),
       interestEarned: interestEarned.toFixed(2),
-      effectiveRate: ((interestEarned / totalDeposited) * 100).toFixed(2)
-    });
-  };
+      taxOnInterest: taxOnInterest.toFixed(2),
+      postTaxAmount: postTaxAmount.toFixed(2),
+      appliedRate: annualRate.toFixed(2),
+      effectiveAnnual: effectiveAnnual.toFixed(2),
+    };
+  }, [monthlyDeposit, interestRate, tenure, compounding, isSenior, includeTax, taxSlab]);
 
   const handleReset = () => {
     setMonthlyDeposit(5000);
@@ -86,26 +93,22 @@ function RDCalculator() {
       </div>
 
       <div className="calculator-content">
-        {/* Currency Selector */}
-        <CurrencySelector 
-          selectedCurrency={currency}
-          onCurrencyChange={setCurrency}
-        />
-
         <div className="calculator-main-grid">
           <div className="calculator-inputs">
-            <div className="slider-group">
+            <div className="inputs-grid">
+            {/* Deposit Details */}
+            <details open style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.75rem 1rem', background: 'white' }}>
+              <summary style={{ fontWeight: 700, fontSize: '1rem', color: '#334155', cursor: 'pointer', marginBottom: '1rem' }}>Deposit Details</summary>
+              <div className="slider-group">
             <div className="slider-header">
               <label>Monthly Deposit</label>
               <input
                 type="text"
-                value={formatSmartCurrency(monthlyDeposit, currency)}
+                aria-label="Monthly deposit input"
+                value={`₹${Number(monthlyDeposit).toLocaleString('en-IN')}`}
                 onChange={(e) => {
                   const val = e.target.value.replace(/[^0-9]/g, '');
-                  if (val === '') {
-                    setMonthlyDeposit('');
-                    return;
-                  }
+                  if (val === '') { return; }
                   const num = parseInt(val);
                   if (!isNaN(num)) {
                     setMonthlyDeposit(num);
@@ -136,6 +139,7 @@ function RDCalculator() {
               value={monthlyDeposit}
               onChange={(e) => setMonthlyDeposit(parseInt(e.target.value))}
               className="slider"
+              aria-label="Monthly deposit slider"
             />
             <div className="slider-labels">
               <span>₹500</span>
@@ -148,13 +152,11 @@ function RDCalculator() {
               <label>Interest Rate (p.a.)</label>
               <input
                 type="text"
+                aria-label="Interest rate input"
                 value={`${interestRate}%`}
                 onChange={(e) => {
                   const val = e.target.value.replace(/[%\s]/g, '');
-                  if (val === '') {
-                    setInterestRate('');
-                    return;
-                  }
+                  if (val === '') { return; }
                   const num = parseFloat(val);
                   if (!isNaN(num)) {
                     setInterestRate(num);
@@ -185,6 +187,7 @@ function RDCalculator() {
               value={interestRate}
               onChange={(e) => setInterestRate(parseFloat(e.target.value))}
               className="slider"
+              aria-label="Interest rate slider"
             />
             <div className="slider-labels">
               <span>1%</span>
@@ -197,13 +200,11 @@ function RDCalculator() {
               <label>RD Tenure</label>
               <input
                 type="text"
+                aria-label="RD tenure input"
                 value={`${tenure} ${tenure === 1 ? 'Month' : 'Months'}`}
                 onChange={(e) => {
                   const val = e.target.value.replace(/[^0-9]/g, '');
-                  if (val === '') {
-                    setTenure('');
-                    return;
-                  }
+                  if (val === '') { return; }
                   const num = parseInt(val);
                   if (!isNaN(num)) {
                     setTenure(num);
@@ -234,21 +235,90 @@ function RDCalculator() {
               value={tenure}
               onChange={(e) => setTenure(parseInt(e.target.value))}
               className="slider"
+              aria-label="RD tenure slider"
             />
             <div className="slider-labels">
               <span>6 Mo</span>
               <span>120 Mos</span>
             </div>
           </div>
+          </details>
+
+          {/* Additional Options */}
+          <details style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '0.75rem 1rem', background: 'white' }}>
+            <summary style={{ fontWeight: 700, fontSize: '1rem', color: '#334155', cursor: 'pointer', marginBottom: '1rem' }}>Additional Options</summary>
+
+            {/* Compounding Frequency */}
+            <div className="slider-group">
+              <div className="slider-header">
+                <label>Compounding Frequency</label>
+              </div>
+              <select
+                aria-label="Compounding frequency selector"
+                value={compounding}
+                onChange={(e) => setCompounding(e.target.value)}
+                className="full-width-select"
+              >
+                <option value="quarterly">Quarterly (Most banks)</option>
+                <option value="monthly">Monthly (some NBFCs)</option>
+                <option value="annual">Annual (simple payout)</option>
+              </select>
+            </div>
+
+            {/* Senior Citizen Toggle */}
+            <div className="slider-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <label style={{ fontWeight: 600, color: '#2c3e50' }}>Senior Citizen (add +0.5%)</label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, color: '#1e293b' }}>
+                <input
+                  type="checkbox"
+                  checked={isSenior}
+                  onChange={(e) => setIsSenior(e.target.checked)}
+                  style={{ width: 18, height: 18 }}
+                />
+                Apply senior citizen additional rate
+              </label>
+            </div>
+
+            {/* Tax Toggle */}
+            <div className="slider-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <label style={{ fontWeight: 600, color: '#2c3e50' }}>Include Tax on Interest</label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, color: '#1e293b' }}>
+                <input
+                  type="checkbox"
+                  checked={includeTax}
+                  onChange={(e) => setIncludeTax(e.target.checked)}
+                  style={{ width: 18, height: 18 }}
+                />
+                Show post-tax maturity (interest taxed per slab)
+              </label>
+              {includeTax && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <label style={{ fontWeight: 600, color: '#2c3e50' }}>Tax Slab</label>
+                  <select
+                    value={taxSlab}
+                    onChange={(e) => setTaxSlab(parseInt(e.target.value))}
+                    className="full-width-select"
+                    aria-label="Tax slab selector"
+                  >
+                    <option value={5}>5% (up to ₹5L after deductions)</option>
+                    <option value={20}>20% (middle slab)</option>
+                    <option value={30}>30% (highest slab)</option>
+                  </select>
+                </div>
+              )}
+            </div>
+          </details>
 
           {/* Reset Button Inside Input Box */}
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
-            <button onClick={handleReset} className="btn-reset">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M14 8C14 11.3137 11.3137 14 8 14C4.68629 14 2 8C2 4.68629 4.68629 2 8 2C9.84871 2 11.5151 2.87161 12.6 4.2M12.6 4.2V1M12.6 4.2H9.4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <button onClick={handleReset} className="btn-reset" aria-label="Reset to default">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                <path d="M16.023 9.348h4.992V4.356M21.015 4.356A9.718 9.718 0 0012 2.25c-5.385 0-9.75 4.365-9.75 9.75S6.615 21.75 12 21.75c4.6 0 8.447-3.119 9.548-7.31" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
               Reset to Default
             </button>
+          </div>
+          {/* Close inputs-grid */}
           </div>
         </div>
 
@@ -258,18 +328,42 @@ function RDCalculator() {
             
             <div className="result-card highlight">
               <div className="result-label">Maturity Amount</div>
-              <div className={`result-value ${String(result.maturityAmount).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.maturityAmount, currency)}</div>
+              <div className={`result-value ${String(result.maturityAmount).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.maturityAmount, 'INR')}</div>
             </div>
 
             <div className="result-cards">
               <div className="result-card">
                 <div className="result-label">Total Deposited</div>
-                <div className={`result-value ${String(result.totalDeposited).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.totalDeposited, currency)}</div>
+                <div className={`result-value ${String(result.totalDeposited).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.totalDeposited, 'INR')}</div>
               </div>
 
               <div className="result-card">
                 <div className="result-label">Interest Earned</div>
-                <div className={`result-value ${String(result.interestEarned).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.interestEarned, currency)}</div>
+                <div className={`result-value ${String(result.interestEarned).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.interestEarned, 'INR')}</div>
+              </div>
+            </div>
+
+            {includeTax && (
+              <div className="result-cards" style={{ marginTop: '0.5rem' }}>
+                <div className="result-card">
+                  <div className="result-label">Tax on Interest</div>
+                  <div className={`result-value ${String(result.taxOnInterest).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.taxOnInterest, 'INR')}</div>
+                </div>
+                <div className="result-card success">
+                  <div className="result-label">Post-Tax Maturity</div>
+                  <div className={`result-value ${String(result.postTaxAmount).length > 14 ? 'long' : ''}`}>{formatSmartCurrency(result.postTaxAmount, 'INR')}</div>
+                </div>
+              </div>
+            )}
+
+            <div className="result-cards" style={{ marginTop: '0.5rem' }}>
+              <div className="result-card">
+                <div className="result-label">Applied Rate (p.a.)</div>
+                <div className="result-value">{result.appliedRate}%</div>
+              </div>
+              <div className="result-card">
+                <div className="result-label">Effective Yield (annualized)</div>
+                <div className="result-value">{result.effectiveAnnual}%</div>
               </div>
             </div>
 

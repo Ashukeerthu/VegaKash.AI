@@ -15,6 +15,16 @@ function BlogIndex() {
   // Blog posts data - will expand as we add more articles
   const blogPosts = [
     {
+      slug: '/learning/blog/financial-calculators-explained',
+      title: 'Financial Calculators Explained: FD, RD, SIP & EMI',
+      excerpt: 'Understand why FD, RD, SIP, and EMI calculators matter, how they work, and when to use each. Plan smarter with data-driven financial tools.',
+      category: 'Personal Finance',
+      date: new Date().toLocaleString('en-IN', { month: 'long', year: 'numeric' }),
+      readTime: '6 min read',
+      tags: ['FD', 'RD', 'SIP', 'EMI', 'Financial Calculators'],
+      featured: false
+    },
+    {
       slug: '/learning/blog/future-of-travel-2026-ai-trip-planning',
       title: 'Future of Travel 2026: How AI Will Redefine Trip Planning Forever',
       excerpt: 'Discover how AI is transforming travel with smart planning, predictive budgeting, real-time updates, and personalized itineraries. Experience the future of travel in 2026.',
@@ -134,8 +144,8 @@ function BlogIndex() {
             <div className="category-card">
               <div className="category-icon">💰</div>
               <h3>Personal Finance</h3>
-              <p>Money management and budgeting tips</p>
-              <span className="category-count">1 article</span>
+                <p>Money management and budgeting tips</p>
+                <span className="category-count">2 articles</span>
             </div>
             <div className="category-card coming-soon">
               <div className="category-icon">📈</div>
