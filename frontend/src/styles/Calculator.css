@@ -8,7 +8,7 @@
 
 .calculator-header {
   text-align: center;
-  margin-bottom: 1.8rem;
+  margin-bottom: 2rem;
   padding: 1.2rem 1rem 1rem;
   background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
   border-radius: 12px;
@@ -42,21 +42,21 @@
   max-width: 1300px;
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
   contain: layout;
 }
 
 .calculator-main-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.5rem;
+  gap: 2rem;
   align-items: start;
 }
 
 .calculator-inputs {
   background: white;
   border-radius: 12px;
-  padding: 1.5rem;
+  padding: 1.75rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.8);
   position: sticky;
@@ -367,7 +367,7 @@
 .calculator-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+  gap: 2.5rem;
   align-items: start;
   margin-bottom: 2rem;
   max-width: 1400px;
@@ -378,7 +378,7 @@
 .calculator-results {
   background: white;
   border-radius: 12px;
-  padding: 1.5rem;
+  padding: 1.75rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.8);
   animation: slideIn 0.5s ease;

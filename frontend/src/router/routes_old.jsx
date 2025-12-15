@@ -21,7 +21,7 @@ const SavingsInterestCalculatorUK = lazy(() => import('../pages/calculators/glob
 // ==================== CALCULATOR ROUTES ====================
 // Financial calculators - lazy loaded for performance
 const EMICalculator = lazy(() => import('../modules/calculators/emi'));
-const SIPCalculator = lazy(() => import('../modules/calculators/sip'));
+const SIPCalculator = lazy(() => import('../pages/calculators/SIPCalculator'));
 const FDCalculator = lazy(() => import('../modules/calculators/fd'));
 const RDCalculator = lazy(() => import('../modules/calculators/rd'));
 const TaxCalculator = lazy(() => import('../modules/calculators/tax'));

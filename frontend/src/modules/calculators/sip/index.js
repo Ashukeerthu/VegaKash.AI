@@ -1,5 +1,5 @@
 /**
- * SIP Calculator Module Export
+ * SIP Calculator Module Export (Aliased to enhanced Pages implementation)
  */
 
-export { default } from './SIPCalculator';
+export { default } from '../../../pages/calculators/SIPCalculator';

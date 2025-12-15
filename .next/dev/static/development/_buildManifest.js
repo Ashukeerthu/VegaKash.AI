@@ -1,9 +1,9 @@
 self.__BUILD_MANIFEST = {
-  "/": [
-    "static/chunks/pages/index.js"
-  ],
   "/_error": [
     "static/chunks/pages/_error.js"
+  ],
+  "/in/calculators/home-loan-affordability": [
+    "static/chunks/pages/in/calculators/home-loan-affordability.js"
   ],
   "__rewrites": {
     "afterFiles": [],
@@ -17,6 +17,7 @@ self.__BUILD_MANIFEST = {
     "/blog",
     "/blog/future-of-travel-2026",
     "/blog/[slug]",
+    "/in/calculators/home-loan-affordability",
     "/sitemap.xml",
     "/tools",
     "/tools/[slug]",

@@ -759,8 +759,21 @@ function SIPCalculator() {
           </div>
 
           {/* Enhanced Features Section */}
-          <div className="advanced-options" style={{ marginTop: '2rem' }}>
-            <h3>Advanced Options</h3>
+          <div className="advanced-options" style={{ 
+            marginTop: '2rem', 
+            padding: '1.5rem', 
+            backgroundColor: '#f8f9fa', 
+            borderRadius: '12px',
+            border: '2px solid #e9ecef'
+          }}>
+            <h3 style={{ 
+              color: '#495057', 
+              marginBottom: '1.5rem',
+              fontSize: '1.25rem',
+              fontWeight: '600'
+            }}>
+              🎯 Advanced Options
+            </h3>
             
             {/* Fund Category Selection */}
             <div className="slider-group">
