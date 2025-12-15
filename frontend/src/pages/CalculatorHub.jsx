@@ -19,137 +19,138 @@ function CalculatorHub() {
     // === Global Calculators ===
     {
       id: 'mortgage-us',
-      title: 'Mortgage Calculator',
+      title: 'Mortgage Calculator (US)',
       description: 'Calculate monthly payment, total interest, and amortization schedule for US mortgages.',
       icon: '🏠',
       category: 'Loans & Mortgages',
       priority: 'high',
-      route: '/calculators/mortgage-us',
+      route: '/us/calculators/mortgage',
       region: 'US'
     },
     {
       id: 'loan-payment-us',
-      title: 'Loan Payment Calculator',
+      title: 'Loan Payment Calculator (US)',
       description: 'Calculate US loan monthly payment and total interest for personal loans.',
       icon: '💰',
       category: 'Loans & Mortgages',
       priority: 'high',
-      route: '/calculators/loan-payment-us',
+      route: '/us/calculators/loan',
       region: 'US'
     },
     {
       id: 'credit-card-payoff-us',
-      title: 'Credit Card Payoff Calculator',
+      title: 'Credit Card Payoff Calculator (US)',
       description: 'Calculate months to pay off and total interest for US credit card debt.',
       icon: '💳',
       category: 'Loans & Mortgages',
       priority: 'high',
-      route: '/calculators/credit-card-payoff-us',
+      route: '/us/calculators/credit-card',
       region: 'US'
     },
     {
       id: '401k-retirement-us',
-      title: '401(k) Retirement Calculator',
+      title: '401(k) Retirement Calculator (US)',
       description: 'Estimate 401k retirement savings growth with employer matching for US users.',
       icon: '📈',
       category: 'Investments & Savings',
       priority: 'high',
-      route: '/calculators/401k-retirement-us',
+      route: '/us/calculators/401k',
       region: 'US'
     },
     {
       id: 'savings-growth-us',
-      title: 'Savings Growth Calculator',
+      title: 'Savings Growth Calculator (US)',
       description: 'Estimate future value of US savings with regular deposits and compound interest.',
       icon: '💵',
       category: 'Investments & Savings',
       priority: 'high',
-      route: '/calculators/savings-growth-us',
+      route: '/us/calculators/savings',
       region: 'US'
     },
     {
       id: 'vat-uk',
-      title: 'VAT Calculator',
+      title: 'VAT Calculator (UK)',
       description: 'Calculate VAT and total price for UK purchases with 20% rate.',
       icon: '📄',
       category: 'Tax & VAT',
       priority: 'high',
-      route: '/calculators/vat-uk',
+      route: '/uk/calculators/vat',
       region: 'UK'
     },
     {
       id: 'mortgage-affordability-uk',
-      title: 'Mortgage Affordability Calculator',
-      description: 'Estimate how much mortgage you can afford in the UK based on income.',
+      title: 'Mortgage Affordability Calculator (UK)',
+      description: 'Estimate how much mortgage you can afford in the UK based on income, salary multipliers, and deposit.',
       icon: '🏠',
       category: 'Loans & Mortgages',
       priority: 'high',
-      route: '/calculators/mortgage-affordability-uk',
+      route: '/uk/calculators/mortgage',
       region: 'UK'
     },
     {
       id: 'savings-interest-uk',
-      title: 'Savings Interest Calculator',
+      title: 'Savings Interest Calculator (UK)',
       description: 'Estimate interest earned on UK savings accounts with compound growth.',
       icon: '💵',
       category: 'Investments & Savings',
       priority: 'high',
-      route: '/calculators/savings-interest-uk',
+      route: '/uk/calculators/savings',
       region: 'UK'
     },
     // === India/Default Calculators ===
     {
       id: 'emi',
-      title: 'EMI Calculator',
+      title: 'EMI Calculator (India)',
       description: 'Calculate monthly installments for home, car, or personal loans.',
       icon: '🏠',
       category: 'Loans',
       priority: 'high',
-      route: '/emi-calculator',
+      route: '/in/calculators/emi',
       region: 'India'
     },
     {
       id: 'sip',
-      title: 'SIP Calculator',
+      title: 'SIP Calculator (India)',
       description: 'Calculate mutual fund SIP returns and wealth creation.',
       icon: '📊',
       category: 'Investments',
       priority: 'high',
-      route: '/sip-calculator',
+      route: '/in/calculators/sip',
       region: 'India'
     },
     {
       id: 'fd',
-      title: 'FD Calculator',
+      title: 'FD Calculator (India)',
       description: 'Calculate Fixed Deposit maturity and interest.',
       icon: '🏦',
       category: 'Savings',
       priority: 'high',
-      route: '/fd-calculator',
+      route: '/in/calculators/fd',
       region: 'India'
     },
     {
       id: 'rd',
-      title: 'RD Calculator',
+      title: 'RD Calculator (India)',
       description: 'Calculate Recurring Deposit returns.',
       icon: '🗓️',
       category: 'Savings',
       priority: 'high',
-      route: '/rd-calculator',
+      route: '/in/calculators/rd',
       region: 'India'
     },
     {
       id: 'auto-loan',
-      title: 'Auto Loan Calculator',
+      title: 'Auto Loan Calculator (India)',
       description: 'Calculate car loan EMI and total interest',
       icon: '🚗',
       category: 'Loans',
       priority: 'high',
-      route: '/car-loan-calculator'
+      route: '/car-loan-calculator',
+      region: 'India'
     },
     {
       id: 'income-tax',
-      title: 'Income Tax Calculator',
+      title: 'Income Tax Calculator (India)',
       description: 'Compare old vs new tax regime (FY 2024-25)',
       icon: '📊',
       category: 'Tax',
@@ -190,13 +191,13 @@ function CalculatorHub() {
     },
     {
       id: 'home-loan-affordability',
-      title: 'Home Loan Affordability',
-      description: 'Calculate maximum home loan you can afford',
+      title: 'Home Loan Affordability (India)',
+      description: 'Calculate home loan eligibility with bank-specific FOIR, approval probability, and RBI-compliant LTV calculations',
       icon: '🏡',
       category: 'Loans',
       priority: 'high',
-      route: '/calculators/home-loan-affordability',
-      comingSoon: true
+      route: '/in/calculators/home-loan-affordability',
+      region: 'India'
     }
   ];
 

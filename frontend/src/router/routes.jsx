@@ -35,6 +35,7 @@ const SIPCalculator = lazy(() => import('../modules/calculators/sip'));
 const FDCalculator = lazy(() => import('../modules/calculators/fd'));
 const RDCalculator = lazy(() => import('../modules/calculators/rd'));
 const AutoLoanCalculator = lazy(() => import('../modules/calculators/autoloan'));
+const MortgageAffordabilityCalculatorIndia = lazy(() => import('../pages/calculators/global/MortgageAffordabilityCalculatorIndia'));
 
 // Pages
 const Home = lazy(() => import('../pages/Home'));
@@ -288,6 +289,18 @@ export const countrySpecificCalculatorRoutes = [
     description: 'Calculate Systematic Investment Plan (SIP) returns, projected wealth, and investment growth with different time horizons.',
     category: 'Investments',
     tool: 'sip',
+    country: 'in',
+    countryName: 'India',
+    currency: 'INR',
+    hreflang: 'en-in',
+  },
+  {
+    path: '/in/calculators/home-loan-affordability',
+    element: MortgageAffordabilityCalculatorIndia,
+    title: 'India Home Loan Affordability Calculator – Eligibility & EMI Calculator',
+    description: 'Calculate home loan eligibility based on Indian banking norms (FOIR, LTV, income multipliers). Bank-specific FOIR, approval probability meter, and detailed eligibility analysis.',
+    category: 'Loans',
+    tool: 'home-loan-affordability',
     country: 'in',
     countryName: 'India',
     currency: 'INR',

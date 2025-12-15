@@ -296,35 +296,43 @@ function CreditCardPayoffCalculatorUS() {
         </div>
 
         {/* SEO Content Section */}
-        <section className="seo-content">
-          <h2>How to Calculate Credit Card Payoff</h2>
-          <p>The formula for calculating months to pay off your credit card is:</p>
-          <code>n = -log(1 - r×P/M) / log(1 + r)</code>
-          <p>Where:</p>
-          <ul>
-            <li><strong>P</strong> = Current balance</li>
-            <li><strong>r</strong> = Monthly interest rate (annual rate ÷ 12)</li>
-            <li><strong>M</strong> = Monthly payment amount</li>
-            <li><strong>n</strong> = Number of months to pay off</li>
-          </ul>
+        <div className="seo-content-section">
+          <div className="content-block">
+            <h2>How to Calculate Credit Card Payoff</h2>
+            <p>The formula for calculating months to pay off your credit card is:</p>
+            <div className="formula-box">
+              <strong>n = -log(1 - r×P/M) / log(1 + r)</strong>
+            </div>
+            <p>Where:</p>
+            <ul>
+              <li><strong>P</strong> = Current balance</li>
+              <li><strong>r</strong> = Monthly interest rate (annual rate ÷ 12)</li>
+              <li><strong>M</strong> = Monthly payment amount</li>
+              <li><strong>n</strong> = Number of months to pay off</li>
+            </ul>
+          </div>
 
-          <h2>US Credit Card Payoff FAQ</h2>
-          <ul>
-            <li><strong>How can I pay off my card faster?</strong> Increase your monthly payment amount to reduce interest charges and payoff time.</li>
-            <li><strong>What if my payment is only minimum payment?</strong> Minimum payments typically cover only interest, making payoff take much longer.</li>
-            <li><strong>Do different cards have different rates?</strong> Yes, credit card rates vary widely based on creditworthiness and promotional offers.</li>
-            <li><strong>How much money can I save by paying faster?</strong> Use this calculator to compare different payment amounts and see the savings.</li>
-          </ul>
+          <div className="content-block">
+            <h2>US Credit Card Payoff FAQ</h2>
+            <ul>
+              <li><strong>How can I pay off my card faster?</strong> Increase your monthly payment amount to reduce interest charges and payoff time.</li>
+              <li><strong>What if my payment is only minimum payment?</strong> Minimum payments typically cover only interest, making payoff take much longer.</li>
+              <li><strong>Do different cards have different rates?</strong> Yes, credit card rates vary widely based on creditworthiness and promotional offers.</li>
+              <li><strong>How much money can I save by paying faster?</strong> Use this calculator to compare different payment amounts and see the savings.</li>
+            </ul>
+          </div>
 
-          <h2>Credit Card Payoff Strategies</h2>
-          <p>Try these approaches to pay off credit card debt faster:</p>
-          <ul>
-            <li><strong>Avalanche Method:</strong> Pay off cards with highest interest rates first</li>
-            <li><strong>Snowball Method:</strong> Pay off smallest balances first for psychological wins</li>
-            <li><strong>Balance Transfer:</strong> Move balance to 0% APR card if available</li>
-            <li><strong>Debt Consolidation:</strong> Combine multiple cards into one lower-rate loan</li>
-          </ul>
-        </section>
+          <div className="content-block">
+            <h2>Credit Card Payoff Strategies</h2>
+            <p>Try these approaches to pay off credit card debt faster:</p>
+            <ul>
+              <li><strong>Avalanche Method:</strong> Pay off cards with highest interest rates first</li>
+              <li><strong>Snowball Method:</strong> Pay off smallest balances first for psychological wins</li>
+              <li><strong>Balance Transfer:</strong> Move balance to 0% APR card if available</li>
+              <li><strong>Debt Consolidation:</strong> Combine multiple cards into one lower-rate loan</li>
+            </ul>
+          </div>
+        </div>
 
         <AEOContentSection tool="creditcard" country={country} />
 
