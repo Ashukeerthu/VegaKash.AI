@@ -298,6 +298,22 @@
   opacity: 0.9;
 }
 
+/* Inline helper/error below inputs */
+.inline-error {
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+  color: #b91c1c;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+}
+
+.help-tip {
+  color: #7f1d1d;
+  margin-left: 0.35rem;
+}
+
 /* Compact select for loan type */
 .input-select {
   width: 200px;
@@ -367,6 +383,12 @@
 .btn-secondary:hover {
   background: rgba(102,126,234,0.08);
   border-color: #4f46e5;
+}
+
+/* Compact variant for secondary buttons (advanced toggle) */
+.btn-secondary.btn-compact {
+  font-size: 0.82rem;
+  padding: 0.5rem 1rem;
 }
 
 @media (min-width: 900px) {
@@ -1477,6 +1499,81 @@
   margin-top: 1rem;
 }
 
+/* Answer blocks & examples (top SEO/AEO content) */
+.answer-block {
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.25rem;
+  border: 1px solid #e5e7eb;
+}
+
+.answer-block h2, .answer-block h3 {
+  margin-top: 0;
+}
+
+.primary-block {
+  background: #f0f9ff;
+  border-left: 4px solid #667eea;
+}
+
+.examples-block {
+  background: #f9fafb;
+}
+
+.examples-list {
+  columns: 2;
+  column-gap: 2rem;
+  padding-left: 1.2rem;
+}
+
+.examples-list li {
+  margin-bottom: 0.4rem;
+}
+
+/* Geo trust note */
+.geo-trust {
+  font-size: 0.95rem;
+  color: #6b7280;
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+
+/* Share actions row */
+.share-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Status dot used in income status badge */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  display: inline-block;
+}
+
+/* Concise top answer visual */
+.concise-block {
+  background: #fffdf7;
+  border: 1px solid #f3f4f6;
+}
+
+/* Advanced toggle row container */
+.advanced-toggle-row {
+  text-align: center;
+  margin-top: 0.75rem;
+}
+
+/* Reset button wrapper row */
+.reset-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
 /* Tooltip Styles */
 .info-tip {
   display: inline-block;
@@ -1595,11 +1692,12 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2.5rem 2rem;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
+  background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 12px 36px rgba(102, 126, 234, 0.10);
+  margin-top: 1.75rem;
+  margin-bottom: 1.75rem;
 }
 
 .content-block {
@@ -1612,13 +1710,13 @@
 }
 
 .content-block h2 {
-  color: #2c3e50;
-  font-size: 2rem;
+  color: #1f2937;
+  font-size: 1.8rem;
   font-weight: 800;
-  margin-bottom: 1.25rem;
-  letter-spacing: -0.5px;
+  margin-bottom: 1rem;
+  letter-spacing: -0.4px;
   position: relative;
-  padding-bottom: 0.75rem;
+  padding-bottom: 0.6rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -1634,8 +1732,8 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 80px;
-  height: 4px;
+  width: 72px;
+  height: 3px;
   background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
   border-radius: 2px;
 }
@@ -1648,19 +1746,19 @@
 }
 
 .content-block p {
-  color: #5a6c7d;
-  font-size: 1.05rem;
-  margin-bottom: 1rem;
-  line-height: 1.8;
+  color: #374151;
+  font-size: 1rem;
+  margin-bottom: 0.85rem;
+  line-height: 1.75;
 }
 
 .content-block ul,
 .content-block ol {
-  color: #5a6c7d;
-  font-size: 1.05rem;
-  line-height: 1.8;
-  padding-left: 2rem;
-  margin-bottom: 1rem;
+  color: #374151;
+  font-size: 1rem;
+  line-height: 1.75;
+  padding-left: 1.5rem;
+  margin-bottom: 0.85rem;
 }
 
 .content-block li {
@@ -1673,13 +1771,13 @@
 }
 
 .formula-box {
-  background: linear-gradient(135deg, #f8f9fc 0%, #f0f3f9 100%);
+  background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 100%);
   border-left: 4px solid #667eea;
-  padding: 1.5rem;
-  margin: 1.5rem 0;
-  border-radius: 8px;
+  padding: 1.25rem;
+  margin: 1.25rem 0;
+  border-radius: 10px;
   font-family: 'Courier New', monospace;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   text-align: center;
 }
 
