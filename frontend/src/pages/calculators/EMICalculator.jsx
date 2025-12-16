@@ -864,11 +864,11 @@ function EMICalculator() {
           <h2>Related Financial Calculators</h2>
           <p>Explore our other calculators to plan your finances better:</p>
           <div className="calculator-grid">
-            <Link to="/sip-calculator" className="calc-card">
+            <Link to="/in/calculators/sip" className="calc-card">
               <h3>SIP Calculator</h3>
               <p>Calculate returns on systematic investment plans</p>
             </Link>
-            <Link to="/fd-calculator" className="calc-card">
+            <Link to="/in/calculators/fd" className="calc-card">
               <h3>FD Calculator</h3>
               <p>Compute fixed deposit maturity amount</p>
             </Link>
@@ -876,7 +876,7 @@ function EMICalculator() {
               <h3>Income Tax Calculator</h3>
               <p>Calculate tax liability for FY 2024-25</p>
             </Link>
-            <Link to="/rd-calculator" className="calc-card">
+            <Link to="/in/calculators/rd" className="calc-card">
               <h3>RD Calculator</h3>
               <p>Calculate recurring deposit returns</p>
             </Link>

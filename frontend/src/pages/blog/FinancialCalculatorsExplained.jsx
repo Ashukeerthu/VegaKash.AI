@@ -168,19 +168,19 @@ function FinancialCalculatorsExplained() {
                 gap: '1rem',
                 marginTop: '1rem'
               }}>
-                <Link to="/fd-calculator" style={{ ...softLink, background: 'rgba(255,255,255,0.08)', color: 'white', border: '1px solid rgba(255,255,255,0.15)' }}>
+                <Link to="/in/calculators/fd" style={{ ...softLink, background: 'rgba(255,255,255,0.08)', color: 'white', border: '1px solid rgba(255,255,255,0.15)' }}>
                   <span>🏦 FD Calculator</span>
                   <span style={{ opacity: 0.75 }}>→</span>
                 </Link>
-                <Link to="/rd-calculator" style={{ ...softLink, background: 'rgba(255,255,255,0.08)', color: 'white', border: '1px solid rgba(255,255,255,0.15)' }}>
+                <Link to="/in/calculators/rd" style={{ ...softLink, background: 'rgba(255,255,255,0.08)', color: 'white', border: '1px solid rgba(255,255,255,0.15)' }}>
                   <span>📅 RD Calculator</span>
                   <span style={{ opacity: 0.75 }}>→</span>
                 </Link>
-                <Link to="/sip-calculator" style={{ ...softLink, background: 'rgba(255,255,255,0.08)', color: 'white', border: '1px solid rgba(255,255,255,0.15)' }}>
+                <Link to="/in/calculators/sip" style={{ ...softLink, background: 'rgba(255,255,255,0.08)', color: 'white', border: '1px solid rgba(255,255,255,0.15)' }}>
                   <span>📈 SIP Calculator</span>
                   <span style={{ opacity: 0.75 }}>→</span>
                 </Link>
-                <Link to="/emi-calculator" style={{ ...softLink, background: 'rgba(255,255,255,0.08)', color: 'white', border: '1px solid rgba(255,255,255,0.15)' }}>
+                <Link to="/in/calculators/emi" style={{ ...softLink, background: 'rgba(255,255,255,0.08)', color: 'white', border: '1px solid rgba(255,255,255,0.15)' }}>
                   <span>💳 EMI Calculator</span>
                   <span style={{ opacity: 0.75 }}>→</span>
                 </Link>
@@ -224,7 +224,7 @@ function FinancialCalculatorsExplained() {
                 <li>When planning short-to-medium term goals</li>
                 <li>When comparing bank FD rates</li>
               </ul>
-              <Link to="/fd-calculator" style={cta}>👉 FD Calculator – Calculate fixed deposit maturity and interest earned</Link>
+              <Link to="/in/calculators/fd" style={cta}>👉 FD Calculator – Calculate fixed deposit maturity and interest earned</Link>
             </section>
 
             <section style={card}>
@@ -243,7 +243,7 @@ function FinancialCalculatorsExplained() {
                 <li>When building an emergency fund</li>
                 <li>When planning short-term goals like travel or education</li>
               </ul>
-              <Link to="/rd-calculator" style={cta}>👉 RD Calculator – Calculate recurring deposit maturity with monthly investments</Link>
+              <Link to="/in/calculators/rd" style={cta}>👉 RD Calculator – Calculate recurring deposit maturity with monthly investments</Link>
             </section>
 
             <section style={card}>
@@ -262,7 +262,7 @@ function FinancialCalculatorsExplained() {
                 <li>For long-term wealth creation (5+ years)</li>
                 <li>To beat inflation through equity exposure</li>
               </ul>
-              <Link to="/sip-calculator" style={cta}>👉 SIP Calculator – Estimate mutual fund returns through monthly SIP investments</Link>
+              <Link to="/in/calculators/sip" style={cta}>👉 SIP Calculator – Estimate mutual fund returns through monthly SIP investments</Link>
             </section>
 
             <section style={card}>
@@ -281,7 +281,7 @@ function FinancialCalculatorsExplained() {
                 <li>Before buying a car on loan</li>
                 <li>When restructuring or prepaying loans</li>
               </ul>
-              <Link to="/emi-calculator" style={cta}>👉 EMI Calculator – Calculate loan EMI, interest and total repayment amount</Link>
+              <Link to="/in/calculators/emi" style={cta}>👉 EMI Calculator – Calculate loan EMI, interest and total repayment amount</Link>
             </section>
 
             <section style={card}>
@@ -297,19 +297,19 @@ function FinancialCalculatorsExplained() {
                   <tbody>
                     <tr>
                       <td>Safe lump sum investment</td>
-                      <td><Link to="/fd-calculator">FD Calculator</Link></td>
+                      <td><Link to="/in/calculators/fd">FD Calculator</Link></td>
                     </tr>
                     <tr>
                       <td>Monthly guaranteed savings</td>
-                      <td><Link to="/rd-calculator">RD Calculator</Link></td>
+                      <td><Link to="/in/calculators/rd">RD Calculator</Link></td>
                     </tr>
                     <tr>
                       <td>Long-term wealth creation</td>
-                      <td><Link to="/sip-calculator">SIP Calculator</Link></td>
+                      <td><Link to="/in/calculators/sip">SIP Calculator</Link></td>
                     </tr>
                     <tr>
                       <td>Loan affordability planning</td>
-                      <td><Link to="/emi-calculator">EMI Calculator</Link></td>
+                      <td><Link to="/in/calculators/emi">EMI Calculator</Link></td>
                     </tr>
                   </tbody>
                 </table>

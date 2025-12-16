@@ -5,6 +5,7 @@ import TravelSummary from './components/TravelSummary';
 import TravelAIPlan from './components/TravelAIPlan';
 import TravelLoadingScreen from './components/TravelLoadingScreen';
 import ScrollToTop from '../../core/ui/ScrollToTop';
+import { API_BASE_URL } from '../../../config';
 import './TravelBudget.css';
 
 /**
@@ -40,7 +41,7 @@ function TravelBudgetPage() {
       console.log('Travel form submitted:', formData);
       
       // Call backend API to calculate budget
-      const response = await fetch('http://localhost:8000/api/v1/ai/travel/calculate-budget', {
+      const response = await fetch(`${API_BASE_URL}/api/v1/ai/travel/calculate-budget`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -122,7 +123,7 @@ function TravelBudgetPage() {
       // Call optimization endpoint with timeout
       try {
         const optimizationResponse = await fetchWithTimeout(
-          'http://localhost:8000/api/v1/ai/travel/optimize',
+          `${API_BASE_URL}/api/v1/ai/travel/optimize`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -147,7 +148,7 @@ function TravelBudgetPage() {
       // Call itinerary generation endpoint with timeout
       try {
         const itineraryResponse = await fetchWithTimeout(
-          'http://localhost:8000/api/v1/ai/travel/generate-itinerary',
+          `${API_BASE_URL}/api/v1/ai/travel/generate-itinerary`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

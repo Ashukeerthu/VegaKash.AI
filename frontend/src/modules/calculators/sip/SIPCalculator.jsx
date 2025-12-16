@@ -98,7 +98,7 @@ function SIPCalculator() {
         title="SIP Calculator | VegaKash.AI"
         description="Calculate SIP and lumpsum returns with charts and projections. Compare investment strategies and forecast wealth."
         keywords="sip calculator, investment calculator, lumpsum calculator, mutual fund returns, wealth projection"
-        canonical="/sip-calculator"
+        canonical="/in/calculators/sip"
         structuredData={{
           "@graph": [
             {
@@ -106,7 +106,7 @@ function SIPCalculator() {
               "@type": "WebPage",
               "name": "SIP Calculator",
               "description": "Calculate SIP and lumpsum returns with charts and projections",
-              "url": "https://vegaktools.com/sip-calculator"
+              "url": "https://vegaktools.com/in/calculators/sip"
             },
             {
               "@context": "https://schema.org",
@@ -114,7 +114,7 @@ function SIPCalculator() {
               "itemListElement": [
                 { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://vegaktools.com/" },
                 { "@type": "ListItem", "position": 2, "name": "Calculators", "item": "https://vegaktools.com/calculators" },
-                { "@type": "ListItem", "position": 3, "name": "SIP Calculator", "item": "https://vegaktools.com/sip-calculator" }
+                { "@type": "ListItem", "position": 3, "name": "SIP Calculator", "item": "https://vegaktools.com/in/calculators/sip" }
               ]
             }
           ]
@@ -739,19 +739,19 @@ function SIPCalculator() {
           <h2>Related Financial Tools</h2>
           <p>Explore more calculators and tools to plan smarter</p>
           <div className="calculator-grid">
-            <Link to="/fd-calculator" className="calc-card">
+            <Link to="/in/calculators/fd" className="calc-card">
               <h3>🏦 FD Calculator</h3>
               <p>Calculate fixed deposit maturity and interest</p>
             </Link>
-            <Link to="/rd-calculator" className="calc-card">
+            <Link to="/in/calculators/rd" className="calc-card">
               <h3>📅 RD Calculator</h3>
               <p>Calculate recurring deposit returns</p>
             </Link>
-            <Link to="/emi-calculator" className="calc-card">
+            <Link to="/in/calculators/emi" className="calc-card">
               <h3>💰 EMI Calculator</h3>
               <p>Calculate loan EMI and total interest</p>
             </Link>
-            <Link to="/car-loan-calculator" className="calc-card">
+            <Link to="/in/calculators/emi" className="calc-card">
               <h3>🚗 Auto Loan Calculator</h3>
               <p>Plan car loan EMIs and interest outgo</p>
             </Link>

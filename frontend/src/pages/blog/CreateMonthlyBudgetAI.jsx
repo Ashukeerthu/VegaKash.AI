@@ -179,10 +179,10 @@ function CreateMonthlyBudgetAI() {
                     <li>💡 Utilities (electricity, water, gas, internet)</li>
                     <li>🛒 Groceries (baseline amount)</li>
                     <li>🏥 Insurance (health, car, home)</li>
-                    <li>💳 <Link to="/emi-calculator">Loan or EMI payments</Link></li>
+                    <li>💳 <Link to="/in/calculators/emi">Loan or EMI payments</Link></li>
                     <li>📺 Subscriptions (Netflix, Spotify, gym)</li>
                   </ul>
-                  <p className="tip">💡 <strong>Pro Tip:</strong> Use our <Link to="/emi-calculator">EMI Calculator</Link> to plan loan payments accurately.</p>
+                  <p className="tip">💡 <strong>Pro Tip:</strong> Use our <Link to="/in/calculators/emi">EMI Calculator</Link> to plan loan payments accurately.</p>
                 </div>
               </div>
 
@@ -209,11 +209,11 @@ function CreateMonthlyBudgetAI() {
                   <ul>
                     <li>🚨 <strong>Emergency fund</strong> — 3-6 months expenses</li>
                     <li>💰 <strong>Debt repayment</strong> — Clear high-interest loans</li>
-                    <li>📈 <strong>Investments</strong> — <Link to="/sip-calculator">SIP for long-term growth</Link></li>
+                    <li>📈 <strong>Investments</strong> — <Link to="/in/calculators/sip">SIP for long-term growth</Link></li>
                     <li>🏖️ <strong>Travel savings</strong> — Dream vacation fund</li>
                     <li>🏡 <strong>Down payment</strong> — House or car</li>
                   </ul>
-                  <p className="tip">💡 <strong>Smart Savings:</strong> Use <Link to="/fd-calculator">FD Calculator</Link> and <Link to="/rd-calculator">RD Calculator</Link> to grow your money.</p>
+                  <p className="tip">💡 <strong>Smart Savings:</strong> Use <Link to="/in/calculators/fd">FD Calculator</Link> and <Link to="/in/calculators/rd">RD Calculator</Link> to grow your money.</p>
                 </div>
               </div>
 
@@ -271,10 +271,10 @@ function CreateMonthlyBudgetAI() {
                 <h3>Savings & Goals</h3>
                 <ul>
                   <li>Emergency fund</li>
-                  <li><Link to="/sip-calculator">SIP investments</Link></li>
+                  <li><Link to="/in/calculators/sip">SIP investments</Link></li>
                   <li>Retirement savings</li>
                   <li>Extra debt payments</li>
-                  <li><Link to="/fd-calculator">Fixed deposits</Link></li>
+                  <li><Link to="/in/calculators/fd">Fixed deposits</Link></li>
                 </ul>
               </div>
             </div>
@@ -355,7 +355,7 @@ function CreateMonthlyBudgetAI() {
               <div className="persona-card">
                 <span className="persona-icon">💼</span>
                 <h4>Working Professionals</h4>
-                <p>Balance salary, <Link to="/emi-calculator">EMI payments</Link>, and investments</p>
+                <p>Balance salary, <Link to="/in/calculators/emi">EMI payments</Link>, and investments</p>
               </div>
               
               <div className="persona-card">
@@ -389,27 +389,27 @@ function CreateMonthlyBudgetAI() {
             <p>Maximize your financial planning with these calculators:</p>
             
             <div className="tools-grid">
-              <Link to="/emi-calculator" className="tool-card">
+              <Link to="/in/calculators/emi" className="tool-card">
                 <h4>💳 EMI Calculator</h4>
                 <p>Calculate loan payments for home, car, or personal loans</p>
               </Link>
               
-              <Link to="/sip-calculator" className="tool-card">
+              <Link to="/in/calculators/sip" className="tool-card">
                 <h4>📈 SIP Calculator</h4>
                 <p>Plan systematic investments and wealth creation</p>
               </Link>
               
-              <Link to="/fd-calculator" className="tool-card">
+              <Link to="/in/calculators/fd" className="tool-card">
                 <h4>🏦 FD Calculator</h4>
                 <p>Calculate fixed deposit maturity amount and interest</p>
               </Link>
               
-              <Link to="/rd-calculator" className="tool-card">
+              <Link to="/in/calculators/rd" className="tool-card">
                 <h4>💰 RD Calculator</h4>
                 <p>Plan recurring deposit savings with interest projections</p>
               </Link>
               
-              <Link to="/car-loan-calculator" className="tool-card">
+              <Link to="/in/calculators/emi" className="tool-card">
                 <h4>🚗 Auto Loan Calculator</h4>
                 <p>Calculate car loan EMI and total interest</p>
               </Link>

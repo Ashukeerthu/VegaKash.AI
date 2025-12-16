@@ -618,11 +618,11 @@ function RDCalculator() {
           <h2>Related Financial Calculators</h2>
           <p>Explore our other calculators to plan your finances better:</p>
           <div className="calculator-grid">
-            <Link to="/fd-calculator" className="calc-card">
+            <Link to="/in/calculators/fd" className="calc-card">
               <h3>FD Calculator</h3>
               <p>Calculate fixed deposit maturity and returns</p>
             </Link>
-            <Link to="/sip-calculator" className="calc-card">
+            <Link to="/in/calculators/sip" className="calc-card">
               <h3>SIP Calculator</h3>
               <p>Calculate mutual fund SIP and lumpsum returns</p>
             </Link>
@@ -630,7 +630,7 @@ function RDCalculator() {
               <h3>Savings Goal Calculator</h3>
               <p>Plan monthly savings to achieve financial goals</p>
             </Link>
-            <Link to="/emi-calculator" className="calc-card">
+            <Link to="/in/calculators/emi" className="calc-card">
               <h3>EMI Calculator</h3>
               <p>Calculate loan EMI and total interest payable</p>
             </Link>

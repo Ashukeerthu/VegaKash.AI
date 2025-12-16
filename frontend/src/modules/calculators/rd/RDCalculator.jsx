@@ -64,7 +64,7 @@ function RDCalculator() {
         title="RD Calculator | VegaKash.AI"
         description="Calculate recurring deposit maturity amount and interest earned with monthly compounding, in your preferred currency."
         keywords="rd calculator, recurring deposit calculator, maturity amount, interest earned"
-        canonical="/rd-calculator"
+        canonical="/in/calculators/rd"
         structuredData={{
           "@graph": [
             {
@@ -72,7 +72,7 @@ function RDCalculator() {
               "@type": "WebPage",
               "name": "RD Calculator",
               "description": "Calculate recurring deposit maturity amount and interest earned with monthly compounding",
-              "url": "https://vegaktools.com/rd-calculator"
+              "url": "https://vegaktools.com/in/calculators/rd"
             },
             {
               "@context": "https://schema.org",
@@ -80,7 +80,7 @@ function RDCalculator() {
               "itemListElement": [
                 { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://vegaktools.com/" },
                 { "@type": "ListItem", "position": 2, "name": "Calculators", "item": "https://vegaktools.com/calculators" },
-                { "@type": "ListItem", "position": 3, "name": "RD Calculator", "item": "https://vegaktools.com/rd-calculator" }
+                { "@type": "ListItem", "position": 3, "name": "RD Calculator", "item": "https://vegaktools.com/in/calculators/rd" }
               ]
             }
           ]
@@ -663,19 +663,19 @@ function RDCalculator() {
           <h2>Related Financial Tools</h2>
           <p>Explore more calculators and tools to plan smarter</p>
           <div className="calculator-grid">
-            <Link to="/fd-calculator" className="calc-card">
+            <Link to="/in/calculators/fd" className="calc-card">
               <h3>🏦 FD Calculator</h3>
               <p>Calculate fixed deposit maturity and returns</p>
             </Link>
-            <Link to="/sip-calculator" className="calc-card">
+            <Link to="/in/calculators/sip" className="calc-card">
               <h3>📈 SIP Calculator</h3>
               <p>Calculate mutual fund SIP and lumpsum returns</p>
             </Link>
-            <Link to="/emi-calculator" className="calc-card">
+            <Link to="/in/calculators/emi" className="calc-card">
               <h3>💰 EMI Calculator</h3>
               <p>Calculate loan EMI and total interest payable</p>
             </Link>
-            <Link to="/car-loan-calculator" className="calc-card">
+            <Link to="/in/calculators/emi" className="calc-card">
               <h3>🚗 Auto Loan Calculator</h3>
               <p>Plan car loan EMIs and interest outgo</p>
             </Link>

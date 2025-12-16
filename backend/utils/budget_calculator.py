@@ -1,9 +1,10 @@
 """
 Budget Planner V1.2 - Budget Calculation Utilities
 Core algorithms for budget generation and adjustments
+Includes Auto Loan-specific calculations
 """
 
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 # ============================================
 # COL ADJUSTMENT ALGORITHM

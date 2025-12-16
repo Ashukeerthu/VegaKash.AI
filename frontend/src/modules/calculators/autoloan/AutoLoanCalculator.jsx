@@ -70,7 +70,7 @@ function AutoLoanCalculator() {
         title="Car Loan EMI Calculator | VegaKash.AI"
         description="Calculate your car loan EMI, total interest, and payment schedule. Plan your auto loan for new and used vehicles."
         keywords="car loan emi calculator, auto loan calculator, vehicle loan, car financing calculator, auto emi"
-        canonical="/car-loan-calculator"
+        canonical="/in/calculators/emi"
         structuredData={{
           "@graph": [
             {
@@ -78,15 +78,15 @@ function AutoLoanCalculator() {
               "@type": "WebPage",
               "name": "Car Loan EMI Calculator",
               "description": "Calculate your car loan EMI, total interest, and payment schedule",
-              "url": "https://vegaktools.com/car-loan-calculator"
+              "url": "https://vegaktools.com/in/calculators/emi"
             },
             {
               "@context": "https://schema.org",
               "@type": "BreadcrumbList",
               "itemListElement": [
                 { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://vegaktools.com/" },
-                { "@type": "ListItem", "position": 2, "name": "Calculators", "item": "https://vegaktools.com/calculators" },
-                { "@type": "ListItem", "position": 3, "name": "Car Loan EMI Calculator", "item": "https://vegaktools.com/car-loan-calculator" }
+                { "@type": "ListItem", "position": 2, "name": "Calculators", "item": "https://vegaktools.com/in/calculators" },
+                { "@type": "ListItem", "position": 3, "name": "Car Loan EMI Calculator", "item": "https://vegaktools.com/in/calculators/emi" }
               ]
             }
           ]
@@ -393,19 +393,19 @@ function AutoLoanCalculator() {
             <h2>Related Financial Tools</h2>
             <p>Explore more calculators and tools to plan smarter</p>
             <div className="calculator-grid">
-              <Link to="/emi-calculator" className="calc-card">
+              <Link to="/in/calculators/emi" className="calc-card">
                 <h3>💰 EMI Calculator</h3>
                 <p>Calculate home or personal loan EMI</p>
               </Link>
-              <Link to="/sip-calculator" className="calc-card">
+              <Link to="/in/calculators/sip" className="calc-card">
                 <h3>📈 SIP Calculator</h3>
                 <p>Plan monthly investments and estimate returns</p>
               </Link>
-              <Link to="/fd-calculator" className="calc-card">
+              <Link to="/in/calculators/fd" className="calc-card">
                 <h3>🏦 FD Calculator</h3>
                 <p>Calculate fixed deposit maturity and interest</p>
               </Link>
-              <Link to="/rd-calculator" className="calc-card">
+              <Link to="/in/calculators/rd" className="calc-card">
                 <h3>📅 RD Calculator</h3>
                 <p>Calculate recurring deposit returns</p>
               </Link>

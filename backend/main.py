@@ -20,6 +20,7 @@ from slowapi.util import get_remote_address  # type: ignore
 from routes.budget_planner import router as budget_planner_router
 from routes.feedback import router as feedback_router
 from routes.travel_planner import router as travel_planner_router
+from routes.auto_loan import router as auto_loan_router
 from schemas import (
     AIPlanOutput,
     AIPlanOutputV2,
@@ -136,10 +137,12 @@ app.add_middleware(
 app.include_router(budget_planner_router)
 app.include_router(travel_planner_router)
 app.include_router(feedback_router)
+app.include_router(auto_loan_router)
 
 logger.info("✅ Budget Planner routes registered (Phase 2)")
 logger.info("✅ Travel Planner routes registered (Phase 3)")
 logger.info("✅ Feedback routes registered")
+logger.info("✅ Auto Loan Calculator routes registered")
 
 
 @app.post("/api/v2/generate-ai-plan", response_model=AIPlanOutputV2)

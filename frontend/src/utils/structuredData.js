@@ -124,27 +124,27 @@ export const getCalculatorSchema = (calculatorType) => {
     emi: {
       name: "EMI Calculator",
       description: "Calculate Equated Monthly Installment (EMI) for loans with detailed amortization schedule",
-      url: "/emi-calculator"
+      url: "/in/calculators/emi"
     },
     sip: {
       name: "SIP Calculator",
       description: "Calculate returns on Systematic Investment Plan with compound interest",
-      url: "/sip-calculator"
+      url: "/in/calculators/sip"
     },
     fd: {
       name: "FD Calculator",
       description: "Calculate Fixed Deposit maturity and interest earned",
-      url: "/fd-calculator"
+      url: "/in/calculators/fd"
     },
     rd: {
       name: "RD Calculator",
       description: "Calculate Recurring Deposit maturity and interest",
-      url: "/rd-calculator"
+      url: "/in/calculators/rd"
     },
     autoLoan: {
       name: "Car Loan EMI Calculator",
       description: "Calculate car loan EMI and total interest with payment schedule",
-      url: "/car-loan-calculator"
+      url: "/in/calculators/emi"
     },
     incomeTax: {
       name: "Income Tax Calculator",

@@ -146,7 +146,7 @@ function CalculatorHub() {
       icon: '🚗',
       category: 'Loans',
       priority: 'high',
-      route: '/car-loan-calculator',
+      route: '/in/calculators/auto-loan',
       region: 'India'
     },
     {

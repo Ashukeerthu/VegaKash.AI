@@ -34,6 +34,7 @@ const EMICalculator = lazy(() => import('../pages/calculators/EMICalculator'));
 const SIPCalculator = lazy(() => import('../pages/calculators/SIPCalculator'));
 const FDCalculator = lazy(() => import('../pages/calculators/FDCalculator'));
 const RDCalculator = lazy(() => import('../pages/calculators/RDCalculator'));
+const AutoLoanCalculator = lazy(() => import('../modules/calculators/autoloan/AutoLoanCalculator'));
 const HomeLoanEligibilityIndia = lazy(() => import('../pages/calculators/global/MortgageAffordabilityCalculatorIndia'));
 
 // Pages
@@ -57,87 +58,8 @@ const Disclaimer = lazy(() => import('../pages/Disclaimer'));
  * Global calculator routes (available in all countries)
  * Structure: /calculators/{tool}/
  */
-export const globalCalculatorRoutes = [
-  // Mortgage
-  {
-    path: '/calculators/mortgage',
-    element: MortgageCalculatorUS,
-    title: 'Mortgage Calculator – Monthly Payment, Amortization & Affordability',
-    description: 'Calculate monthly mortgage payments, total interest, amortization schedule, and affordability assessment.',
-    category: 'Loans',
-    tool: 'mortgage',
-    isGlobal: true,
-    country: 'global',
-    hreflang: 'x-default',
-  },
-  // Loan Payment
-  {
-    path: '/calculators/loan',
-    element: LoanPaymentCalculatorUS,
-    title: 'Loan Payment Calculator – Monthly EMI & Amortization Schedule',
-    description: 'Calculate monthly loan payments, total interest payable, and complete amortization schedule for any loan type.',
-    category: 'Loans',
-    tool: 'loan',
-    isGlobal: true,
-    country: 'global',
-    hreflang: 'x-default',
-  },
-  // EMI
-  {
-    path: '/calculators/emi',
-    element: EMICalculator,
-    title: 'EMI Calculator – Equated Monthly Installment Calculator',
-    description: 'Calculate Equated Monthly Installment (EMI), compare loan options, and plan your loan repayment strategy effectively.',
-    category: 'Loans',
-    tool: 'emi',
-    isGlobal: true,
-    hreflang: 'x-default',
-  },
-  // SIP
-  {
-    path: '/calculators/sip',
-    element: SIPCalculator,
-    title: 'SIP Calculator – Systematic Investment Plan Calculator',
-    description: 'Calculate Systematic Investment Plan (SIP) returns, projected wealth, and investment growth with flexible options.',
-    category: 'Investments',
-    tool: 'sip',
-    isGlobal: true,
-    hreflang: 'x-default',
-  },
-  // FD
-  {
-    path: '/calculators/fd',
-    element: FDCalculator,
-    title: 'FD Calculator – Fixed Deposit Maturity & Interest Calculator',
-    description: 'Calculate Fixed Deposit (FD) maturity amount, interest earned, and compare investment returns across tenures.',
-    category: 'Savings',
-    tool: 'fd',
-    isGlobal: true,
-    hreflang: 'x-default',
-  },
-  // RD
-  {
-    path: '/calculators/rd',
-    element: RDCalculator,
-    title: 'RD Calculator – Recurring Deposit Returns Calculator',
-    description: 'Calculate Recurring Deposit (RD) returns, maturity amount, and compare different investment terms and interest rates.',
-    category: 'Savings',
-    tool: 'rd',
-    isGlobal: true,
-    hreflang: 'x-default',
-  },
-  // Savings
-  {
-    path: '/calculators/savings',
-    element: SavingsGrowthCalculatorUS,
-    title: 'Savings Calculator – Savings Growth & Future Value Calculator',
-    description: 'Plan and track your savings growth with compound interest, compare savings goals, and project your financial future.',
-    category: 'Savings',
-    tool: 'savings',
-    isGlobal: true,
-    hreflang: 'x-default',
-  },
-];
+// NOTE: Legacy global calculator paths removed to lock country-based structure
+export const globalCalculatorRoutes = [];
 
 // ==================== COUNTRY-SPECIFIC CALCULATOR ROUTES ====================
 /**
@@ -295,6 +217,18 @@ export const countrySpecificCalculatorRoutes = [
     hreflang: 'en-in',
   },
   {
+    path: '/in/calculators/auto-loan',
+    element: AutoLoanCalculator,
+    title: 'Auto Loan Calculator – Car Loan EMI & Interest Calculator (India)',
+    description: 'Calculate car loan EMI, total interest, and payment schedule for vehicle financing in India. Plan your auto loan with down payment analysis.',
+    category: 'Loans',
+    tool: 'auto-loan',
+    country: 'in',
+    countryName: 'India',
+    currency: 'INR',
+    hreflang: 'en-in',
+  },
+  {
     path: '/india/calculators/home-loan-eligibility',
     element: HomeLoanEligibilityIndia,
     title: 'India Home Loan Eligibility Calculator',
@@ -438,30 +372,7 @@ export const contentRoutes = [
  * Ensures backward compatibility and prevents broken links
  */
 export const legacyRedirectRoutes = [
-  // Blog legacy paths → new learning path
-  { path: '/blog/financial-calculators-explained', redirectTo: '/learning/blog/financial-calculators-explained' },
-  { path: '/learning/financial-calculators-explained', redirectTo: '/learning/blog/financial-calculators-explained' },
-  // Old US calculators → new global routes
-  { path: '/calculators/mortgage-us', redirectTo: '/us/calculators/mortgage' },
-  { path: '/calculators/loan-payment-us', redirectTo: '/us/calculators/loan' },
-  { path: '/calculators/credit-card-payoff-us', redirectTo: '/us/calculators/credit-card' },
-  { path: '/calculators/401k-retirement-us', redirectTo: '/us/calculators/401k' },
-  { path: '/calculators/savings-growth-us', redirectTo: '/us/calculators/savings' },
-
-  // Old UK calculators → new global routes
-  { path: '/calculators/vat-uk', redirectTo: '/uk/calculators/vat' },
-  { path: '/calculators/mortgage-affordability-uk', redirectTo: '/uk/calculators/mortgage' },
-  { path: '/calculators/savings-interest-uk', redirectTo: '/uk/calculators/savings' },
-
-  // Old paths → global routes (backward compatibility)
-  { path: '/emi-calculator', redirectTo: '/calculators/emi' },
-  { path: '/sip-calculator', redirectTo: '/calculators/sip' },
-  { path: '/fd-calculator', redirectTo: '/calculators/fd' },
-  { path: '/rd-calculator', redirectTo: '/calculators/rd' },
-  { path: '/car-loan-calculator', redirectTo: '/calculators/emi' },
-  { path: '/income-tax-calculator', redirectTo: '/calculators/tax' },
-  // India eligibility legacy → new India-friendly path
-  { path: '/in/calculators/home-loan-eligibility', redirectTo: '/india/calculators/home-loan-eligibility' },
+  // Legacy redirects intentionally cleared to freeze final URL structure
 ];
 
 // ==================== COMBINED ROUTES ====================
