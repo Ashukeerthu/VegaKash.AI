@@ -375,15 +375,15 @@ export const legacyRedirectRoutes = [
   // Redirect base calculator paths to country-specific versions
   {
     path: '/calculators/mortgage',
-    element: () => <Navigate to="/us/calculators/mortgage" replace />,
+    element: <Navigate to="/us/calculators/mortgage" replace />,
   },
   {
     path: '/calculators/loan',
-    element: () => <Navigate to="/us/calculators/loan" replace />,
+    element: <Navigate to="/us/calculators/loan" replace />,
   },
   {
     path: '/calculators/autoloan',
-    element: () => <Navigate to="/in/calculators/auto-loan" replace />,
+    element: <Navigate to="/in/calculators/auto-loan" replace />,
   },
 ];
 
