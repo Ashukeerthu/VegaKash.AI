@@ -372,7 +372,19 @@ export const contentRoutes = [
  * Ensures backward compatibility and prevents broken links
  */
 export const legacyRedirectRoutes = [
-  // Legacy redirects intentionally cleared to freeze final URL structure
+  // Redirect base calculator paths to country-specific versions
+  {
+    path: '/calculators/mortgage',
+    element: () => <Navigate to="/us/calculators/mortgage" replace />,
+  },
+  {
+    path: '/calculators/loan',
+    element: () => <Navigate to="/us/calculators/loan" replace />,
+  },
+  {
+    path: '/calculators/autoloan',
+    element: () => <Navigate to="/in/calculators/auto-loan" replace />,
+  },
 ];
 
 // ==================== COMBINED ROUTES ====================
@@ -384,6 +396,7 @@ export const allRoutes = [
   ...budgetRoutes,
   ...globalCalculatorRoutes,
   ...countrySpecificCalculatorRoutes,
+  ...legacyRedirectRoutes,
   ...blogRoutes,
   ...contentRoutes,
 ];
