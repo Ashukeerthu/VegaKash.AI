@@ -69,19 +69,41 @@ sudo journalctl -u vegakash-backend -f
 sudo tail -f /var/log/nginx/error.log
 ```
 
-### Verify OpenAI API Key:
+### Verify Environment Variables:
 ```bash
 cd /home/u277936268/domains/vegaktools.com/public_html/VegaKash.AI/backend
-cat .env | grep OPENAI_API_KEY
+cat .env
 ```
 
-If missing:
+If missing or incomplete, create/update .env:
 ```bash
-echo "OPENAI_API_KEY=sk-proj-your-key-here" > .env
-echo "OPENAI_MODEL=gpt-4o-mini" >> .env
+cat > .env << 'EOF'
+# OpenAI Configuration (Required)
+OPENAI_API_KEY=sk-proj-your-key-here
+OPENAI_MODEL=gpt-4o-mini
+
+# Email Configuration (Required for Feedback)
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASSWORD=your-app-password
+EMAIL_TO=your-email@gmail.com
+
+# Production Settings
+ENVIRONMENT=production
+PORT=8000
+FRONTEND_URL=https://vegaktools.com
+PRODUCTION_DOMAIN=vegaktools.com
+
+# Google Maps API (Optional)
+GOOGLE_MAPS_API_KEY=your-google-maps-key
+EOF
+
 chmod 600 .env
 sudo systemctl restart vegakash-backend
 ```
+
+**Important:** For Gmail, use an [App Password](https://support.google.com/accounts/answer/185833), not your regular password.
 
 ## Common Issues
 
