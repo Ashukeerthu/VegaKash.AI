@@ -277,7 +277,7 @@ function EMICalculator() {
     keywords: country
       ? `EMI calculator ${country.toUpperCase()}, loan EMI, monthly payment calculator`
       : 'EMI calculator, equated monthly installment, loan calculator, EMI formula, monthly payment',
-    tool: 'emi',
+    tool: null, // Set to null to disable duplicate FAQPage from EnhancedSEO (we have consolidated FAQPage at line 314)
     country: country || undefined,
     supportedCountries: ['in', 'us', 'uk'],
     isGlobal: !country,
@@ -311,7 +311,7 @@ function EMICalculator() {
           }
         })}
       </script>
-      {/* JSON-LD Schema for FAQPage - AI Overview & Voice Search */}
+      {/* JSON-LD Schema for FAQPage - Consolidated (Single Schema - No Duplicates) */}
       <script type="application/ld+json">
         {JSON.stringify({
           "@context": "https://schema.org",
@@ -319,10 +319,34 @@ function EMICalculator() {
           "mainEntity": [
             {
               "@type": "Question",
-              "name": "What is EMI?",
+              "name": "What does EMI stand for?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "EMI (Equated Monthly Installment) is the fixed monthly payment made towards a loan. It includes both principal and interest and remains relatively constant over the loan tenure."
+                "text": "EMI stands for Equated Monthly Installment. It's the fixed monthly payment made towards a loan. It includes both principal and interest and remains relatively constant over the loan tenure."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How is EMI calculated?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "EMI is calculated using the formula: EMI = P × [r(1+r)^n]/[(1+r)^n-1], where P is loan principal, r is monthly interest rate, and n is the number of months."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What's the difference between EMI and monthly loan payment?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "EMI and monthly loan payment mean the same thing. EMI is the term commonly used in India for fixed monthly loan payments, while Western countries may just call it 'monthly payment.'"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How can I reduce my EMI?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "You can reduce your EMI by: increasing your down payment, extending the loan tenure (though this increases total interest), improving your credit score for better rates, or paying a lump sum amount."
               }
             },
             {
@@ -330,7 +354,7 @@ function EMICalculator() {
               "name": "What is a good EMI to income ratio?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Financial experts recommend that your total EMI obligations should not exceed 40-50% of your monthly income. This ensures you have sufficient funds for other expenses and savings."
+                "text": "Financial experts recommend that your total EMI obligations should not exceed 40-50% of your monthly income. This ensures you have sufficient funds for other expenses and savings. For example, if your monthly income is ₹1,00,000, your total EMIs should ideally be below ₹40,000-50,000."
               }
             },
             {
@@ -338,7 +362,7 @@ function EMICalculator() {
               "name": "Can I prepay my loan to reduce EMI?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Yes, most loans allow part-prepayments. You can either reduce your EMI amount while keeping tenure same, or reduce tenure while keeping EMI same. Most lenders don't charge prepayment penalties on floating rate home loans."
+                "text": "Yes, most loans allow part-prepayments. You can either reduce your EMI amount while keeping tenure same, or reduce tenure while keeping EMI same. Most lenders don't charge prepayment penalties on floating rate home loans. However, check your loan agreement for any applicable charges."
               }
             },
             {
@@ -346,7 +370,15 @@ function EMICalculator() {
               "name": "Is EMI amount fixed throughout the loan tenure?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "For fixed-rate loans, EMI remains constant. However, for floating-rate loans (most common in India), EMI can change when the lender revises interest rates based on RBI's repo rate."
+                "text": "For fixed-rate loans, EMI remains constant. However, for floating-rate loans (most common in India), EMI can change when the lender revises interest rates based on RBI's repo rate or other external benchmarks. Some lenders adjust tenure instead of EMI amount."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can I change my loan tenure after taking the loan?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, many lenders allow you to increase or decrease your loan tenure through restructuring or part-prepayment options. Extending tenure will reduce your EMI but increase total interest. Shortening tenure will increase EMI but save on interest. Contact your lender to understand the process and any applicable charges."
               }
             },
             {
@@ -354,7 +386,7 @@ function EMICalculator() {
               "name": "What happens if I miss an EMI payment?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Missing EMI payments can result in late payment charges, penalties, negative impact on credit score, additional interest on unpaid amount, and in extreme cases, legal action."
+                "text": "Missing EMI payments can have serious consequences: (1) Late payment charges and penalties, (2) Negative impact on your credit score, (3) Additional interest on unpaid amount, (4) Legal action or asset seizure in extreme cases. Always prioritize EMI payments or contact your lender immediately if facing financial difficulties."
               }
             },
             {
@@ -362,7 +394,7 @@ function EMICalculator() {
               "name": "How does CIBIL score affect my EMI?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Your CIBIL score doesn't directly affect EMI amount, but it significantly impacts the interest rate offered by lenders. A higher score (750+) qualifies you for lower interest rates."
+                "text": "Your CIBIL score doesn't directly affect EMI amount, but it significantly impacts the interest rate offered by lenders. A higher score (750+) makes you eligible for lower interest rates, which in turn reduces your EMI. For example, a score above 750 might get you 8.5% interest, while a score of 650 might result in 10% interest on the same loan."
               }
             }
           ]
@@ -1743,6 +1775,38 @@ function EMICalculator() {
         <div className="content-block faq-section">
           <h2>Frequently Asked Questions (FAQs)</h2>
           
+          <div className="faq-item">
+            <h3>What does EMI stand for?</h3>
+            <p>
+              EMI stands for Equated Monthly Installment. It's the fixed monthly payment made towards a loan. It includes both principal and interest 
+              and remains relatively constant over the loan tenure.
+            </p>
+          </div>
+
+          <div className="faq-item">
+            <h3>How is EMI calculated?</h3>
+            <p>
+              EMI is calculated using the formula: EMI = P × [r(1+r)^n]/[(1+r)^n-1], where P is loan principal, r is monthly interest rate, 
+              and n is the number of months. Our calculator applies this formula instantly based on your inputs.
+            </p>
+          </div>
+
+          <div className="faq-item">
+            <h3>What's the difference between EMI and monthly loan payment?</h3>
+            <p>
+              EMI and monthly loan payment mean the same thing. EMI is the term commonly used in India for fixed monthly loan payments, while 
+              Western countries may just call it 'monthly payment.' Both refer to the same concept of regular loan repayment.
+            </p>
+          </div>
+
+          <div className="faq-item">
+            <h3>How can I reduce my EMI?</h3>
+            <p>
+              You can reduce your EMI by: increasing your down payment, extending the loan tenure (though this increases total interest), 
+              improving your credit score for better rates, or paying a lump sum amount. Use our calculator to experiment with different scenarios.
+            </p>
+          </div>
+
           <div className="faq-item">
             <h3>What is a good EMI to income ratio?</h3>
             <p>
