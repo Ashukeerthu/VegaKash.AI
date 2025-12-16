@@ -232,11 +232,13 @@ export const generateFAQSchema = (tool, country = null) => {
 export const generateBreadcrumbSchema = (tool, country = null) => {
   const breadcrumbs = [
     {
+      '@type': 'ListItem',
       position: 1,
       name: 'Home',
       item: 'https://vegakash.ai/'
     },
     {
+      '@type': 'ListItem',
       position: 2,
       name: 'Calculators',
       item: 'https://vegakash.ai/calculators/'
@@ -253,6 +255,7 @@ export const generateBreadcrumbSchema = (tool, country = null) => {
       ae: 'UAE Calculators'
     };
     breadcrumbs.push({
+      '@type': 'ListItem',
       position: 3,
       name: countryNames[country] || 'Calculators',
       item: `https://vegakash.ai/${country}/calculators/`
@@ -273,6 +276,7 @@ export const generateBreadcrumbSchema = (tool, country = null) => {
   };
 
   breadcrumbs.push({
+    '@type': 'ListItem',
     position: breadcrumbs.length + 1,
     name: toolNames[tool] || 'Calculator',
     item: country 
