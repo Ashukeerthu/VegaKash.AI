@@ -1,0 +1,872 @@
+/* ========================================
+   Travel Form Component Styles
+   ======================================== */
+
+.travel-form {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Scoped to .travel-form to avoid conflicts with global styles */
+.travel-form .form-header {
+  text-align: center;
+  margin-bottom: 40px;
+  border-bottom: none;
+  padding-bottom: 0;
+  position: static;
+}
+
+.travel-form .form-header::before {
+  display: none;
+}
+
+.travel-form .form-header h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 12px;
+  display: block;
+  justify-content: center;
+}
+
+.travel-form .form-header h2::before {
+  display: none;
+}
+
+.travel-form .form-header p {
+  font-size: 1.1rem;
+  color: #666;
+}
+
+/* ========================================
+   Form Sections
+   ======================================== */
+
+.travel-form .form-section {
+  margin-bottom: 40px;
+  padding-bottom: 40px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.travel-form .form-section:last-of-type {
+  border-bottom: none;
+}
+
+.travel-form .section-title {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.travel-form .section-description {
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.travel-form .form-subsection {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 2px solid #e2e8f0;
+}
+
+.travel-form .form-subsection:last-child {
+  margin-bottom: 0;
+}
+
+.travel-form .subsection-title {
+  font-size: 1.2rem;
+  color: #667eea;
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+
+/* ========================================
+   Form Groups
+   ======================================== */
+
+.travel-form .form-group {
+  margin-bottom: 24px;
+}
+
+.travel-form .form-group label {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.travel-form .required {
+  color: #e53e3e;
+}
+
+.travel-form .form-group input[type="text"],
+.travel-form .form-group input[type="date"],
+.travel-form .form-group input[type="number"],
+.travel-form .form-group select {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.travel-form .form-group input:focus,
+.travel-form .form-group select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.travel-form .form-group input.error,
+.travel-form .form-group select.error {
+  border-color: #e53e3e;
+}
+
+.travel-form .form-group input[type="range"] {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #e2e8f0;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.travel-form .form-group input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #667eea;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.travel-form .form-group input[type="range"]::-webkit-slider-thumb:hover {
+  background: #5568d3;
+  transform: scale(1.2);
+}
+
+.travel-form .form-group input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #667eea;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.travel-form .form-group input[type="range"]::-moz-range-thumb:hover {
+  background: #5568d3;
+  transform: scale(1.2);
+}
+
+.travel-form .help-text {
+  display: block;
+  font-size: 0.875rem;
+  color: #718096;
+  margin-top: 6px;
+}
+
+.travel-form .auto-filled {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #48bb78;
+  font-weight: 500;
+  margin-top: 8px;
+  padding: 6px 12px;
+  background: rgba(72, 187, 120, 0.1);
+  border-radius: 6px;
+}
+
+.travel-form .auto-filled strong {
+  color: #2f855a;
+}
+
+.travel-form .error-message {
+  display: block;
+  font-size: 0.875rem;
+  color: #e53e3e;
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+/* ========================================
+   Form Rows (Side-by-Side Fields)
+   ======================================== */
+
+.travel-form .form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+/* ========================================
+   Radio Cards (Travel Style, Transport)
+   ======================================== */
+
+.travel-form .radio-card-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.travel-form .radio-card {
+  position: relative;
+  cursor: pointer;
+}
+
+.travel-form .radio-card input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.travel-form .radio-card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 24px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.travel-form .radio-card:hover .radio-card-content {
+  border-color: #667eea;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.travel-form .radio-card input[type="radio"]:checked + .radio-card-content {
+  border-color: #667eea;
+  background: linear-gradient(135deg, #667eea10, #764ba210);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.2);
+}
+
+.travel-form .radio-card-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.travel-form .radio-card-label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.travel-form .radio-card-description {
+  font-size: 0.875rem;
+  color: #718096;
+}
+
+/* ========================================
+   Checkbox Chips (Trip Themes)
+   ======================================== */
+
+.travel-form .checkbox-chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.travel-form .checkbox-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: 2px solid #e2e8f0;
+  border-radius: 50px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.travel-form .checkbox-chip:hover {
+  border-color: #667eea;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.travel-form .checkbox-chip.active {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border-color: #667eea;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+}
+
+.travel-form .chip-icon {
+  font-size: 1.2rem;
+}
+
+.travel-form .chip-label {
+  white-space: nowrap;
+}
+
+/* ========================================
+   Checkbox Group (Budget Options)
+   ======================================== */
+
+.travel-form .checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.travel-form .checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.travel-form .checkbox-label input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #667eea;
+}
+
+/* ========================================
+   Trip Info Badge
+   ======================================== */
+
+.travel-form .trip-info-badge {
+  background: linear-gradient(135deg, #667eea10, #764ba210);
+  border: 2px solid #667eea;
+  border-radius: 12px;
+  padding: 16px 24px;
+  text-align: center;
+  font-size: 1.1rem;
+  color: #333;
+  margin-top: 20px;
+}
+
+.travel-form .trip-info-badge strong {
+  color: #667eea;
+  font-weight: 700;
+}
+
+/* ========================================
+   Form Actions (Submit Button)
+   ======================================== */
+
+.travel-form .form-actions {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.travel-form .btn-submit {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 18px 48px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.travel-form .btn-submit:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+}
+
+.travel-form .btn-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.travel-form .spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+
+@media (max-width: 768px) {
+  .travel-form {
+    padding: 30px 20px;
+  }
+
+  .travel-form .form-header h2 {
+    font-size: 1.75rem;
+  }
+
+  .travel-form .form-header p {
+    font-size: 1rem;
+  }
+
+  .travel-form .section-title {
+    font-size: 1.3rem;
+  }
+
+  .travel-form .radio-card-group {
+    grid-template-columns: 1fr;
+  }
+
+  .travel-form .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .travel-form .checkbox-chip-group {
+    justify-content: center;
+  }
+
+  .travel-form .btn-submit {
+    padding: 16px 36px;
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .travel-form {
+    padding: 24px 16px;
+  }
+
+  .travel-form .form-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .travel-form .section-title {
+    font-size: 1.2rem;
+  }
+
+  .travel-form .radio-card-content {
+    padding: 20px 12px;
+  }
+
+  .travel-form .radio-card-icon {
+    font-size: 2rem;
+  }
+
+  .travel-form .checkbox-chip {
+    padding: 8px 16px;
+    font-size: 0.875rem;
+  }
+
+  .travel-form .btn-submit {
+    width: 100%;
+    padding: 14px 24px;
+    font-size: 1rem;
+  }
+
+  .travel-form .detail-level-options {
+    grid-template-columns: 1fr;
+  }
+
+  .travel-form .detail-level-card {
+    padding: 16px;
+  }
+
+  .travel-form .detail-level-header {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .travel-form .detail-icon {
+    font-size: 1.8rem;
+  }
+}
+
+/* ========================================
+   Itinerary Detail Level Selector - Enhanced
+   ======================================== */
+
+.travel-form .itinerary-detail-section {
+  background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%);
+  border: 2px solid #e0e7ff;
+  border-radius: 16px;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+}
+
+.travel-form .itinerary-detail-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.travel-form .section-header-enhanced {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.travel-form .section-badge {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.travel-form .section-subtitle-enhanced {
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.travel-form .token-hint {
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.travel-form .detail-level-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.travel-form .detail-level-option {
+  cursor: pointer;
+  display: block;
+}
+
+.travel-form .radio-hidden {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.travel-form .option-card {
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  min-height: 180px;
+}
+
+.travel-form .option-card:hover {
+  border-color: #667eea;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(102, 126, 234, 0.15);
+}
+
+.travel-form .detail-level-option.selected .option-card {
+  border-color: #667eea;
+  background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 100%);
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
+}
+
+.travel-form .option-icon-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.travel-form .option-icon {
+  font-size: 3rem;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  transition: transform 0.3s ease;
+}
+
+.travel-form .detail-level-option.selected .option-icon {
+  transform: scale(1.15);
+}
+
+.travel-form .recommended-badge {
+  position: absolute;
+  top: -8px;
+  right: -40px;
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.travel-form .option-content {
+  flex: 1;
+}
+
+.travel-form .option-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 8px 0;
+}
+
+.travel-form .detail-level-option.selected .option-title {
+  color: #667eea;
+}
+
+.travel-form .option-description {
+  font-size: 0.85rem;
+  color: #718096;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.travel-form .option-checkmark {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.travel-form .detail-level-option.selected .option-checkmark {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.travel-form .checkmark {
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+/* Responsive for Detail Level Grid */
+@media (max-width: 900px) {
+  .travel-form .detail-level-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .travel-form .option-card {
+    flex-direction: row;
+    text-align: left;
+    padding: 16px 20px;
+    min-height: auto;
+    gap: 16px;
+  }
+
+  .travel-form .option-icon-wrapper {
+    flex-shrink: 0;
+  }
+
+  .travel-form .option-icon {
+    font-size: 2.2rem;
+  }
+
+  .travel-form .recommended-badge {
+    position: static;
+    margin-top: 6px;
+  }
+
+  .travel-form .option-content {
+    text-align: left;
+  }
+
+  .travel-form .option-checkmark {
+    position: static;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  .travel-form .section-subtitle-enhanced {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Old styles kept for backwards compatibility */
+.travel-form .section-subtitle {
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 24px;
+  font-style: italic;
+}
+
+.travel-form .detail-level-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.travel-form .detail-level-card {
+  position: relative;
+  display: block;
+  padding: 20px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.travel-form .detail-level-card:hover {
+  border-color: #667eea;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+}
+
+.travel-form .detail-level-card input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.travel-form .detail-level-card input[type="radio"]:checked + .detail-level-content {
+  color: #667eea;
+}
+
+.travel-form .detail-level-card input[type="radio"]:checked {
+  /* This is for the parent card styling */
+}
+
+.travel-form .detail-level-card input[type="radio"]:checked ~ .detail-level-content {
+  color: #667eea;
+}
+
+/* Style the card when radio is checked */
+.travel-form .detail-level-card input[type="radio"]:checked + .detail-level-content,
+.travel-form .detail-level-card:has(input[type="radio"]:checked) {
+  /* Use :has pseudo-class for better support */
+}
+
+.travel-form .detail-level-card input[type="radio"]:checked {
+  /* Mark it somehow */
+}
+
+.travel-form .detail-level-options .detail-level-card input:checked + .detail-level-content {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.05);
+}
+
+/* Better approach: modify parent when input is checked */
+.travel-form .detail-level-options input[type="radio"]:checked + .detail-level-content {
+  color: #667eea;
+}
+
+.travel-form .detail-level-options .detail-level-card {
+  border: 2px solid #e2e8f0;
+}
+
+.travel-form .detail-level-options input[type="radio"]:checked {
+  /* Can't directly style, but parent will change */
+}
+
+.travel-form .radio-input {
+  position: absolute;
+  margin: 4px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #667eea;
+}
+
+.travel-form .detail-level-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: 24px;
+  min-height: 80px;
+  justify-content: center;
+}
+
+.travel-form .detail-level-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: #333;
+}
+
+.travel-form .detail-icon {
+  font-size: 2.2rem;
+  line-height: 1;
+}
+
+.travel-form .detail-label {
+  color: #333;
+}
+
+.travel-form .detail-description {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Checked state styling */
+.travel-form .detail-level-options input:checked + .detail-level-content {
+  color: #667eea;
+}
+
+.travel-form .detail-level-options input:checked + .detail-level-content .detail-icon {
+  transform: scale(1.15);
+}
+
+.travel-form .detail-level-options input:checked + .detail-level-content .detail-label {
+  color: #667eea;
+}

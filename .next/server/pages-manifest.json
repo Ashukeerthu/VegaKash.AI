@@ -1,0 +1,14 @@
+{
+  "/": "pages/index.js",
+  "/_app": "pages/_app.js",
+  "/_document": "pages/_document.js",
+  "/_error": "pages/_error.js",
+  "/blog": "pages/blog.js",
+  "/blog/[slug]": "pages/blog/[slug].js",
+  "/blog/future-of-travel-2026": "pages/blog/future-of-travel-2026.js",
+  "/sitemap.xml": "pages/sitemap.xml.js",
+  "/tools": "pages/tools.js",
+  "/tools/[slug]": "pages/tools/[slug].js",
+  "/tools/[slug]/[country]": "pages/tools/[slug]/[country].js",
+  "/tools/[slug]/answer.json": "pages/tools/[slug]/answer.json.js"
+}

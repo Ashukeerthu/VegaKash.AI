@@ -1,0 +1,79 @@
+{
+  "pages": {
+    "/": [
+      "static/chunks/bd2231c90d30ae9b.js",
+      "static/chunks/f70013795016afb4.js",
+      "static/chunks/db2bfe74d307fa57.js",
+      "static/chunks/turbopack-6908eb5578d31046.js"
+    ],
+    "/_app": [
+      "static/chunks/9e9d63de1d01d6f8.js",
+      "static/chunks/f70013795016afb4.js",
+      "static/chunks/db2bfe74d307fa57.js",
+      "static/chunks/turbopack-3a8ec24debcb3fb4.js"
+    ],
+    "/_error": [
+      "static/chunks/b5c844d7e9c67709.js",
+      "static/chunks/f70013795016afb4.js",
+      "static/chunks/db2bfe74d307fa57.js",
+      "static/chunks/turbopack-e9e0379c1d6a2f95.js"
+    ],
+    "/blog": [
+      "static/chunks/d2f454efe6f93499.js",
+      "static/chunks/f70013795016afb4.js",
+      "static/chunks/db2bfe74d307fa57.js",
+      "static/chunks/5f54ff44eb56af64.css",
+      "static/chunks/turbopack-45f3f75ff301596a.js"
+    ],
+    "/blog/[slug]": [
+      "static/chunks/c0ccfae4717ca9de.js",
+      "static/chunks/f70013795016afb4.js",
+      "static/chunks/db2bfe74d307fa57.js",
+      "static/chunks/0495b11dd52d7ebe.css",
+      "static/chunks/turbopack-ee9aed09a0b76c3e.js"
+    ],
+    "/blog/future-of-travel-2026": [
+      "static/chunks/d521cc0bbf1050da.js",
+      "static/chunks/f70013795016afb4.js",
+      "static/chunks/db2bfe74d307fa57.js",
+      "static/chunks/turbopack-3cbf9ec331eaf2f4.js"
+    ],
+    "/sitemap.xml": [
+      "static/chunks/e6db2e0412c5e685.js",
+      "static/chunks/f70013795016afb4.js",
+      "static/chunks/db2bfe74d307fa57.js",
+      "static/chunks/turbopack-f7ad38282401db74.js"
+    ],
+    "/tools": [
+      "static/chunks/0e5ecd8035801ecb.js",
+      "static/chunks/f70013795016afb4.js",
+      "static/chunks/db2bfe74d307fa57.js",
+      "static/chunks/turbopack-6a1699f4df9e7369.js"
+    ],
+    "/tools/[slug]": [
+      "static/chunks/691187d0e709be42.js",
+      "static/chunks/f70013795016afb4.js",
+      "static/chunks/db2bfe74d307fa57.js",
+      "static/chunks/turbopack-5391e35b68581056.js"
+    ],
+    "/tools/[slug]/[country]": [
+      "static/chunks/56b529aa87276598.js",
+      "static/chunks/f70013795016afb4.js",
+      "static/chunks/db2bfe74d307fa57.js",
+      "static/chunks/turbopack-ebed063c4e7cafe4.js"
+    ],
+    "/tools/[slug]/answer.json": [
+      "static/chunks/42b9e85330a4ee4e.js",
+      "static/chunks/f70013795016afb4.js",
+      "static/chunks/db2bfe74d307fa57.js",
+      "static/chunks/turbopack-0448f4153cb91f28.js"
+    ]
+  },
+  "devFiles": [],
+  "polyfillFiles": [],
+  "lowPriorityFiles": [
+    "static/JftUYYaiA5Nr5iqot49yi/_ssgManifest.js",
+    "static/JftUYYaiA5Nr5iqot49yi/_buildManifest.js"
+  ],
+  "rootMainFiles": []
+}

@@ -4,7 +4,7 @@ Core algorithms for budget generation and adjustments
 Includes Auto Loan-specific calculations
 """
 
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 # ============================================
 # COL ADJUSTMENT ALGORITHM

@@ -30,6 +30,121 @@
   font-family: monospace;
 }
 
+/* Answer blocks & examples */
+.answer-block {
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.answer-block h2 {
+  margin-top: 0;
+}
+
+.primary-block {
+  background: #f0f9ff;
+  border-left: 4px solid #667eea;
+}
+
+.examples-block {
+  background: #f9fafb;
+}
+
+.examples-list {
+  columns: 2;
+  column-gap: 2rem;
+  padding-left: 1.2rem;
+}
+
+.examples-list li {
+  margin-bottom: 0.4rem;
+}
+
+/* Geo trust note */
+.geo-trust {
+  font-size: 0.95rem;
+  color: #6b7280;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Shock summary spacing */
+.shock-summary {
+  margin-top: 1rem;
+}
+
+/* Calculator header styling */
+.calculator-header {
+  background: linear-gradient(135deg, #f7f6ff 0%, #eef2ff 100%);
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.calculator-header h1 {
+  margin: 0 0 0.35rem 0;
+  color: #1f2937;
+}
+
+.calculator-header p {
+  margin: 0;
+  color: #4b5563;
+  font-size: 0.97rem;
+}
+
+.answer-block.primary-block,
+.answer-block.examples-block {
+  border: 1px solid #e5e7eb;
+}
+
+.use-cases-block {
+  margin-top: 1.5rem;
+}
+
+.use-cases-block ul {
+  padding-left: 1.2rem;
+}
+
+/* Share actions row */
+.share-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Confidence row and status dot (moved from inline styles) */
+.confidence-row {
+  margin-top: 1rem;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+/* Concise answer block styling */
+.concise-block {
+  background: #fffdf7;
+  border: 1px solid #f3f4f6;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .examples-list {
+    columns: 1;
+  }
+
+  .calculator-header {
+    padding: 1rem 1.1rem;
+  }
+}
+
 /* Mobile card layout fallback */
 @media (max-width: 768px) {
   .amortization-table table thead { display: none; }

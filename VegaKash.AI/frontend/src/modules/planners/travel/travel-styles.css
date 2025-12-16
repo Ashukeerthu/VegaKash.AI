@@ -1,0 +1,17 @@
+/**
+ * Travel Budget Planner - Consolidated Styles
+ * This file imports all travel-related CSS to ensure consistent loading
+ * Import this file in main.jsx to prevent FOUC (Flash of Unstyled Content)
+ */
+
+/* Main Travel Budget Page Styles */
+@import './TravelBudget.css';
+
+/* Component Styles */
+@import './components/TravelForm.css';
+@import './components/TravelAIPlan.css';
+@import './components/TravelSummary.css';
+@import './components/TravelLoadingScreen.css';
+@import './components/CityAutocomplete.css';
+@import './components/ItineraryPagination.css';
+@import './components/VisaGuidelineModal.css';

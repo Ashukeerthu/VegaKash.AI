@@ -1,0 +1,146 @@
+{
+  "version": 3,
+  "pages404": true,
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "priority": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [
+    {
+      "page": "/blog/[slug]",
+      "regex": "^/blog/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/blog/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/tools/[slug]",
+      "regex": "^/tools/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/tools/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/tools/[slug]/answer.json",
+      "regex": "^/tools/([^/]+?)/answer\\.json(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/tools/(?<nxtPslug>[^/]+?)/answer\\.json(?:/)?$"
+    },
+    {
+      "page": "/tools/[slug]/[country]",
+      "regex": "^/tools/([^/]+?)/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug",
+        "nxtPcountry": "nxtPcountry"
+      },
+      "namedRegex": "^/tools/(?<nxtPslug>[^/]+?)/(?<nxtPcountry>[^/]+?)(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/blog",
+      "regex": "^/blog(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/blog(?:/)?$"
+    },
+    {
+      "page": "/blog/future-of-travel-2026",
+      "regex": "^/blog/future\\-of\\-travel\\-2026(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/blog/future\\-of\\-travel\\-2026(?:/)?$"
+    },
+    {
+      "page": "/sitemap.xml",
+      "regex": "^/sitemap\\.xml(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/sitemap\\.xml(?:/)?$"
+    },
+    {
+      "page": "/tools",
+      "regex": "^/tools(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/tools(?:/)?$"
+    }
+  ],
+  "dataRoutes": [
+    {
+      "page": "/blog/[slug]",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "dataRouteRegex": "^/_next/data/JftUYYaiA5Nr5iqot49yi/blog/([^/]+?)\\.json$",
+      "namedDataRouteRegex": "^/_next/data/JftUYYaiA5Nr5iqot49yi/blog/(?<nxtPslug>[^/]+?)\\.json$"
+    },
+    {
+      "page": "/sitemap.xml",
+      "dataRouteRegex": "^/_next/data/JftUYYaiA5Nr5iqot49yi/sitemap.xml\\.json$"
+    },
+    {
+      "page": "/tools/[slug]",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "dataRouteRegex": "^/_next/data/JftUYYaiA5Nr5iqot49yi/tools/([^/]+?)\\.json$",
+      "namedDataRouteRegex": "^/_next/data/JftUYYaiA5Nr5iqot49yi/tools/(?<nxtPslug>[^/]+?)\\.json$"
+    },
+    {
+      "page": "/tools/[slug]/answer.json",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "dataRouteRegex": "^/_next/data/JftUYYaiA5Nr5iqot49yi/tools/([^/]+?)/answer\\.json\\.json$",
+      "namedDataRouteRegex": "^/_next/data/JftUYYaiA5Nr5iqot49yi/tools/(?<nxtPslug>[^/]+?)/answer\\.json\\.json$"
+    },
+    {
+      "page": "/tools/[slug]/[country]",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug",
+        "nxtPcountry": "nxtPcountry"
+      },
+      "dataRouteRegex": "^/_next/data/JftUYYaiA5Nr5iqot49yi/tools/([^/]+?)/([^/]+?)\\.json$",
+      "namedDataRouteRegex": "^/_next/data/JftUYYaiA5Nr5iqot49yi/tools/(?<nxtPslug>[^/]+?)/(?<nxtPcountry>[^/]+?)\\.json$"
+    }
+  ],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSuffix": ".prefetch.rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments",
+    "clientParamParsing": false,
+    "dynamicRSCPrerender": false
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}

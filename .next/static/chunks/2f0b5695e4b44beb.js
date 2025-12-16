@@ -1,0 +1,6 @@
+__turbopack_load_page_chunks__("/sitemap.xml", [
+  "static/chunks/f39629ed9d877c0e.js",
+  "static/chunks/f70013795016afb4.js",
+  "static/chunks/db2bfe74d307fa57.js",
+  "static/chunks/turbopack-59ba48e8a05f2fa5.js"
+])

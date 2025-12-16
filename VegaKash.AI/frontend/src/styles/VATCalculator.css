@@ -1,0 +1,242 @@
+/* 
+ * VAT Calculator Specific Styles
+ * Extracted from inline styles for better performance and maintainability
+ */
+
+/* Quick VAT Action Buttons */
+.vat-quick-btn {
+  padding: 0.875rem;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.vat-quick-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.vat-quick-btn:active {
+  transform: translateY(0);
+}
+
+.vat-add-btn:hover {
+  filter: brightness(1.1);
+}
+
+.vat-remove-btn:hover {
+  filter: brightness(1.1);
+}
+
+/* VAT Threshold Banner */
+.vat-threshold-banner {
+  margin-top: 1rem;
+  padding: 0.875rem;
+  background: #fef3c7;
+  border-radius: 8px;
+  border: 2px solid #fbbf24;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.vat-threshold-banner strong {
+  color: #92400e;
+  font-size: 0.95rem;
+}
+
+.vat-threshold-banner .threshold-detail {
+  font-size: 0.85rem;
+  color: #78350f;
+  margin-top: 0.25rem;
+}
+
+/* Business Mode Cards */
+.vat-business-card {
+  background: #f0fdf4;
+  border: 2px solid #86efac;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.vat-business-card h3 {
+  color: #15803d;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Formula Warning Box */
+.vat-formula-warning {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: #fef3c7;
+  border-radius: 12px;
+  border: 2px solid #fbbf24;
+}
+
+.vat-formula-warning h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #92400e;
+  margin-bottom: 1rem;
+}
+
+.vat-formula-example {
+  padding: 0.75rem;
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+  color: #78350f;
+  line-height: 1.8;
+}
+
+.vat-formula-example strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.vat-formula-example.wrong strong {
+  color: #dc2626;
+}
+
+.vat-formula-example.correct strong {
+  color: #059669;
+}
+
+/* VAT Comparison Table */
+.vat-comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+.vat-comparison-table thead tr {
+  background: #f8f9fa;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.vat-comparison-table th {
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.vat-comparison-table tbody tr {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.vat-comparison-table tbody tr:last-child {
+  background: #f8f9fa;
+}
+
+.vat-comparison-table td {
+  padding: 0.75rem;
+  color: #475569;
+  vertical-align: top;
+}
+
+.vat-rate-standard {
+  color: #667eea;
+  font-weight: 700;
+}
+
+.vat-rate-reduced {
+  color: #10b981;
+  font-weight: 700;
+}
+
+.vat-rate-zero {
+  color: #64748b;
+  font-weight: 700;
+}
+
+.vat-rate-exempt {
+  color: #94a3b8;
+  font-weight: 700;
+}
+
+/* Flat Rate Scheme Section */
+.vat-flat-rate-section {
+  padding: 1.5rem;
+  background: #fef3c7;
+  border-radius: 12px;
+  border: 1px solid #fbbf24;
+}
+
+.vat-flat-rate-section h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #92400e;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.vat-flat-rate-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.vat-flat-rate-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.vat-flat-rate-checkbox span {
+  font-size: 0.95rem;
+  color: #78350f;
+}
+
+.vat-flat-rate-info {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  color: #78350f;
+  line-height: 1.6;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .vat-quick-btn {
+    font-size: 0.85rem;
+    padding: 0.75rem;
+  }
+  
+  .vat-comparison-table {
+    font-size: 0.85rem;
+  }
+  
+  .vat-comparison-table th,
+  .vat-comparison-table td {
+    padding: 0.5rem;
+  }
+}
+
+/* Animation for hover effects */
+@keyframes vat-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.vat-quick-btn:hover {
+  animation: vat-pulse 1.5s ease-in-out infinite;
+}
