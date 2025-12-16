@@ -246,6 +246,25 @@ def build_ai_prompt(financial_input: FinancialInput, summary: SummaryOutput) -> 
     Returns:
         Formatted prompt string for the AI model
     """
+    # Currency symbols mapping
+    currency_symbols = {
+        'INR': '₹',
+        'USD': '$',
+        'EUR': '€',
+        'GBP': '£',
+        'CNY': '¥',
+        'JPY': '¥',
+        'AUD': 'A$',
+        'CAD': 'C$',
+        'SGD': 'S$',
+        'MYR': 'RM',
+        'THB': '฿',
+        'AED': 'د.إ',
+        'SAR': '﷼',
+    }
+    
+    currency_symbol = currency_symbols.get(financial_input.currency, financial_input.currency)
+    
     # Format loans information (support both EMI and principal modes)
     from services.calculations import calculate_loan_emi, get_loan_principal
     
@@ -256,8 +275,8 @@ def build_ai_prompt(financial_input: FinancialInput, summary: SummaryOutput) -> 
             emi = calculate_loan_emi(loan)
             principal = get_loan_principal(loan)
             loan_details.append(
-                f"- {loan.name}: ₹{emi:,.2f}/month EMI, "
-                f"₹{principal:,.2f} outstanding principal, "
+                f"- {loan.name}: {currency_symbol}{emi:,.2f}/month EMI, "
+                f"{currency_symbol}{principal:,.2f} outstanding principal, "
                 f"{loan.interest_rate_annual}% interest, {loan.remaining_months} months remaining"
             )
         loans_info = "\n".join(loan_details)
@@ -272,55 +291,59 @@ def build_ai_prompt(financial_input: FinancialInput, summary: SummaryOutput) -> 
     if goals and goals.primary_goal_type:
         goal_info = f"{goals.primary_goal_type}"
         if goals.primary_goal_amount:
-            goal_info += f" (Target: ₹{goals.primary_goal_amount:,.2f})"
+            goal_info += f" (Target: {currency_symbol}{goals.primary_goal_amount:,.2f})"
+    
+    # Determine context based on currency
+    context = "India" if financial_input.currency == "INR" else f"the selected currency ({financial_input.currency})"
+    investment_options = "SIP in mutual funds, PPF, FD, EPF, NPS, etc." if financial_input.currency == "INR" else "mutual funds, bonds, stocks, savings accounts, etc."
     
     prompt = f"""
-You are analyzing the financial situation of a person in India. Based on the data below, provide a comprehensive financial plan.
+You are analyzing the financial situation of a person. Based on the data below, provide a comprehensive financial plan.
 
 **FINANCIAL DATA:**
 
 Income:
-- Primary Monthly Income: ₹{financial_input.monthly_income_primary:,.2f}
-- Additional Income: ₹{financial_input.monthly_income_additional:,.2f}
-- Total Income: ₹{summary.total_income:,.2f}
+- Primary Monthly Income: {currency_symbol}{financial_input.monthly_income_primary:,.2f}
+- Additional Income: {currency_symbol}{financial_input.monthly_income_additional:,.2f}
+- Total Income: {currency_symbol}{summary.total_income:,.2f}
 
 Expenses (Monthly):
-- Housing/Rent: ₹{expenses.housing_rent if expenses else 0:,.2f}
-- Groceries & Food: ₹{expenses.groceries_food if expenses else 0:,.2f}
-- Transport: ₹{expenses.transport if expenses else 0:,.2f}
-- Utilities: ₹{expenses.utilities if expenses else 0:,.2f}
-- Insurance: ₹{expenses.insurance if expenses else 0:,.2f}
-- Entertainment: ₹{expenses.entertainment if expenses else 0:,.2f}
-- Subscriptions: ₹{expenses.subscriptions if expenses else 0:,.2f}
-- Others: ₹{expenses.others if expenses else 0:,.2f}
-- Total Expenses: ₹{summary.total_expenses:,.2f}
+- Housing/Rent: {currency_symbol}{expenses.housing_rent if expenses else 0:,.2f}
+- Groceries & Food: {currency_symbol}{expenses.groceries_food if expenses else 0:,.2f}
+- Transport: {currency_symbol}{expenses.transport if expenses else 0:,.2f}
+- Utilities: {currency_symbol}{expenses.utilities if expenses else 0:,.2f}
+- Insurance: {currency_symbol}{expenses.insurance if expenses else 0:,.2f}
+- Entertainment: {currency_symbol}{expenses.entertainment if expenses else 0:,.2f}
+- Subscriptions: {currency_symbol}{expenses.subscriptions if expenses else 0:,.2f}
+- Others: {currency_symbol}{expenses.others if expenses else 0:,.2f}
+- Total Expenses: {currency_symbol}{summary.total_expenses:,.2f}
 
 Current Financial Status:
-- Net Savings: ₹{summary.net_savings:,.2f}
+- Net Savings: {currency_symbol}{summary.net_savings:,.2f}
 - Savings Rate: {summary.savings_rate_percent:.1f}%
 - Debt-to-Income Ratio: {summary.debt_to_income_ratio_percent:.1f}%
 - Financial Status: {"DEFICIT ⚠️" if summary.has_deficit else "SURPLUS ✓"}
 
 Goals:
-- Monthly Savings Target: ₹{goals.monthly_savings_target if goals else 0:,.2f}
-- Emergency Fund Target: ₹{goals.emergency_fund_target if goals else 0:,.2f}
+- Monthly Savings Target: {currency_symbol}{goals.monthly_savings_target if goals else 0:,.2f}
+- Emergency Fund Target: {currency_symbol}{goals.emergency_fund_target if goals else 0:,.2f}
 - Primary Goal: {goal_info}
 
 Active Loans:
 {loans_info}
 
 50-30-20 Rule Recommendation:
-- Needs (50%): ₹{summary.rule_50_30_20_needs:,.2f}
-- Wants (30%): ₹{summary.rule_50_30_20_wants:,.2f}
-- Savings (20%): ₹{summary.rule_50_30_20_savings:,.2f}
+- Needs (50%): {currency_symbol}{summary.rule_50_30_20_needs:,.2f}
+- Wants (30%): {currency_symbol}{summary.rule_50_30_20_wants:,.2f}
+- Savings (20%): {currency_symbol}{summary.rule_50_30_20_savings:,.2f}
 
 **INSTRUCTIONS:**
 Provide a detailed, personalized financial plan in JSON format with these exact keys:
 
 1. "summary_text": STRING - Brief 2-3 sentence summary of their financial situation
-2. "budget_breakdown": STRING (NOT OBJECT) - Detailed monthly budget recommendation as formatted text with line breaks (consider Indian context: rent, groceries, transport, etc.)
+2. "budget_breakdown": STRING (NOT OBJECT) - Detailed monthly budget recommendation as formatted text with line breaks
 3. "expense_optimizations": ARRAY of STRINGS - 4-6 specific, actionable tips to reduce expenses
-4. "savings_and_investment_plan": STRING (NOT OBJECT) - Detailed savings and investment strategy as formatted text. Mention generic Indian options like SIP in mutual funds, PPF, FD, EPF, NPS, etc. WITHOUT naming specific funds or companies. Include percentage allocation suggestions.
+4. "savings_and_investment_plan": STRING (NOT OBJECT) - Detailed savings and investment strategy as formatted text. Mention generic options like {investment_options} WITHOUT naming specific funds or companies. Include percentage allocation suggestions.
 5. "debt_strategy": STRING - If they have loans, recommend a repayment strategy (snowball or avalanche method). If no loans, suggest how to stay debt-free.
 6. "goal_plan": STRING (NOT OBJECT) - Step-by-step plan to achieve their primary goal with timeline and monthly savings needed, as formatted text
 7. "action_items_30_days": ARRAY of STRINGS - 5-7 concrete action items they can do in the next 30 days
@@ -328,8 +351,7 @@ Provide a detailed, personalized financial plan in JSON format with these exact 
 
 **CRITICAL:**
 - budget_breakdown, savings_and_investment_plan, and goal_plan MUST be strings with newlines (\n), NOT nested objects
-- Use Indian Rupees (₹) in all monetary references
-- Consider Indian financial products and context (SIP, PPF, FD, EPF, NPS, etc.)
+- Use {currency_symbol} ({financial_input.currency}) in all monetary references
 - Be specific and actionable
 - Use simple, clear language
 - Return ONLY valid JSON matching the schema exactly, no additional text

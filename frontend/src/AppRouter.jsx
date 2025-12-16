@@ -18,8 +18,7 @@ import {
   countrySpecificCalculatorRoutes,
   budgetRoutes,
   blogRoutes,
-  contentRoutes,
-  legacyRedirectRoutes
+  contentRoutes
 } from './router/routes';
 import { Navigate } from 'react-router-dom';
 import NotFound from './pages/NotFound';
@@ -114,20 +113,6 @@ function AppContent() {
             />
           );
         })}
-        
-        {/* 
-          LEGACY REDIRECTS (301)
-          Maps old URLs to new structure
-          Example: /calculators/mortgage-us → /us/calculators/mortgage
-          Preserves SEO value from old links
-        */}
-        {legacyRedirectRoutes.map((route, index) => (
-          <Route 
-            key={`redirect-${route.path}`}
-            path={route.path} 
-            element={<Navigate to={route.redirectTo} replace />} 
-          />
-        ))}
         
         {/* Blog Routes - After specific routes */}
         {blogRoutes.map((route, index) => {

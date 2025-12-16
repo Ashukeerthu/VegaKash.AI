@@ -205,6 +205,7 @@ class BudgetPlannerService:
         # Step 6: Generate explanation
         explanation = BudgetPlannerService._generate_explanation(
             income=monthly_income,
+            currency=request.currency,
             needs_percent=needs_percent,
             wants_percent=wants_percent,
             savings_percent=savings_percent,
@@ -385,6 +386,7 @@ class BudgetPlannerService:
     @staticmethod
     def _generate_explanation(
         income: float,
+        currency: str,
         needs_percent: float,
         wants_percent: float,
         savings_percent: float,
@@ -397,6 +399,25 @@ class BudgetPlannerService:
     ) -> str:
         """Generate human-readable budget explanation"""
         
+        # Currency symbols mapping
+        currency_symbols = {
+            'INR': '₹',
+            'USD': '$',
+            'EUR': '€',
+            'GBP': '£',
+            'CNY': '¥',
+            'JPY': '¥',
+            'AUD': 'A$',
+            'CAD': 'C$',
+            'SGD': 'S$',
+            'MYR': 'RM',
+            'THB': '฿',
+            'AED': 'د.إ',
+            'SAR': '﷼',
+        }
+        
+        currency_symbol = currency_symbols.get(currency, currency)
+        
         city_tier_names = {
             'tier_1': 'Metro City',
             'tier_2': 'Tier-2 City',
@@ -406,12 +427,12 @@ class BudgetPlannerService:
         
         tier_name = city_tier_names.get(city_tier, city_tier)
         
-        explanation = f"""Your personalized budget plan for ₹{income:,.0f}/month:
+        explanation = f"""Your personalized budget plan for {currency_symbol}{income:,.0f}/month:
 
 📊 Budget Split:
-- Needs: {needs_percent:.1f}% (₹{(income * needs_percent / 100):,.0f})
-- Wants: {wants_percent:.1f}% (₹{(income * wants_percent / 100):,.0f})
-- Savings: {savings_percent:.1f}% (₹{(income * savings_percent / 100):,.0f})
+- Needs: {needs_percent:.1f}% ({currency_symbol}{(income * needs_percent / 100):,.0f})
+- Wants: {wants_percent:.1f}% ({currency_symbol}{(income * wants_percent / 100):,.0f})
+- Savings: {savings_percent:.1f}% ({currency_symbol}{(income * savings_percent / 100):,.0f})
 
 🎯 Personalization Factors:
 - Location: {tier_name} (COL Multiplier: {col_multiplier}x)
