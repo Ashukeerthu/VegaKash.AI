@@ -129,13 +129,13 @@ function Navbar() {
               {/* Loan & Mortgage Category */}
               <li className="dropdown-header">💳 Loans & Mortgages</li>
               <li role="none">
-                <Link to="/calculators/mortgage" className="dropdown-item" role="menuitem">
+                <Link to="/us/calculators/mortgage" className="dropdown-item" role="menuitem">
                   💰 Mortgage Calculator (US)
                 </Link>
               </li>
               <li role="none">
-                <Link to="/calculators/loan" className="dropdown-item" role="menuitem">
-                  📊 Loan Payment Calculator
+                <Link to="/us/calculators/loan" className="dropdown-item" role="menuitem">
+                  📊 Loan Payment Calculator (US)
                 </Link>
               </li>
               <li role="none">
@@ -157,8 +157,8 @@ function Navbar() {
               {/* Investments & Savings Category */}
               <li className="dropdown-header">📈 Investments & Savings</li>
               <li role="none">
-                <Link to="/calculators/savings" className="dropdown-item" role="menuitem">
-                  💰 Savings Growth Calculator
+                <Link to="/us/calculators/savings" className="dropdown-item" role="menuitem">
+                  💰 Savings Growth (US)
                 </Link>
               </li>
               <li role="none">
@@ -190,8 +190,8 @@ function Navbar() {
               {/* Specialty Tools Category */}
               <li className="dropdown-header">🛠️ Specialty Tools</li>
               <li role="none">
-                <Link to="/calculators/autoloan" className="dropdown-item" role="menuitem">
-                  🚗 Auto Loan Calculator
+                <Link to="/in/calculators/auto-loan" className="dropdown-item" role="menuitem">
+                  🚗 Auto Loan Calculator (India)
                 </Link>
               </li>
               <li role="none">
@@ -288,15 +288,15 @@ function Navbar() {
               <li className="dropdown-divider"></li>
               
               <li className="dropdown-header">💳 Loans & Mortgages</li>
-              <li><Link to="/calculators/mortgage" onClick={handleLinkClick}>💰 Mortgage Calculator</Link></li>
-              <li><Link to="/calculators/loan" onClick={handleLinkClick}>📊 Loan Payment Calculator</Link></li>
+              <li><Link to="/us/calculators/mortgage" onClick={handleLinkClick}>💰 Mortgage Calculator (US)</Link></li>
+              <li><Link to="/us/calculators/loan" onClick={handleLinkClick}>📊 Loan Payment (US)</Link></li>
               <li><Link to="/in/calculators/emi" onClick={handleLinkClick}>🏠 EMI Calculator (India)</Link></li>
               <li><Link to="/us/calculators/credit-card" onClick={handleLinkClick}>💳 Credit Card Payoff (US)</Link></li>
               <li><Link to="/uk/calculators/mortgage" onClick={handleLinkClick}>🏡 Mortgage Affordability (UK)</Link></li>
               
               <li className="dropdown-divider" style={{marginTop: '0.5rem'}}></li>
               <li className="dropdown-header">📈 Investments & Savings</li>
-              <li><Link to="/calculators/savings" onClick={handleLinkClick}>💰 Savings Growth Calculator</Link></li>
+              <li><Link to="/us/calculators/savings" onClick={handleLinkClick}>💰 Savings Growth (US)</Link></li>
               <li><Link to="/in/calculators/sip" onClick={handleLinkClick}>📊 SIP Calculator (India)</Link></li>
               <li><Link to="/in/calculators/fd" onClick={handleLinkClick}>🏦 FD Calculator (India)</Link></li>
               <li><Link to="/in/calculators/rd" onClick={handleLinkClick}>📅 RD Calculator (India)</Link></li>
