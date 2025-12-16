@@ -12,10 +12,10 @@ import '../../styles/Calculator.css';
 
 // Loan type presets configuration
 const LOAN_PRESETS = {
-  home: { rate: [7, 12], tenure: [10, 30] },
-  car: { rate: [7, 12], tenure: [3, 7] },
-  personal: { rate: [10, 24], tenure: [1, 5] },
-  education: { rate: [7, 12], tenure: [5, 15] }
+  home: { rate: [7, 12], tenure: [10, 30], amount: [1000000, 50000000] }, // ₹1L–₹5Cr
+  car: { rate: [7, 12], tenure: [3, 7], amount: [100000, 3000000] }, // ₹1L–₹30L
+  personal: { rate: [10, 24], tenure: [1, 5], amount: [10000, 5000000] }, // ₹10k–₹50L
+  education: { rate: [7, 12], tenure: [5, 15], amount: [50000, 5000000] } // ₹50k–₹50L
 };
 
 /**
@@ -39,6 +39,7 @@ function EMICalculator() {
   const [interestRate, setInterestRate] = useState(qpRate ? Math.max(5, Math.min(20, parseFloat(qpRate))) : 8.5);
   const [tenure, setTenure] = useState(qpTenure ? Math.max(1, Math.min(30, parseFloat(qpTenure))) : 20);
   const [result, setResult] = useState(null);
+  const [amountError, setAmountError] = useState('');
   const [amortizationView, setAmortizationView] = useState('yearly'); // 'yearly' or 'monthly'
   // Prepayment and strategy
   const [prepayMode, setPrepayMode] = useState('reduceTenure'); // 'reduceEmi' | 'reduceTenure'
@@ -50,6 +51,9 @@ function EMICalculator() {
   const [monthlyIncome, setMonthlyIncome] = useState('');
   // Loan type presets
   const [loanType, setLoanType] = useState('home'); // home | car | personal | education
+  const amountRange = LOAN_PRESETS[loanType]?.amount || [100000, 50000000];
+  const rateRange = LOAN_PRESETS[loanType]?.rate || [5, 20];
+  const tenureRange = LOAN_PRESETS[loanType]?.tenure || [1, 30];
   // Advanced options toggle
   const [showAdvanced, setShowAdvanced] = useState(false);
 
@@ -147,10 +151,10 @@ function EMICalculator() {
   // SEO configuration for global/country-specific versions
   const seoConfig = {
     title: (country && country.toLowerCase() === 'in')
-      ? 'EMI Calculator India – Home Loan, Car Loan & Personal Loan'
+      ? 'EMI Calculator India (2025) – Calculate Loan EMI Instantly'
       : country 
-        ? `EMI Calculator for ${country.toUpperCase()}`
-        : 'EMI Calculator India – Home Loan, Car Loan & Personal Loan',
+        ? `EMI Calculator for ${country.toUpperCase()} – Calculate Loan EMI`
+        : 'EMI Calculator India (2025) – Calculate Loan EMI Instantly',
     description: country
       ? `Calculate EMI for ${country.toUpperCase()} with our free EMI calculator. Get monthly payment, total interest, and amortization schedule.`
       : 'Free EMI calculator to calculate equated monthly installment for home loans, car loans, and personal loans. Get amortization breakdown.',
@@ -161,24 +165,112 @@ function EMICalculator() {
     country: country || undefined,
     supportedCountries: ['in', 'us', 'uk'],
     isGlobal: !country,
+    canonical: `https://vegaktools.com${location.pathname}`,
   };
+
+  const geoNote = country
+    ? (country.toLowerCase() === 'in'
+        ? 'Based on typical Indian bank interest rates (RBI-linked).'
+        : country.toLowerCase() === 'us'
+          ? 'Aligned with typical US mortgage and personal loan standards.'
+          : `Adjust the interest rate for local lender offerings in ${country.toUpperCase()}.`)
+    : 'Adjust the interest rate slider to match your lender offer.';
 
   return (
     <>
       {/* SEO Tags - Global & Country-Specific */}
       <EnhancedSEO {...seoConfig} />
-      {/* JSON-LD Schema for FinancialProduct */}
+      {/* JSON-LD Schema for FinancialProduct with Geo signals */}
       <script type="application/ld+json">
         {JSON.stringify({
           "@context": "https://schema.org",
           "@type": "FinancialProduct",
           name: (country && country.toLowerCase() === 'in') ? 'EMI Calculator India' : 'EMI Calculator',
           applicationCategory: 'FinanceApplication',
+          areaServed: country && country.toLowerCase() === 'in' ? { "@type": "Country", "name": "India" } : undefined,
           offers: {
             "@type": "Offer",
             price: '0',
-            priceCurrency: 'INR'
+            priceCurrency: (country && country.toLowerCase() === 'us') ? 'USD' : (country && country.toLowerCase() === 'uk') ? 'GBP' : 'INR'
           }
+        })}
+      </script>
+      {/* JSON-LD Schema for FAQPage - AI Overview & Voice Search */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is EMI?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "EMI (Equated Monthly Installment) is the fixed monthly payment made towards a loan. It includes both principal and interest and remains relatively constant over the loan tenure."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What is a good EMI to income ratio?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Financial experts recommend that your total EMI obligations should not exceed 40-50% of your monthly income. This ensures you have sufficient funds for other expenses and savings."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can I prepay my loan to reduce EMI?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, most loans allow part-prepayments. You can either reduce your EMI amount while keeping tenure same, or reduce tenure while keeping EMI same. Most lenders don't charge prepayment penalties on floating rate home loans."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is EMI amount fixed throughout the loan tenure?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "For fixed-rate loans, EMI remains constant. However, for floating-rate loans (most common in India), EMI can change when the lender revises interest rates based on RBI's repo rate."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What happens if I miss an EMI payment?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Missing EMI payments can result in late payment charges, penalties, negative impact on credit score, additional interest on unpaid amount, and in extreme cases, legal action."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How does CIBIL score affect my EMI?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Your CIBIL score doesn't directly affect EMI amount, but it significantly impacts the interest rate offered by lenders. A higher score (750+) qualifies you for lower interest rates."
+              }
+            }
+          ]
+        })}
+      </script>
+      {/* JSON-LD Schema for Calculator intent */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          name: 'EMI Calculator',
+          applicationCategory: 'FinanceApplication',
+          operatingSystem: 'All',
+          offers: {
+            "@type": "Offer",
+            price: '0',
+            priceCurrency: (country && country.toLowerCase() === 'us') ? 'USD' : (country && country.toLowerCase() === 'uk') ? 'GBP' : 'INR'
+          },
+          featureList: [
+            'EMI calculation',
+            'Prepayment impact',
+            'Amortization schedule',
+            'Interest rate shock analysis'
+          ]
         })}
       </script>
       
@@ -186,9 +278,47 @@ function EMICalculator() {
         <Breadcrumb items={breadcrumbItems} />
         
         <div className="calculator-header">
-          <h1>{country ? `EMI Calculator (${country.toUpperCase()})` : 'EMI Calculator'}</h1>
-          <p>Calculate your Equated Monthly Installment for home loans, car loans, personal loans</p>
+          <h1>
+            {country && country.toLowerCase() === 'in'
+              ? 'EMI Calculator – Calculate Home Loan, Car Loan & Personal Loan EMI'
+              : country
+                ? `EMI Calculator in ${country.toUpperCase()} – Loan EMI Calculator`
+                : 'EMI Calculator – Calculate Home Loan, Car Loan & Personal Loan EMI'}
+          </h1>
+          <p>Calculate your Equated Monthly Installment with prepayment impact, EMI safety check, and interest rate shock analysis</p>
         </div>
+
+        {/* Answer Block 1: What is EMI - Early visibility for Google */}
+        <div className="answer-block primary-block">
+          <h2>What is EMI (Equated Monthly Installment)?</h2>
+          <p>
+            EMI (Equated Monthly Installment) is the fixed monthly payment you make towards a loan. It includes both principal (the amount you borrowed) and interest (the cost of borrowing). EMI remains relatively constant throughout the loan tenure, making it easier to budget and plan your finances.
+          </p>
+        </div>
+
+        {/* Answer Block 2: Common EMI Examples - High-intent featured snippet queries */}
+        <div className="answer-block examples-block">
+          <h3>Common EMI Examples in India</h3>
+          <p><strong>Quick reference for typical loans:</strong></p>
+          <ul className="examples-list">
+            <li><strong>₹10 lakh home loan</strong> for 20 years at 8.5% → EMI ₹8,678</li>
+            <li><strong>₹30 lakh home loan</strong> for 20 years at 8.5% → EMI ₹26,034</li>
+            <li><strong>₹5 lakh car loan</strong> for 5 years at 9% → EMI ₹10,378</li>
+            <li><strong>₹20 lakh personal loan</strong> for 5 years at 15% → EMI ₹47,210</li>
+          </ul>
+        </div>
+
+        {/* Short Plain Answer for AEO */}
+        <div className="answer-block concise-block">
+          <p>
+            <strong>EMI depends on three factors:</strong> loan amount, interest rate, and loan tenure. Increasing tenure lowers EMI but increases total interest paid.
+          </p>
+        </div>
+
+        {/* Geo Trust Signal - Builds local authority */}
+        {geoNote && (
+          <p className="geo-trust">✓ {geoNote}</p>
+        )}
 
         <div className="calculator-content">
         <div className="calculator-inputs">
@@ -208,6 +338,11 @@ function EMICalculator() {
                   const num = parseInt(val);
                   if (!isNaN(num)) {
                     setLoanAmount(num);
+                    if (num < amountRange[0] || num > amountRange[1]) {
+                      setAmountError(`For ${loanType} loans, amount must be between ₹${amountRange[0].toLocaleString('en-IN')} and ₹${amountRange[1].toLocaleString('en-IN')}.`);
+                    } else {
+                      setAmountError('');
+                    }
                   }
                 }}
                 onBlur={(e) => {
@@ -215,13 +350,17 @@ function EMICalculator() {
                   const num = parseInt(val);
                   
                   if (val === '' || isNaN(num)) {
-                    setLoanAmount(1000000);
-                  } else if (num < 100000) {
-                    setLoanAmount(100000);
-                  } else if (num > 50000000) {
-                    setLoanAmount(50000000);
+                    setLoanAmount(Math.max(amountRange[0], Math.min(amountRange[1], 1000000)));
+                    setAmountError('');
+                  } else if (num < amountRange[0]) {
+                    setLoanAmount(amountRange[0]);
+                    setAmountError('');
+                  } else if (num > amountRange[1]) {
+                    setLoanAmount(amountRange[1]);
+                    setAmountError('');
                   } else {
                     setLoanAmount(num);
+                    setAmountError('');
                   }
                 }}
                 className="input-display"
@@ -229,17 +368,22 @@ function EMICalculator() {
             </div>
             <input
               type="range"
-              min="100000"
-              max="50000000"
+              min={amountRange[0]}
+              max={amountRange[1]}
               step="100000"
               value={loanAmount}
               onChange={(e) => setLoanAmount(parseFloat(e.target.value))}
               className="slider"
             />
             <div className="slider-labels">
-              <span>₹1L</span>
-              <span>₹5Cr</span>
+              <span>₹{amountRange[0].toLocaleString('en-IN')}</span>
+              <span>₹{amountRange[1].toLocaleString('en-IN')}</span>
             </div>
+            {amountError && (
+              <div className="inline-error">
+                {amountError} <span className="help-tip">Tip: Personal loan limits vary; high-value cases are rare.</span>
+              </div>
+            )}
           </div>
 
             <div className="slider-group">
@@ -278,8 +422,8 @@ function EMICalculator() {
             </div>
             <input
               type="range"
-              min="5"
-              max="20"
+              min={rateRange[0]}
+              max={rateRange[1]}
               step="0.1"
               value={interestRate}
               onChange={(e) => setInterestRate(parseFloat(e.target.value))}
@@ -327,8 +471,8 @@ function EMICalculator() {
             </div>
             <input
               type="range"
-              min="1"
-              max="30"
+              min={tenureRange[0]}
+              max={tenureRange[1]}
               step="1"
               value={tenure}
               onChange={(e) => setTenure(parseFloat(e.target.value))}
@@ -353,6 +497,8 @@ function EMICalculator() {
                   const preset = LOAN_PRESETS[t];
                   setInterestRate(Math.min(Math.max(interestRate, preset.rate[0]), preset.rate[1]));
                   setTenure(Math.min(Math.max(tenure, preset.tenure[0]), preset.tenure[1]));
+                  setLoanAmount(Math.min(Math.max(loanAmount, preset.amount[0]), preset.amount[1]));
+                  setAmountError('');
                 }}
               >
                 <option value="home">Home Loan</option>
@@ -365,11 +511,10 @@ function EMICalculator() {
           </div>{/* End inputs-grid */}
 
           {/* Advanced Options Toggle */}
-          <div style={{textAlign:'center',marginTop:'0.75rem'}}>
+          <div className="advanced-toggle-row">
             <button 
-              className="btn-secondary" 
+              className="btn-secondary btn-compact" 
               onClick={()=>setShowAdvanced(!showAdvanced)}
-              style={{fontSize:'0.82rem',padding:'0.5rem 1rem'}}
             >
               {showAdvanced ? '▲ Hide' : '▼ Show'} Advanced Options
             </button>
@@ -400,7 +545,7 @@ function EMICalculator() {
             <div className="slider-header">
               <label>Prepayment Simulator</label>
             </div>
-            <div className="toggle-row" style={{gap:'0.5rem'}}>
+            <div className="toggle-row">
               <span>Strategy:</span>
               <button className={`tab-btn ${prepayMode==='reduceTenure'?'active':''}`} onClick={()=>setPrepayMode('reduceTenure')}>Reduce Tenure</button>
               <button className={`tab-btn ${prepayMode==='reduceEmi'?'active':''}`} onClick={()=>setPrepayMode('reduceEmi')}>Reduce EMI</button>
@@ -440,7 +585,7 @@ function EMICalculator() {
             <div className="slider-header">
               <label>Interest Rate Shock</label>
             </div>
-            <div className="shock-row" style={{display:'flex',gap:'0.5rem',flexWrap:'wrap'}}>
+            <div className="shock-row">
               {[0,0.5,1,2].map(d=>{
                 // Determine severity class for color coding
                 const severityClass = d === 0 ? 'shock-none' : d <= 1 ? 'shock-low' : 'shock-high';
@@ -461,7 +606,7 @@ function EMICalculator() {
           )}
 
           {/* Reset Button Inside Input Box */}
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
+          <div className="reset-row">
             <button onClick={handleReset} className="btn-reset">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M14 8C14 11.3137 11.3137 14 8 14C4.68629 14 2 11.3137 2 8C2 4.68629 4.68629 2 8 2C9.84871 2 11.5151 2.87161 12.6 4.2M12.6 4.2V1M12.6 4.2H9.4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -532,7 +677,7 @@ function EMICalculator() {
             </div>
 
             {/* Confidence Meter & EMI to Income */}
-            <div className="confidence-row" style={{marginTop:'1rem'}}>
+            <div className="confidence-row">
               {(() => {
                 const emiNum = parseFloat(result.emi);
                 const incomeNum = parseFloat(monthlyIncome || '0');
@@ -549,7 +694,7 @@ function EMICalculator() {
                         <Tooltip text="Banks prefer EMI ≤ 40–50% of monthly income for approval.">ℹ️</Tooltip>
                       </span>
                       <span className={`income-status-badge ${statusClass}`}>
-                        <span style={{width:8,height:8,borderRadius:'50%',background:'currentColor'}}></span>
+                        <span className="status-dot"></span>
                         {status}
                       </span>
                     </div>
@@ -582,7 +727,7 @@ function EMICalculator() {
               // Use high-shock class for +2% rate increase
               const shockClass = shockDelta >= 2 ? 'shock-summary high-shock' : 'shock-summary';
               return (
-                <div className={shockClass} style={{marginTop:'1rem'}}>
+                <div className={shockClass}>
                   <div><strong>New EMI with +{shockDelta}% shock:</strong> {formatSmartCurrency(shock.shocked.emi)}</div>
                   <div><strong>Extra interest payable:</strong> {formatSmartCurrency(shock.extraInterest)}</div>
                 </div>
@@ -590,7 +735,7 @@ function EMICalculator() {
             })()}
 
             {/* Share & Copy */}
-            <div style={{display:'flex',gap:'0.5rem',marginTop:'1rem',flexWrap:'wrap'}}>
+            <div className="share-actions">
               <button className="tab-btn" onClick={() => {
                 const text = `EMI: ${formatSmartCurrency(result.emi)}\nPrincipal: ${formatSmartCurrency(result.principal)}\nInterest: ${formatSmartCurrency(result.totalInterest)}\nTotal: ${formatSmartCurrency(result.totalAmount)}`;
                 navigator.clipboard?.writeText(text);
@@ -601,6 +746,15 @@ function EMICalculator() {
                 'Interest: '+formatSmartCurrency(result.totalInterest)+'\n'+
                 'Total: '+formatSmartCurrency(result.totalAmount))}`} target="_blank" rel="noopener noreferrer">Share WhatsApp</a>
               <button className="tab-btn" onClick={() => exportCalculatorPDF('.calculator-container','emi-summary.pdf')}>Download PDF</button>
+            </div>
+            <div className="content-block use-cases-block">
+              <h2>Who Should Use This EMI Calculator?</h2>
+              <ul>
+                <li>Salaried individuals planning home or car loans</li>
+                <li>Self-employed professionals checking loan affordability</li>
+                <li>Borrowers comparing loan tenure vs EMI trade-offs</li>
+                <li>Users planning part-prepayments or balance transfers</li>
+              </ul>
             </div>
           </div>
         )}
@@ -640,13 +794,13 @@ function EMICalculator() {
             </div>
             {/* Prepayment summary - only show if prepayment is active */}
             {yearlyPrepay > 0 && (
-              <div className="prepay-summary" style={{marginTop:'1rem'}}>
+              <div className="prepay-summary">
                 <div><strong>Interest saved:</strong> {formatSmartCurrency(prepaySim.interestSaved)}</div>
                 <div><strong>Years reduced:</strong> {prepaySim.yearsReduced.toFixed(2)}</div>
                 {prepayMode==='reduceEmi' && <div><strong>EMI change:</strong> {formatSmartCurrency(prepaySim.emiChanged)}</div>}
               </div>
             )}
-            <div className="disclaimer" style={{ marginTop: '1rem', fontSize: '0.9rem', color: '#6b7280' }}>
+            <div className="disclaimer">
               ⚠️ Indicative only. Actual EMI may vary by lender.
             </div>
           </div>
@@ -657,16 +811,9 @@ function EMICalculator() {
       {/* SEO Content Section */}
       <div className="seo-content-section">
         <div className="content-block">
-          <h2>What is EMI?</h2>
+          <h2>EMI recap (quick)</h2>
           <p>
-            EMI or Equated Monthly Installment is a fixed payment amount made by a borrower to a lender at a specified date each calendar month. 
-            EMIs are used to pay off both interest and principal each month, ensuring that the loan is paid off in full over a specified number of years. 
-            The most common types of loans that use EMIs include home loans, car loans, and personal loans.
-          </p>
-          <p>
-            An EMI consists of two components: the principal component and the interest component. In the initial years, the interest component forms 
-            a larger part of the EMI, but as the loan tenure progresses, the principal component increases while the interest component decreases. 
-            This is because interest is calculated on the outstanding principal amount.
+            EMI is the fixed monthly payment covering both principal and interest, staying largely constant through the loan tenure to keep budgeting predictable.
           </p>
         </div>
 
@@ -782,6 +929,11 @@ function EMICalculator() {
             <li><strong>Analyze Breakdown:</strong> Check the amortization schedule to see year-wise principal and interest payments</li>
             <li><strong>Adjust & Compare:</strong> Modify values to find the optimal loan structure for your needs</li>
           </ol>
+          <p>
+            <Link to="/india/calculators/home-loan-eligibility">
+              Check your home loan eligibility before applying
+            </Link>
+          </p>
         </div>
 
         {/* Answer Block for AEO */}
@@ -884,6 +1036,8 @@ function EMICalculator() {
         </div>
         </div>
       </div>
+      {/* Floating Back-to-Top button */}
+      <ScrollToTop threshold={300} />
     </>
   );
 }
