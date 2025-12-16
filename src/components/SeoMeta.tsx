@@ -1,6 +1,5 @@
 import React from 'react';
 import Head from 'next/head';
-import { buildJsonLdForPage } from '../lib/jsonLdGenerators';
 
 interface SeoMetaProps {
   title: string;

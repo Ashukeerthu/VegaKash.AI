@@ -75,7 +75,16 @@ const BlogPostPage: React.FC<BlogPostPageProps> = ({
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.params || {};
 
-  const blogData = {
+  if (!slug || Array.isArray(slug)) {
+    return { notFound: true };
+  }
+    const resolvedSlug = Array.isArray(slug) ? slug[0] : slug;
+
+    if (!resolvedSlug) {
+      return { notFound: true };
+    }
+
+  const blogData: Record<string, any> = {
     'future-of-travel-2026': {
       title: 'Future of Travel 2026: How AI Will Redefine Trip Planning Forever',
       description: 'Discover how AI is transforming travel with smart planning, predictive budgeting, real-time updates, and personalized itineraries. Experience the future of travel in 2026.',
@@ -100,7 +109,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   };
 
-  const post = blogData[slug];
+  const post = blogData[resolvedSlug];
 
   if (!post) {
     return { notFound: true };
@@ -172,7 +181,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      slug,
+      slug: resolvedSlug,
       title: post.title,
       description: post.description,
       date: post.date,
