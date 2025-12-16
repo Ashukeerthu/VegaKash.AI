@@ -1,0 +1,126 @@
+/**
+ * Floating Feedback Button Styles
+ */
+
+.floating-feedback-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+}
+
+.floating-feedback-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  color: white;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(17, 153, 142, 0.4);
+  transition: all 0.3s ease;
+  font-size: 14px;
+  font-weight: 600;
+  overflow: hidden;
+  min-width: 48px;
+  height: 48px;
+  justify-content: center;
+}
+
+.floating-feedback-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 25px rgba(17, 153, 142, 0.6);
+}
+
+.floating-feedback-btn:active {
+  transform: translateY(-1px);
+}
+
+.feedback-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.feedback-text {
+  max-width: 0;
+  opacity: 0;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.floating-feedback-container.expanded .feedback-text {
+  max-width: 100px;
+  opacity: 1;
+}
+
+.floating-feedback-container.expanded .floating-feedback-btn {
+  padding: 12px 20px 12px 16px;
+}
+
+/* Pulse animation for attention */
+.floating-feedback-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50px;
+  background: inherit;
+  opacity: 0;
+  animation: pulse-ring 2s infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .floating-feedback-container {
+    bottom: 16px;
+    right: 16px;
+  }
+
+  .floating-feedback-btn {
+    width: 48px;
+    height: 48px;
+    padding: 12px;
+  }
+
+  .feedback-text {
+    display: none;
+  }
+
+  .floating-feedback-container.expanded .floating-feedback-btn {
+    padding: 12px;
+  }
+}
+
+/* Don't show on very small screens or when keyboard is open */
+@media (max-height: 500px) {
+  .floating-feedback-container {
+    display: none;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .floating-feedback-btn {
+    background: linear-gradient(135deg, #0f9b8e 0%, #2dd4bf 100%);
+  }
+}

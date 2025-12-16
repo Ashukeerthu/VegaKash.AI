@@ -532,6 +532,24 @@
   transform: rotate(-180deg);
 }
 
+/* Highlight reset button when URL params detected */
+.btn-reset.highlight {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3); }
+  50% { box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5); }
+}
+
+.btn-reset.highlight:hover {
+  animation: none;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+}
+
 /* Calculator Layout - Stacked (legacy support) */
 .calculator-layout {
   display: flex;
@@ -2633,6 +2651,907 @@ button:focus-visible,
   .download-csv-btn {
     width: 100%;
     justify-content: center;
+  }
+}
+
+/* New feature styles */
+
+/* Info text for advanced fields */
+.info-text {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: #f3f4f6;
+  border-left: 3px solid #667eea;
+  border-radius: 4px;
+  line-height: 1.4;
+}
+
+/* EMI note under result */
+.emi-note {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+/* FOIR wrapper */
+.foir-wrapper {
+  background: linear-gradient(135deg, #fef3c7 0%, #fef08a 100%);
+  border: 1px solid #fcd34d;
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin-top: 1rem;
+}
+
+.foir-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  gap: 1rem;
+  flex-wrap: nowrap;
+}
+
+.foir-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.foir-percentage {
+  color: #92400e;
+  font-size: 1.05rem;
+}
+
+.foir-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #78350f;
+}
+
+/* Timeline insight */
+.timeline-insight {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%);
+  border-left: 4px solid #3b82f6;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: #1e3a8a;
+  line-height: 1.6;
+}
+
+.timeline-insight .emoji {
+  margin-right: 0.5rem;
+  font-size: 1.1rem;
+}
+
+/* Prepayment Impact Section */
+.prepay-impact-section {
+  background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+  border: 2px solid #10b981;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.prepay-impact-section h4 {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  color: #065f46;
+  font-weight: 600;
+}
+
+.prepay-impact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.impact-card {
+  background: white;
+  border-radius: 6px;
+  padding: 1rem;
+  text-align: center;
+  border-left: 4px solid #10b981;
+}
+
+.impact-label {
+  font-size: 0.85rem;
+  color: #6b7280;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.impact-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #065f46;
+}
+
+.impact-value.highlight {
+  color: #059669;
+  font-size: 1.4rem;
+}
+
+/* ===== IMPROVED FORM UX CONSISTENCY ===== */
+
+/* Form sections container */
+.calculator-inputs {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Input group wrapper - consistent card styling */
+.slider-group {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  transition: all 0.2s ease;
+}
+
+.slider-group:hover {
+  border-color: #d1d5db;
+  background: #f3f4f6;
+}
+
+.slider-group:focus-within {
+  border-color: #667eea;
+  background: #f0f4ff;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Consistent label styling */
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.875rem;
+}
+
+.slider-header label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #1f2937;
+  letter-spacing: 0.3px;
+}
+
+.slider-header .input-value,
+.slider-header .input-display {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #667eea;
+}
+
+/* Input display fields consistency */
+.input-display {
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.input-display:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.input-display::placeholder {
+  color: #9ca3af;
+}
+
+/* Select input consistency */
+.input-select {
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #1f2937;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.input-select:hover {
+  border-color: #b3b9cc;
+}
+
+.input-select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Slider consistency */
+.slider {
+  width: 100%;
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 3px;
+  outline: none;
+  -webkit-appearance: none;
+  margin: 0.75rem 0;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: 2px solid white;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  transition: all 0.2s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: 2px solid white;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  transition: all 0.2s ease;
+}
+
+/* Slider labels alignment */
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+/* Toggle button consistency */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.toggle-row > span {
+  font-size: 0.9rem;
+  color: #6b7280;
+  font-weight: 500;
+  min-width: 60px;
+}
+
+/* Tab button consistency across all toggles */
+.tab-btn {
+  background: white;
+  border: 1.5px solid #e5e7eb;
+  color: #6b7280;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.tab-btn:hover {
+  border-color: #d1d5db;
+  background: #f9fafb;
+  color: #4f46e5;
+}
+
+.tab-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: #667eea;
+  color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Advanced section styling */
+.advanced-section {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.04) 0%, rgba(118, 75, 162, 0.04) 100%);
+  border: 1px solid rgba(102, 126, 234, 0.15);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.advanced-section .slider-group {
+  background: white;
+  border: 1px solid #e5e7eb;
+}
+
+.advanced-section .slider-group:hover {
+  border-color: #d1d5db;
+  background: #fafbfc;
+}
+
+/* Advanced toggle button styling */
+.advanced-toggle-row {
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem 0 1rem;
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  border: 1.5px solid #667eea;
+  color: #667eea;
+  padding: 0.75rem 1.75rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-compact {
+  padding: 0.65rem 1.5rem;
+  font-size: 0.85rem;
+}
+
+/* Reset button styling */
+.reset-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.btn-reset {
+  background: white;
+  border: 1.5px solid #e5e7eb;
+  color: #6b7280;
+  padding: 0.7rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.btn-reset:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+  color: #4f46e5;
+}
+
+/* Error and info text consistency */
+.inline-error {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  margin-top: 0.75rem;
+  border-left: 3px solid #dc2626;
+  display: flex;
+  justify-content: space-between;
+}
+
+.help-tip {
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+.info-text {
+  background: #eff6ff;
+  color: #1e40af;
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  margin-top: 0.75rem;
+  border-left: 3px solid #3b82f6;
+  line-height: 1.4;
+}
+
+/* Shock row styling */
+.shock-row {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.shock-row .tab-btn {
+  flex: 1;
+  min-width: 100px;
+}
+
+.shock-row .tab-btn.active.shock-none {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-color: #10b981;
+}
+
+.shock-row .tab-btn.active.shock-low {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  border-color: #f59e0b;
+}
+
+.shock-row .tab-btn.active.shock-high {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border-color: #ef4444;
+}
+
+/* ============================================
+   COMPREHENSIVE MOBILE RESPONSIVE STYLES
+   ============================================ */
+
+/* Tablet and Mobile (768px and below) */
+@media (max-width: 768px) {
+  /* Container adjustments */
+  .calculator-container {
+    padding: 1rem;
+  }
+
+  .calculator-header h1 {
+    font-size: 1.5rem;
+    line-height: 1.3;
+  }
+
+  .calculator-header p {
+    font-size: 0.9rem;
+  }
+
+  /* Input section */
+  .calculator-inputs {
+    padding: 1.25rem;
+  }
+
+  .slider-group {
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .inputs-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  /* Slider header adjustments */
+  .slider-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .slider-header label {
+    font-size: 0.9rem;
+  }
+
+  .input-display {
+    font-size: 1.1rem;
+    padding: 0.65rem 0.85rem;
+  }
+
+  .input-value {
+    font-size: 0.95rem;
+  }
+
+  /* Toggle buttons */
+  .toggle-row {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .toggle-row > span {
+    min-width: auto;
+    font-size: 0.85rem;
+  }
+
+  .tab-btn {
+    padding: 0.625rem 1rem;
+    font-size: 0.85rem;
+    width: 100%;
+  }
+
+  /* Shock row */
+  .shock-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .shock-row .tab-btn {
+    font-size: 0.8rem;
+    padding: 0.6rem 0.5rem;
+    min-width: auto;
+  }
+
+  /* Advanced toggle */
+  .advanced-toggle-row {
+    margin: 1rem 0;
+  }
+
+  .btn-secondary.btn-compact {
+    width: 100%;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+  }
+
+  /* Reset button */
+  .reset-row {
+    margin-top: 1rem;
+  }
+
+  .btn-reset {
+    width: 100%;
+    justify-content: center;
+    padding: 0.75rem 1.25rem;
+  }
+
+  /* Results section */
+  .calculator-results {
+    padding: 1.25rem;
+  }
+
+  .calculator-results h2 {
+    font-size: 1.3rem;
+  }
+
+  .result-cards {
+    grid-template-columns: 1fr;
+    gap: 0.875rem;
+  }
+
+  .result-card {
+    padding: 1rem;
+  }
+
+  .result-label {
+    font-size: 0.85rem;
+  }
+
+  .result-value {
+    font-size: 1.5rem;
+  }
+
+  .result-value.long {
+    font-size: 1.2rem;
+  }
+
+  /* Chart section */
+  .result-chart {
+    padding: 1.25rem;
+  }
+
+  .pie-chart {
+    width: 200px;
+    height: 200px;
+  }
+
+  .pie-center {
+    font-size: 0.8rem;
+  }
+
+  .pie-center strong {
+    font-size: 1rem;
+  }
+
+  .chart-legend {
+    font-size: 0.85rem;
+  }
+
+  .pie-insight,
+  .timeline-insight {
+    font-size: 0.85rem;
+    padding: 0.75rem;
+  }
+
+  /* Confidence row */
+  .confidence-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .foir-wrapper,
+  .income-bar-wrapper {
+    padding: 1rem;
+  }
+
+  .foir-label {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .foir-title {
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+  }
+
+  .foir-percentage {
+    font-size: 1rem;
+  }
+
+  .foir-breakdown {
+    font-size: 0.85rem;
+  }
+
+  .income-bar-label {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .confidence-markers {
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+  }
+
+  /* Impact sections */
+  .prepay-impact-section,
+  .shock-summary {
+    padding: 1rem;
+  }
+
+  .prepay-impact-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .impact-card {
+    padding: 0.875rem;
+  }
+
+  .impact-label {
+    font-size: 0.85rem;
+  }
+
+  .impact-value {
+    font-size: 1.3rem;
+  }
+
+  .shock-details {
+    font-size: 0.85rem;
+  }
+
+  /* Share actions */
+  .share-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .share-actions .tab-btn {
+    width: 100%;
+  }
+
+  /* Amortization section */
+  .amortization-section {
+    padding: 1rem;
+  }
+
+  .amortization-section h3 {
+    font-size: 1.2rem;
+  }
+
+  .amortization-tabs {
+    gap: 0.5rem;
+  }
+
+  .amortization-tabs .tab-btn {
+    flex: 1;
+    font-size: 0.85rem;
+  }
+
+  /* SEO Content */
+  .seo-content-section {
+    padding: 1rem;
+  }
+
+  .content-block {
+    padding: 1.25rem;
+  }
+
+  .content-block h2 {
+    font-size: 1.3rem;
+  }
+
+  .content-block h3 {
+    font-size: 1.1rem;
+  }
+
+  .formula-box {
+    font-size: 0.85rem;
+    padding: 0.875rem;
+  }
+
+  /* Calculator grid */
+  .calculator-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .calc-card {
+    padding: 1rem;
+  }
+
+  /* Answer blocks */
+  .answer-block {
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .examples-list {
+    font-size: 0.85rem;
+  }
+
+  /* FAQ section */
+  .faq-item {
+    padding: 1rem;
+  }
+
+  .faq-item h3 {
+    font-size: 1rem;
+  }
+
+  .faq-item p {
+    font-size: 0.85rem;
+  }
+}
+
+/* Small Mobile (480px and below) */
+@media (max-width: 480px) {
+  .calculator-container {
+    padding: 0.75rem;
+  }
+
+  .calculator-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .calculator-header p {
+    font-size: 0.85rem;
+  }
+
+  .calculator-inputs,
+  .calculator-results {
+    padding: 1rem;
+  }
+
+  .slider-group {
+    padding: 0.875rem;
+  }
+
+  .input-display {
+    font-size: 1rem;
+    padding: 0.6rem 0.75rem;
+  }
+
+  .slider-header label {
+    font-size: 0.85rem;
+  }
+
+  .input-value {
+    font-size: 0.9rem;
+  }
+
+  .tab-btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .shock-row .tab-btn {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.4rem;
+  }
+
+  .result-value {
+    font-size: 1.3rem;
+  }
+
+  .result-value.long {
+    font-size: 1.1rem;
+  }
+
+  .pie-chart {
+    width: 180px;
+    height: 180px;
+  }
+
+  .pie-center strong {
+    font-size: 0.9rem;
+  }
+
+  .result-card {
+    padding: 0.875rem;
+  }
+
+  .impact-card {
+    padding: 0.75rem;
+  }
+
+  .impact-value {
+    font-size: 1.2rem;
+  }
+
+  .foir-wrapper,
+  .income-bar-wrapper {
+    padding: 0.875rem;
+  }
+
+  .content-block {
+    padding: 1rem;
+  }
+
+  .content-block h2 {
+    font-size: 1.2rem;
+  }
+
+  .content-block h3 {
+    font-size: 1rem;
+  }
+
+  .formula-box {
+    font-size: 0.8rem;
+    padding: 0.75rem;
+  }
+}
+
+/* Extra Small Mobile (360px and below) */
+@media (max-width: 360px) {
+  .calculator-header h1 {
+    font-size: 1.1rem;
+  }
+
+  .calculator-inputs,
+  .calculator-results {
+    padding: 0.875rem;
+  }
+
+  .slider-group {
+    padding: 0.75rem;
+  }
+
+  .result-value {
+    font-size: 1.2rem;
+  }
+
+  .pie-chart {
+    width: 160px;
+    height: 160px;
+  }
+
+  .shock-row {
+    grid-template-columns: 1fr;
+  }
+
+  .shock-row .tab-btn {
+    font-size: 0.8rem;
+    padding: 0.6rem;
   }
 }
 

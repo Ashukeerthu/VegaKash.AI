@@ -1,0 +1,6 @@
+__turbopack_load_page_chunks__("/blog/future-of-travel-2026", [
+  "static/chunks/86bd16f53328c3ae.js",
+  "static/chunks/f70013795016afb4.js",
+  "static/chunks/db2bfe74d307fa57.js",
+  "static/chunks/turbopack-f7a87ac58732ba2e.js"
+])

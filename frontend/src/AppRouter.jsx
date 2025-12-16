@@ -51,6 +51,17 @@ function ScrollToTop() {
  * AppContent - Inner component with routing
  */
 function AppContent() {
+  const [isInitialLoad, setIsInitialLoad] = React.useState(true);
+  
+  // Remove initial load flag after first render
+  React.useEffect(() => {
+    // Small delay to ensure components have mounted
+    const timer = setTimeout(() => {
+      setIsInitialLoad(false);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
+  
   return (
     <div className="app">
       {/* Global Navigation */}
@@ -153,8 +164,8 @@ function AppContent() {
         <Route path="*" element={<NotFound />} />
       </Routes>
       
-      {/* Global Footer */}
-      <Footer />
+      {/* Global Footer - Only show after initial load to prevent flash */}
+      {!isInitialLoad && <Footer />}
       
       {/* Floating Feedback Button - Available on all pages */}
       <FloatingFeedbackButton />

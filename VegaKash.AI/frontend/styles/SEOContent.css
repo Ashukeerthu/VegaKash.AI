@@ -1,0 +1,87 @@
+/* SEO Content Styles: improved readability, hierarchy, and mobile friendliness */
+.seo-content {
+  max-width: 900px;
+  margin: 2rem auto 0;
+  padding: 0 1rem;
+  color: #1f2937; /* gray-800 */
+  line-height: 1.7;
+}
+
+.seo-content h2 {
+  font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+  font-weight: 700;
+  color: #111827; /* gray-900 */
+  margin: 1.5rem 0 0.75rem;
+}
+
+.seo-content h3 {
+  font-size: clamp(1.125rem, 2.2vw, 1.25rem);
+  font-weight: 600;
+  color: #111827;
+  margin: 1.25rem 0 0.5rem;
+}
+
+.seo-content p {
+  margin: 0.5rem 0 0.75rem;
+}
+
+.seo-content ul,
+.seo-content ol {
+  margin: 0.5rem 0 1rem;
+  padding-left: 1.25rem;
+}
+
+.seo-content ul li,
+.seo-content ol li {
+  margin: 0.35rem 0;
+}
+
+.seo-content strong {
+  color: #0f172a; /* slate-900 */
+}
+
+.seo-content code {
+  display: inline-block;
+  background: #f9fafb; /* gray-50 */
+  border: 1px solid #e5e7eb; /* gray-200 */
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  margin: 0.5rem 0 0.75rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.9rem;
+  color: #111827;
+}
+
+/* Helper blocks inside SEO content */
+.seo-content .note {
+  background: #f0f9ff; /* sky-50 */
+  border: 1px solid #bae6fd; /* sky-200 */
+  color: #0c4a6e; /* sky-900 */
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+}
+
+/* Links styling */
+.seo-content a {
+  color: #2563eb; /* blue-600 */
+  text-decoration: none;
+}
+.seo-content a:hover {
+  text-decoration: underline;
+}
+
+/* Small screens adjustments */
+@media (max-width: 640px) {
+  .seo-content {
+    padding: 0 0.75rem;
+  }
+  .seo-content ul,
+  .seo-content ol {
+    padding-left: 1rem;
+  }
+  .seo-content code {
+    font-size: 0.85rem;
+    padding: 0.45rem 0.6rem;
+  }
+}

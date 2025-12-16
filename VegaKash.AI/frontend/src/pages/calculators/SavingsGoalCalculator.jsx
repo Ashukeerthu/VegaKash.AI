@@ -1,0 +1,53 @@
+﻿import React from 'react';
+import SEO from '../../components/SEO';
+import Breadcrumb from '../../components/Breadcrumb';
+import '../../styles/Calculator.css';
+import '../../styles/Pages.css';
+
+/**
+ * Savings Goal Calculator - Coming Soon
+ */
+function SavingsGoalCalculator() {
+  const breadcrumbItems = [
+    { label: 'Home', path: '/', icon: true },
+    { label: 'Calculators', path: '/calculators' },
+    { label: 'Savings Goal Calculator', path: null }
+  ];
+  
+  return (
+    <>
+      <SEO 
+        title="Savings Goal Calculator - Coming Soon | VegaKash.AI"
+        description="Plan monthly investments to reach your financial goals. Calculate how much to save for dream purchases, education, or retirement."
+        keywords="savings goal calculator, financial planning, goal-based investment, monthly savings planner"
+        canonical="/calculators/savings-goal"
+        noindex={true}
+      />
+      
+      <div className="page-container">
+        <Breadcrumb items={breadcrumbItems} />
+        
+        <div className="page-header">
+          <h1>🎯 Savings Goal Calculator</h1>
+          <p>Plan monthly investments to reach financial goals</p>
+        </div>
+        
+        <div className="page-content">
+          <div className="coming-soon-card">
+            <div className="coming-soon-icon">🎯</div>
+            <h2>Coming Soon</h2>
+            <p>Smart goal-based savings planner with timeline tracking!</p>
+            <p className="feature-list">
+               Multiple Goal Tracking<br/>
+               Monthly Savings Calculator<br/>
+               Timeline Planning<br/>
+               Investment Strategy Suggestions
+            </p>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default SavingsGoalCalculator;

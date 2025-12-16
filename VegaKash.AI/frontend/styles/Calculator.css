@@ -1,0 +1,63 @@
+/* Amortization table container improvements */
+.amortization-table {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 8px;
+  padding-bottom: 10px; /* ease tapping last column */
+}
+
+.amortization-table table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 600px; /* keep horizontal scroll for dense columns */
+}
+
+.amortization-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+}
+
+.amortization-table td,
+.amortization-table th {
+  white-space: nowrap;
+  padding: 10px 12px;
+  font-size: 0.875rem;
+}
+
+.amortization-table .mono {
+  font-family: monospace;
+}
+
+/* Mobile card layout fallback */
+@media (max-width: 768px) {
+  .amortization-table table thead { display: none; }
+  .amortization-table table,
+  .amortization-table tbody,
+  .amortization-table tr,
+  .amortization-table td { display: block; width: 100%; }
+
+  .amortization-table .am-row {
+    margin: 0 0 0.75rem 0;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    padding: 0.5rem;
+  }
+
+  .amortization-table td {
+    padding: 6px 8px;
+    text-align: left;
+    border: none;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .amortization-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #374151;
+    margin-right: 0.5rem;
+  }
+}

@@ -1,0 +1,6 @@
+# Security.txt
+# Contact information for security issues
+Contact: mailto:security@yourdomain.com
+Encryption: https://yourdomain.com/pgp-key.txt
+Acknowledgements: https://yourdomain.com/security-acknowledgements.html
+Policy: https://yourdomain.com/security-policy.html
