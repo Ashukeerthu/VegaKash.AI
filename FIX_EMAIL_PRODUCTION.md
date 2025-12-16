@@ -27,11 +27,11 @@ nano .env
 Add these lines to the `.env` file (or update if they exist):
 
 ```env
-# Email Configuration for Feedback System
-EMAIL_HOST=smtp.gmail.com
+# Email Configuration for Feedback System (Hostinger)
+EMAIL_HOST=smtp.hostinger.com
 EMAIL_PORT=587
 EMAIL_USER=support@vegaktools.com
-EMAIL_PASSWORD=your-app-password-here
+EMAIL_PASSWORD=your-hostinger-email-password
 EMAIL_TO=support@vegaktools.com
 ```
 
@@ -97,9 +97,9 @@ msg['Subject'] = 'Test Email'
 msg['From'] = 'support@vegaktools.com'
 msg['To'] = 'support@vegaktools.com'
 
-server = smtplib.SMTP('smtp.gmail.com', 587)
+server = smtplib.SMTP('smtp.hostinger.com', 587)
 server.starttls()
-server.login('support@vegaktools.com', 'your-app-password')
+server.login('support@vegaktools.com', 'your-hostinger-password')
 server.send_message(msg)
 server.quit()
 print("✅ Test email sent successfully!")
@@ -108,11 +108,13 @@ PYEOF
 
 ## Notes
 
-- **Business Email**: Update the email configuration to use your business email `support@vegaktools.com`
-- **App Password**: Generate a new Gmail App Password for the business email
+- **Hostinger Email**: Use your Hostinger business email `support@vegaktools.com`
+- **SMTP Server**: Hostinger uses `smtp.hostinger.com` (not Gmail)
+- **Password**: Use your regular Hostinger email password (no App Password needed)
+- **Port**: 587 (TLS/STARTTLS) or 465 (SSL) - we use 587
 - **Security**: The `.env` file is protected with `chmod 600` (owner read/write only)
 - **Background Tasks**: Feedback emails are sent asynchronously, so the API returns 200 OK immediately even if email fails
-- To generate Gmail App Password: https://myaccount.google.com/apppasswords
+- Hostinger Email Settings: https://support.hostinger.com/en/articles/1583218-how-to-use-smtp
 
 ## Estimated Time
 Total: 2-3 minutes

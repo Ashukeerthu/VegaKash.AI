@@ -51,12 +51,12 @@ function Footer() {
                 <span className="text-sm text-gray-400">For general inquiries & support</span>
               </li>
               <li className="mt-3">
-                <a href="mailto:legal@vegaktools.com" className="footer-link text-sm">
+                <a href="mailto:support@vegaktools.com" className="footer-link text-sm">
                   Legal: legal@vegaktools.com
                 </a>
               </li>
               <li>
-                <a href="mailto:privacy@vegaktools.com" className="footer-link text-sm">
+                <a href="mailto:support@vegaktools.com" className="footer-link text-sm">
                   Privacy: privacy@vegaktools.com
                 </a>
               </li>

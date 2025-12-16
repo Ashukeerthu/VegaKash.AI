@@ -82,11 +82,11 @@ cat > .env << 'EOF'
 OPENAI_API_KEY=sk-proj-your-key-here
 OPENAI_MODEL=gpt-4o-mini
 
-# Email Configuration (Required for Feedback)
-EMAIL_HOST=smtp.gmail.com
+# Email Configuration (Required for Feedback - Hostinger)
+EMAIL_HOST=smtp.hostinger.com
 EMAIL_PORT=587
 EMAIL_USER=support@vegaktools.com
-EMAIL_PASSWORD=your-app-password
+EMAIL_PASSWORD=your-hostinger-email-password
 EMAIL_TO=support@vegaktools.com
 
 # Production Settings
@@ -103,7 +103,10 @@ chmod 600 .env
 sudo systemctl restart vegakash-backend
 ```
 
-**Important:** For Gmail, use an [App Password](https://support.google.com/accounts/answer/185833), not your regular password.
+**Important:** 
+- Hostinger Email: Use `smtp.hostinger.com` as the SMTP host
+- Use your regular Hostinger email password (no App Password needed)
+- Get password from: Hostinger Panel → Emails → Manage
 
 ## Common Issues
 
