@@ -85,9 +85,9 @@ OPENAI_MODEL=gpt-4o-mini
 # Email Configuration (Required for Feedback)
 EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587
-EMAIL_USER=your-email@gmail.com
+EMAIL_USER=support@vegaktools.com
 EMAIL_PASSWORD=your-app-password
-EMAIL_TO=your-email@gmail.com
+EMAIL_TO=support@vegaktools.com
 
 # Production Settings
 ENVIRONMENT=production

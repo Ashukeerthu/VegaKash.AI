@@ -30,9 +30,9 @@ Add these lines to the `.env` file (or update if they exist):
 # Email Configuration for Feedback System
 EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587
-EMAIL_USER=bhaskar070693@gmail.com
-EMAIL_PASSWORD=ajmwkjxnqocbhcdf
-EMAIL_TO=bhaskar070693@gmail.com
+EMAIL_USER=support@vegaktools.com
+EMAIL_PASSWORD=your-app-password-here
+EMAIL_TO=support@vegaktools.com
 ```
 
 Press `Ctrl+X`, then `Y`, then `Enter` to save.
@@ -71,7 +71,7 @@ Should return:
 ## Test on Website
 1. Visit https://vegaktools.com
 2. Submit feedback using any method (feedback button, page feedback, or micro-survey)
-3. Check your email inbox: bhaskar070693@gmail.com
+3. Check your email inbox: support@vegaktools.com
 
 ## Troubleshooting
 
@@ -94,12 +94,12 @@ from email.mime.text import MIMEText
 
 msg = MIMEText("Test from VegaKash.AI")
 msg['Subject'] = 'Test Email'
-msg['From'] = 'bhaskar070693@gmail.com'
-msg['To'] = 'bhaskar070693@gmail.com'
+msg['From'] = 'support@vegaktools.com'
+msg['To'] = 'support@vegaktools.com'
 
 server = smtplib.SMTP('smtp.gmail.com', 587)
 server.starttls()
-server.login('bhaskar070693@gmail.com', 'ajmwkjxnqocbhcdf')
+server.login('support@vegaktools.com', 'your-app-password')
 server.send_message(msg)
 server.quit()
 print("✅ Test email sent successfully!")
@@ -108,10 +108,11 @@ PYEOF
 
 ## Notes
 
-- **App Password**: The password `ajmwkjxnqocbhcdf` is a Gmail App Password, not your regular Gmail password
+- **Business Email**: Update the email configuration to use your business email `support@vegaktools.com`
+- **App Password**: Generate a new Gmail App Password for the business email
 - **Security**: The `.env` file is protected with `chmod 600` (owner read/write only)
 - **Background Tasks**: Feedback emails are sent asynchronously, so the API returns 200 OK immediately even if email fails
-- To regenerate Gmail App Password: https://myaccount.google.com/apppasswords
+- To generate Gmail App Password: https://myaccount.google.com/apppasswords
 
 ## Estimated Time
 Total: 2-3 minutes

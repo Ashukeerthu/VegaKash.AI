@@ -40,6 +40,30 @@ function Footer() {
           </div>
           
           <div className="footer-section">
+            <h4>Contact Us</h4>
+            <ul className="space-y-2">
+              <li>
+                <a href="mailto:support@vegaktools.com" className="footer-link">
+                  📧 support@vegaktools.com
+                </a>
+              </li>
+              <li>
+                <span className="text-sm text-gray-400">For general inquiries & support</span>
+              </li>
+              <li className="mt-3">
+                <a href="mailto:legal@vegaktools.com" className="footer-link text-sm">
+                  Legal: legal@vegaktools.com
+                </a>
+              </li>
+              <li>
+                <a href="mailto:privacy@vegaktools.com" className="footer-link text-sm">
+                  Privacy: privacy@vegaktools.com
+                </a>
+              </li>
+            </ul>
+          </div>
+          
+          <div className="footer-section">
             <h4>Important Notice</h4>
             <p>
               This tool provides general educational guidance only and is NOT certified financial advice. 
